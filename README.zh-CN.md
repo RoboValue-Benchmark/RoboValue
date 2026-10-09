@@ -4,8 +4,8 @@
 
 <div align="center">
   <!-- Add official arXiv and Hugging Face URLs once released. -->
-  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文" title="论文链接即将提供" height="20" />
-  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" title="Hugging Face 链接即将提供" height="20" />
+  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文" height="20" />
+  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" height="20" />
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="文档" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="项目网站" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="排行榜" height="20" /></a>
@@ -18,15 +18,11 @@
 
 </div>
 
-<p align="center">
-  <sub>论文与 Hugging Face 链接即将提供。</sub>
-</p>
-
 <h1 align="center">
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准。它通过细粒度诊断轨迹，评测模型的任务状态理解、时序进度监测、失败与恢复推理以及价值一致性。统一的标量、成对比较和文本接口支持不同类型的模型；接口细节详见[项目文档](docs/developer_guide.md#query-and-result-records)。
+**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准。它通过细粒度诊断轨迹，评测模型的任务状态理解、时序进度监测、失败与恢复推理以及价值一致性。
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" />
@@ -43,9 +39,7 @@
 
 ## 排行榜
 
-通过 **[交互式排行榜](https://robovalue-benchmark.github.io/leaderboard/)**，比较机器人价值模型在四类能力以及仿真、真实世界和泛化条件下的表现。Zero-Shot 和 One-Shot 配置**分别在各自的赛道内排名**。
-
-下表展示 [2026-10-07 论文结果快照](https://github.com/RoboValue-Benchmark/RoboValue-Benchmark.github.io/blob/c1c54ae51dd79dd8d292b9155c128d61b68b1535/public/data/results.json)中每个赛道排名前三的配置。Overall 是四类能力归一化得分的均值，范围为 **0–100**，越高越好；**SIA 单独报告，不计入 Overall**。完整排行榜提供指标覆盖范围、聚合规则和模型详情。
+下表展示 Zero-Shot 和 One-Shot 两个赛道中排名前三的模型配置，各赛道独立排名。Overall 是四类能力归一化得分的均值，范围为 **0–100**，越高越好；**SIA 单独报告，不计入 Overall**。
 
 | 赛道 | 排名 | 模型 | Overall ↑ |
 | --- | :---: | --- | ---: |
@@ -56,15 +50,13 @@
 | One-Shot | 🥈 2 | ProcVLM-2B | 57.82 |
 | One-Shot | 🥉 3 | Robo-Dopamine 2.0-4B Preview | 57.52 |
 
-各评测设置的范围详见[评测协议与进展](#评测协议与进展)。
-
 ## 最新动态
 
 - [2026/10] 🔥 我们的论文 **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** 正式发布。
 
 ## 基准概览
 
-RoboValue 利用仿真与真实世界的诊断轨迹，评测机器人价值模型在**四个能力维度**上的表现。
+本节介绍 RoboValue 的数据集、评测指标、统一评测接口与当前评测进展。
 
 ### 数据集
 
@@ -95,6 +87,10 @@ RoboValue 利用仿真与真实世界的诊断轨迹，评测机器人价值模�
 
 **FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。缺失或不支持的指标结果以 **N/A** 标记。评分方式与评测条件详见[指标定义](https://robovalue-benchmark.github.io/doc/get-started/protocol/)；代码中的指标名称与选项详见[配置指南](docs/configuration.md#metric-selection)。
 
+### 评测接口
+
+统一的**标量打分**、**成对比较**和**文本输出**接口支持不同类型的机器人价值模型。接口定义与输入输出格式详见[项目文档](docs/developer_guide.md#query-and-result-records)。
+
 ### 评测协议与进展
 
 评测设置规定了**模型可用于条件输入或适应的任务专属示范数据**，与上述测试条件属于不同维度。参考数据和适应数据均与测试轨迹分离。
@@ -103,7 +99,7 @@ RoboValue 利用仿真与真实世界的诊断轨迹，评测机器人价值模�
 | --- | --- | --- |
 | **Zero&#8209;Shot** | 无 | ✅ [结果已公布](https://robovalue-benchmark.github.io/leaderboard/) |
 | **One&#8209;Shot** | 每个任务 1 条训练示范 | ✅ [结果已公布](https://robovalue-benchmark.github.io/leaderboard/?track=one) |
-| **Few&#8209;Shot** | 每个任务多条示范 | — 暂无评测报告 |
+| **Few&#8209;Shot** | 每个任务多条示范 | 📋 计划中 |
 | **Full&#8209;Data** | 完整训练集 | 📋 计划中 |
 
 当前结果与工具文档涵盖 **Zero-Shot 和 One-Shot** 模型设置。支持的模型与指标组合详见[配置与命令](docs/configuration.md)。

@@ -4,8 +4,8 @@
 
 <div align="center">
   <!-- Add official arXiv and Hugging Face URLs once released. -->
-  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv: paper" title="Paper link coming soon" height="20" />
-  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" title="Hugging Face link coming soon" height="20" />
+  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv: paper" height="20" />
+  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" height="20" />
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="Documentation" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="Website" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" height="20" /></a>
@@ -18,15 +18,11 @@
 
 </div>
 
-<p align="center">
-  <sub>Paper and Hugging Face links are coming soon.</sub>
-</p>
-
 <h1 align="center">
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real world. It measures task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through fine-grained diagnostic trajectories. Shared scalar, pairwise, and textual interfaces support heterogeneous model families; see the [project documentation](docs/developer_guide.md#query-and-result-records) for interface details.
+**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real world. It measures task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through fine-grained diagnostic trajectories.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
@@ -43,9 +39,7 @@
 
 ## Leaderboard
 
-Compare robotic value models across the four evaluation capabilities and simulation, real-world, and generalization conditions on the **[interactive leaderboard](https://robovalue-benchmark.github.io/leaderboard/)**. Zero-Shot and One-Shot configurations are ranked **within their own tracks**.
-
-The table shows the top three configurations per track from the [2026-10-07 manuscript snapshot](https://github.com/RoboValue-Benchmark/RoboValue-Benchmark.github.io/blob/c1c54ae51dd79dd8d292b9155c128d61b68b1535/public/data/results.json). Overall is the mean of four normalized capability scores on a **0–100** scale (higher is better); **SIA is reported separately and excluded from Overall**. See the full leaderboard for metric coverage, aggregation rules, and model details.
+The table below lists the top three model configurations in the Zero-Shot and One-Shot tracks, ranked separately. Overall is the mean of four normalized capability scores on a **0–100** scale (higher is better); **SIA is reported separately and excluded from Overall**.
 
 | Track | Rank | Model | Overall ↑ |
 | --- | :---: | --- | ---: |
@@ -56,15 +50,13 @@ The table shows the top three configurations per track from the [2026-10-07 manu
 | One-Shot | 🥈 2 | ProcVLM-2B | 57.82 |
 | One-Shot | 🥉 3 | Robo-Dopamine 2.0-4B Preview | 57.52 |
 
-See [evaluation protocols and status](#evaluation-protocols-and-status) for the scope of each evaluation setting.
-
 ## What's NEW!
 
 - [2026/10] 🔥 Our paper **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** is officially released.
 
 ## Benchmark Overview
 
-RoboValue evaluates robotic value models across **four capability dimensions** using diagnostic trajectories from simulation and the real world.
+This section summarizes RoboValue's dataset, evaluation metrics, shared evaluation interfaces, and current evaluation status.
 
 ### Dataset
 
@@ -95,6 +87,10 @@ Four complementary capabilities are assessed through **11 metrics**, including S
 
 **FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. Missing or unsupported metric results are reported as **N/A**. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring and evaluation conditions, and the [configuration guide](docs/configuration.md#metric-selection) for metric names and options used in code.
 
+### Evaluation Interfaces
+
+Shared interfaces for **scalar scores**, **pairwise comparisons**, and **textual outputs** support different robotic value model families. See the [project documentation](docs/developer_guide.md#query-and-result-records) for interface definitions and input/output formats.
+
 ### Evaluation Protocols and Status
 
 Evaluation settings specify the **task-specific demonstrations available to a model** for conditioning or adaptation. They are distinct from the test conditions above. Reference and adaptation data are kept separate from test trajectories.
@@ -103,7 +99,7 @@ Evaluation settings specify the **task-specific demonstrations available to a mo
 | --- | --- | --- |
 | **Zero&#8209;Shot** | None | ✅ [Results available](https://robovalue-benchmark.github.io/leaderboard/) |
 | **One&#8209;Shot** | 1 training demonstration per task | ✅ [Results available](https://robovalue-benchmark.github.io/leaderboard/?track=one) |
-| **Few&#8209;Shot** | Multiple demonstrations per task | — Not reported |
+| **Few&#8209;Shot** | Multiple demonstrations per task | 📋 Planned |
 | **Full&#8209;Data** | Complete training split | 📋 Planned |
 
 Current results and documented model settings cover **Zero-Shot and One-Shot**. See [configuration and commands](docs/configuration.md) for supported model and metric combinations.
