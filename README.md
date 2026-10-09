@@ -3,9 +3,9 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Paper-Coming_soon-D85C6A?logo=arxiv&amp;logoColor=white" alt="Paper: coming soon" />
+  <img src="https://img.shields.io/badge/Paper-Coming_soon-D85C6A?logo=arxiv&amp;logoColor=white" alt="arXiv: paper" />
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-6853C9?logo=googlechrome&amp;logoColor=white" alt="Project website" /></a>
-  <img src="https://img.shields.io/badge/Dataset-Coming_soon-D49A3A?logo=huggingface&amp;logoColor=white" alt="Dataset download: coming soon" />
+  <img src="https://img.shields.io/badge/Dataset-Coming_soon-D49A3A?logo=huggingface&amp;logoColor=white" alt="HuggingFace" />
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-409C96?logo=readthedocs&amp;logoColor=white" alt="Documentation" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-4F9D69?logo=wechat&amp;logoColor=white" alt="Community" /></a>
