@@ -24,7 +24,7 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准。它通过细粒度诊断轨迹，评测模型的任务状态理解、时序进度监测、失败与恢复推理以及价值一致性。
+**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准，通过细粒度诊断轨迹评测任务结果与执行过程。
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" />
