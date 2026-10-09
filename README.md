@@ -41,9 +41,9 @@
 
 ## Leaderboard
 
-See the [**interactive leaderboard**](https://robovalue-benchmark.github.io/leaderboard/) for full results and model details.
-
 The table below lists the top three model configurations in the Zero-Shot and One-Shot tracks, ranked separately. Overall is the mean of four normalized capability scores on a **0–100** scale (higher is better); **SIA is reported separately and excluded from Overall**.
+
+See the [**interactive leaderboard**](https://robovalue-benchmark.github.io/leaderboard/) for full results and model details.
 
 | Track | Rank | Model | Overall ↑ |
 | --- | :---: | --- | ---: |
