@@ -34,15 +34,18 @@
 
 View full rankings and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/), with separate Zero-Shot and One-Shot tracks.
 
-## What's NEW!
+## 📰 What's New <a name="whats-new"></a>
 
 - [2026/10] 🔥 Our paper **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** is officially released.
 
 ## ✨ Highlights
 
 - 🎯 **Fine-grained value evaluation.** Assess task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through a shared evaluation protocol.
+
 - 🤖 **35 tasks across simulation and the real world.** RoboValue includes **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**, with **3,500 expert training demonstrations** and **2,792 separate test trajectories**.
+
 - 🔍 **Diagnostic execution scenarios.** Counterfactual instructions, recurring visual states, effective and ineffective recoveries, and alternative valid subtask orders expose errors that outcome accuracy and forward-progress correlation can overlook.
+
 - 🌍 **Controlled generalization tests.** Evaluate in-domain and under separate **cross-embodiment** and **cross-environment** shifts, without additional adaptation to the shifted conditions.
 
 <div align="center">
@@ -61,7 +64,9 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 | **Failure and Recovery Reasoning** | Failure onset, unresolved errors, and effective or ineffective recovery | FPL, TRR |
 | **Value Consistency** | Stable feedback and comparable subtask gains across valid solutions | VS, CSVC |
 
-**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. **SIA is reported separately and excluded from the leaderboard's Overall score.** Missing or unsupported results are shown as **N/A**. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring and evaluation conditions.
+**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. **SIA is reported separately and excluded from the leaderboard's Overall score.**
+
+Unmeasured leaderboard entries are shown as **—**. Missing metrics contribute zero after normalization, without redistributing their weights. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring and evaluation conditions.
 
 </details>
 
@@ -78,7 +83,9 @@ Tracks specify the **task-specific demonstrations available for conditioning or 
 
 ## 🧩 Supported Value Models
 
-Model-specific adapters expose shared **scalar scoring**, **pairwise comparison**, and **textual subtask** interfaces while retaining model-dependent value semantics. **✅** marks an available adapter interface, including model-specific conversions; **—** means unavailable. Model names link to setup guides; see the [interface definitions](docs/developer_guide.md#query-and-result-records) for input/output formats.
+Model-specific adapters expose shared **scalar scoring**, **pairwise comparison**, and **textual subtask** interfaces while retaining model-dependent value semantics.
+
+**✅** marks an available adapter interface, including model-specific conversions; **—** means unavailable. Model names link to setup guides; see the [interface definitions](docs/developer_guide.md#query-and-result-records) for input/output formats.
 
 | Model family | Scalar | Pairwise | Text (SIA) | Configuration |
 | --- | :---: | :---: | :---: | --- |
@@ -91,11 +98,13 @@ Model-specific adapters expose shared **scalar scoring**, **pairwise comparison*
 | [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
 | [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | ✅ | — | [YAML](configs/rynnvalueconfigs.yaml) |
 | [**LIV**](docs/baselines/liv.md) | ✅ | ✅ | — | [YAML](configs/livconfigs.yaml) |
-| [**FailSafe-labeled integration**](docs/baselines/failsafe.md)† | — | — | ✅ | [YAML](configs/failsafeconfigs.yaml) |
+| [**FailSafe-labeled integration**](docs/baselines/failsafe.md)<sup>†</sup> | — | — | ✅ | [YAML](configs/failsafeconfigs.yaml) |
 
-Metric eligibility and verification scope vary by model; see the [configuration guide](docs/configuration.md#metric-selection) and each setup guide. †The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
+Metric eligibility and verification scope vary by model; see the [configuration guide](docs/configuration.md#metric-selection) and each setup guide.
 
-## Quick Start
+<sup>†</sup> The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
+
+## 🚀 Quick Start <a name="quick-start"></a>
 
 The steps below assume you already have access to the benchmark data; public downloads are coming soon. Start with **one baseline**, prepare its runtime and checkpoint, then validate the data and run an evaluation. The supplied installation path targets **Linux x86_64** and requires a launcher with **Python 3.10+ and PyYAML**, plus **uv** and the baseline-specific CUDA/build dependencies. See the [shared prerequisites](docs/baselines/README.md#prerequisites) before installation.
 
@@ -195,16 +204,12 @@ RoboValue/
 
 Datasets, downloaded model assets, environments, and generated outputs are configured separately; see [data preparation](docs/data.md) and [baseline setup](docs/baselines/README.md#source-runtime-and-checkpoint-roots) for storage conventions. LIV's distributed assets use Git LFS.
 
-## Contributing
+## 🤝 Contributing <a name="contributing"></a>
 
 Contributions are welcome! Help extend RoboValue with **model adapters**, **reproducible evaluation results**, **task and annotation improvements**, or **documentation fixes**. Start with the [developer guide](docs/developer_guide.md) and [testing guide](docs/testing.md), then open a pull request describing the change and its validation.
 
 For questions or bug reports, open an [issue](https://github.com/RoboValue-Benchmark/RoboValue/issues) with the baseline, metric, environment versions, configuration without credentials, and relevant traceback. Join the [RoboValue community](https://robovalue-benchmark.github.io/community/) to discuss evaluation protocols and robotic value models.
 
-## Citation
+## 📝 Citation <a name="citation"></a>
 
-If you find **RoboValue** helpful in your research, please cite our paper:
-
-```bibtex
-% BibTeX citation to be added.
-```
+If you find **RoboValue** helpful in your research, please cite our paper. The BibTeX entry will be added here.
