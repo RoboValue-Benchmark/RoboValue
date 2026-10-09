@@ -95,7 +95,9 @@ RoboValue 将**诊断数据**、**面向不同能力的指标**与**受控评测
 | **失败与恢复推理** | 失败发生时刻、尚未解决的错误，以及有效或无效的恢复 | FPL, TRR |
 | **价值一致性** | 稳定的反馈，以及不同有效解决方案中可比较的子任务价值增益 | VS, CSVC |
 
-**FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。缺失或不支持的指标结果以 **N/A** 标记。仿真与真实世界结果分别报告，并分别展示两类分布偏移下的结果；TRR 和 CSVC 使用域内轨迹。评分规则、适用样本集合、单位和协议版本详见[指标规范](docs/metric_alignment.md)。
+**FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。缺失或不支持的指标结果以 **N/A** 标记。仿真与真实世界结果分别报告，并分别展示两类分布偏移下的结果；TRR 和 CSVC 使用域内轨迹。各指标衡量的内容详见[指标定义](https://robovalue-benchmark.github.io/doc/get-started/protocol/)；评分对齐与版本变更详见[指标实现与协议说明](docs/metric_alignment.md)。
+
+在 YAML 配置中，TGA-CT、TGA-CF 和 Memory-VOC 分别使用 `tga_easy`、`tga_hard` 和 `voc_mem`。代码文档将 Memory-VOC 称为 MEM-VOC；详见[指标选择](docs/configuration.md#metric-selection)。
 
 ### 评测协议与进展
 
@@ -125,7 +127,7 @@ cd RoboValue
 
 **2. 配置基线并下载模型权重。**
 
-以下以 **RoboReward** 为例。请先满足通用前置条件，包括安装 `hf` CLI，并按照 [RoboReward 指南](docs/baselines/roboreward.md)准备 FFmpeg 4–8 共享库。
+以下以 **RoboReward** 为例，需要已有的 **Python 3.10.x** 解释器。请先满足通用前置条件，包括安装 `hf` CLI，并按照 [RoboReward 指南](docs/baselines/roboreward.md)准备 FFmpeg 4–8 共享库。
 
 ```bash
 bash envs/setup.sh roboreward --plan
@@ -140,17 +142,37 @@ hf download teetone/RoboReward-8B \
 
 **3. 准备数据、配置运行参数并开始评测。**
 
-单独获取数据集，并按照[数据指南](docs/data.md)准备数据。复制下方模板后，替换**所有** `/path/to/...` 占位路径。将 `python` 设为基线环境的解释器路径，将 `checkpoint` 设为本地权重路径，并为本次运行配置 `data`、`output`、`gpu`、实际任务 ID 和适用指标。
+单独获取数据集，并按照[数据指南](docs/data.md)准备数据。复制基线模板：
 
 ```bash
 cp configs/roborewardconfigs.yaml configs/roboreward-local.yaml
-# 运行以下命令前，先编辑 configs/roboreward-local.yaml。
-# 将 data/dataset_real 替换为 YAML 中使用的同一数据集根目录。
+```
+
+假设数据位于 `data/dataset_real/`，按下例编辑 `configs/roboreward-local.yaml`。首次运行仅评测**一个任务在 ID 条件下的 SA 指标**。请设置可用的 GPU；如果数据集中的任务 ID 不同，请替换 `organize_table`。
+
+```yaml
+model: roboreward
+gpu: 0
+batch_size: 1
+python: ../.model-envs/roboreward/bin/python
+checkpoint: ../checkpoints/RoboReward-8B
+data: ../data/dataset_real
+output: ../output
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]
+```
+
+YAML 中的路径相对于 `configs/` 解析：其中的 `../data/dataset_real` 与从仓库根目录运行以下命令时的 `data/dataset_real` 指向同一数据集。若数据、环境或权重位于其他位置，也可使用绝对路径。
+
+```bash
 bash vmbmk.sh validate data/dataset_real
 bash vmbmk.sh run configs/roboreward-local.yaml
 ```
 
-`data` 必须指向**一个包含任务目录的数据集根目录**，例如 `data/dataset_real/`。验证过程仅检查数据结构和资源，不加载模型。运行成功后，会在配置的输出根目录下生成 **`metrics.json`**、保存的 **`config.yaml`**，以及各指标对应的操作记录和溯源文件。路径解析、评测模式和输出详情见[配置与命令](docs/configuration.md)。
+验证过程检查数据结构和资源，不加载模型；成功时输出 `valid`。使用上述配置完成评测后，结果保存在 **`output/roboreward-local/metrics.json`**，同一运行目录内还会保存 **`config.yaml`** 以及各指标对应的操作记录和溯源文件。首次运行成功后，先在 `configs/` 下复制为新的配置文件名，以生成独立运行目录，再按照[配置与命令](docs/configuration.md)扩展任务和适用指标。
 
 <details>
 <summary><strong>基线指南与配置模板</strong></summary>
@@ -158,7 +180,7 @@ bash vmbmk.sh run configs/roboreward-local.yaml
 | 基线 | 安装 | 配置 |
 | --- | --- | --- |
 | **RoboMeter** | [指南](docs/baselines/robometer.md) | [YAML](configs/robometerconfigs.yaml) |
-| **RoboDopamine** | [指南](docs/baselines/robodopamine.md) | [YAML](configs/robodopamineconfigs.yaml) |
+| **Robo-Dopamine** | [指南](docs/baselines/robodopamine.md) | [YAML](configs/robodopamineconfigs.yaml) |
 | **ProcVLM** | [指南](docs/baselines/procvlm.md) | [YAML](configs/procvlmconfigs.yaml) |
 | **RoboReward** | [指南](docs/baselines/roboreward.md) | [YAML](configs/roborewardconfigs.yaml) |
 | **VLAC** | [指南](docs/baselines/vlac.md) | [YAML](configs/vlacconfigs.yaml) |
@@ -202,7 +224,7 @@ RoboValue/
 | [数据准备](docs/data.md) | 数据集结构、元数据、标注和资源路径 |
 | [配置与命令](docs/configuration.md) | YAML 字段、评测模式和 CLI 用法 |
 | [环境详情](docs/environments.md) | 依赖锁定文件、自定义根目录和原生依赖构建 |
-| [指标规范](docs/metric_alignment.md) | 评分定义、适用样本集合和协议变更 |
+| [指标实现说明](docs/metric_alignment.md) | 评分对齐与协议变更 |
 | [结果接口](docs/result_publication.md) | 验证、发布和 SIA 中间输出 |
 | [开发者指南](docs/developer_guide.md) | 包结构、调用流程和扩展接口 |
 | [测试与验证记录](docs/testing.md) | CPU 测试、限定范围的模型检查和已知限制 |

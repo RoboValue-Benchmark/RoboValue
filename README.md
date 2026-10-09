@@ -95,7 +95,9 @@ Four complementary capabilities are assessed through **11 metrics**, including S
 | **Failure and Recovery Reasoning** | Failure onset, unresolved errors, and effective or ineffective recovery | FPL, TRR |
 | **Value Consistency** | Stable feedback and comparable subtask gains across valid solutions | VS, CSVC |
 
-**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. Metric-level results report missing or unsupported coverage as **N/A**. Simulation and real-world results, including the two distribution shifts, are reported separately; TRR and CSVC use in-domain trajectories. See the [metric contracts](docs/metric_alignment.md) for scoring rules, eligible cohorts, units, and protocol versions.
+**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. Metric-level results report missing or unsupported coverage as **N/A**. Simulation and real-world results, including the two distribution shifts, are reported separately; TRR and CSVC use in-domain trajectories. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for what each metric measures and the [implementation and protocol notes](docs/metric_alignment.md) for scoring alignment and version changes.
+
+For YAML configuration, TGA-CT, TGA-CF, and Memory-VOC use `tga_easy`, `tga_hard`, and `voc_mem`, respectively. Memory-VOC is called MEM-VOC in the code documentation; see [metric selection](docs/configuration.md#metric-selection).
 
 ### Evaluation Protocols and Status
 
@@ -125,7 +127,7 @@ This defers the LIV weight download until needed; LIV users should follow the [L
 
 **2. Set up a baseline and download its checkpoint.**
 
-The example below uses **RoboReward**. Complete the shared prerequisites, including the `hf` CLI, and provide FFmpeg 4–8 shared libraries as described in the [RoboReward guide](docs/baselines/roboreward.md).
+The example below uses **RoboReward** with an existing **Python 3.10.x** interpreter. Complete the shared prerequisites, including the `hf` CLI, and provide FFmpeg 4–8 shared libraries as described in the [RoboReward guide](docs/baselines/roboreward.md).
 
 ```bash
 bash envs/setup.sh roboreward --plan
@@ -140,17 +142,37 @@ Model dependencies run in isolated environments. For other models, choose a [bas
 
 **3. Prepare the data, configure the run, and evaluate.**
 
-Obtain the dataset separately and follow the [data guide](docs/data.md). Copy the template below, then replace **every** `/path/to/...` placeholder. Set `python` to the baseline environment interpreter and `checkpoint` to the local checkpoint; configure `data`, `output`, `gpu`, actual task IDs, and eligible metrics for your run.
+Obtain the dataset separately and follow the [data guide](docs/data.md). Copy the baseline template:
 
 ```bash
 cp configs/roborewardconfigs.yaml configs/roboreward-local.yaml
-# Edit configs/roboreward-local.yaml before running the commands below.
-# Replace data/dataset_real with the same dataset root used in the YAML.
+```
+
+For data placed in `data/dataset_real/`, edit `configs/roboreward-local.yaml` as below. This starter run evaluates **SA on one task in the ID condition**. Set an available GPU and replace `organize_table` if your dataset uses a different task ID.
+
+```yaml
+model: roboreward
+gpu: 0
+batch_size: 1
+python: ../.model-envs/roboreward/bin/python
+checkpoint: ../checkpoints/RoboReward-8B
+data: ../data/dataset_real
+output: ../output
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]
+```
+
+The YAML paths are relative to `configs/`: `../data/dataset_real` points to the same dataset as the CLI argument `data/dataset_real` when you run these commands from the repository root. Use absolute paths for data, environments, or checkpoints stored elsewhere.
+
+```bash
 bash vmbmk.sh validate data/dataset_real
 bash vmbmk.sh run configs/roboreward-local.yaml
 ```
 
-`data` must point to **one dataset root containing task directories**, such as `data/dataset_real/`. Validation checks schemas and assets without loading a model. A successful run writes **`metrics.json`**, a saved **`config.yaml`**, and metric-specific operation/provenance artifacts under the configured output root. See [configuration and commands](docs/configuration.md) for path resolution, evaluation modes, and output details.
+Validation checks schemas and assets without loading a model and prints `valid` on success. With this configuration, a successful evaluation writes **`output/roboreward-local/metrics.json`**, the saved **`config.yaml`**, and metric-specific operation/provenance artifacts in the same run directory. After the first run succeeds, copy the configuration to a new filename under `configs/` to create a separate run directory before expanding the task and eligible metric selections. See [configuration and commands](docs/configuration.md).
 
 <details>
 <summary><strong>Baseline guides and configuration templates</strong></summary>
@@ -158,7 +180,7 @@ bash vmbmk.sh run configs/roboreward-local.yaml
 | Baseline | Installation | Configuration |
 | --- | --- | --- |
 | **RoboMeter** | [Guide](docs/baselines/robometer.md) | [YAML](configs/robometerconfigs.yaml) |
-| **RoboDopamine** | [Guide](docs/baselines/robodopamine.md) | [YAML](configs/robodopamineconfigs.yaml) |
+| **Robo-Dopamine** | [Guide](docs/baselines/robodopamine.md) | [YAML](configs/robodopamineconfigs.yaml) |
 | **ProcVLM** | [Guide](docs/baselines/procvlm.md) | [YAML](configs/procvlmconfigs.yaml) |
 | **RoboReward** | [Guide](docs/baselines/roboreward.md) | [YAML](configs/roborewardconfigs.yaml) |
 | **VLAC** | [Guide](docs/baselines/vlac.md) | [YAML](configs/vlacconfigs.yaml) |
@@ -202,7 +224,7 @@ These paths are conventions; external storage is supported through configuration
 | [Data preparation](docs/data.md) | Dataset structure, metadata, annotations, and asset paths |
 | [Configuration and commands](docs/configuration.md) | YAML fields, evaluation modes, and CLI usage |
 | [Environment details](docs/environments.md) | Lockfiles, custom roots, and native builds |
-| [Metric contracts](docs/metric_alignment.md) | Scoring definitions, eligible cohorts, and protocol changes |
+| [Metric implementation notes](docs/metric_alignment.md) | Scoring alignment and protocol changes |
 | [Result interfaces](docs/result_publication.md) | Validation, publication, and SIA intermediate outputs |
 | [Developer guide](docs/developer_guide.md) | Package layout, call flow, and extension points |
 | [Testing and evidence](docs/testing.md) | CPU tests, bounded model checks, and known limitations |
