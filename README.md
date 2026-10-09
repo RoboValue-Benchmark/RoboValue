@@ -3,12 +3,13 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Paper-Coming_soon-D85C6A?logo=arxiv&amp;logoColor=white" alt="arXiv: paper" />
-  <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-6853C9?logo=googlechrome&amp;logoColor=white" alt="Project website" /></a>
-  <img src="https://img.shields.io/badge/Dataset-Coming_soon-D49A3A?logo=huggingface&amp;logoColor=white" alt="HuggingFace" />
-  <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-409C96?logo=readthedocs&amp;logoColor=white" alt="Documentation" /></a>
-  <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" /></a>
-  <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-4F9D69?logo=wechat&amp;logoColor=white" alt="Community" /></a>
+  <!-- Add official arXiv and Hugging Face URLs once released. -->
+  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv: paper" title="Paper link coming soon" height="20" />
+  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" title="Hugging Face link coming soon" height="20" />
+  <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="Documentation" height="20" /></a>
+  <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="Website" height="20" /></a>
+  <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" height="20" /></a>
+  <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/WeChat-green?logo=wechat&amp;logoColor=white" alt="WeChat group" height="20" /></a>
 </div>
 
 <div align="center">
@@ -16,6 +17,10 @@
 [![English](https://img.shields.io/badge/lang-English-blue.svg)](README.md) [![简体中文](https://img.shields.io/badge/语言-简体中文-red.svg)](README.zh-CN.md)
 
 </div>
+
+<p align="center">
+  <sub>Paper and Hugging Face links are coming soon.</sub>
+</p>
 
 <h1 align="center">
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
