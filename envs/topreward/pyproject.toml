@@ -1,0 +1,128 @@
+[project]
+name = "topreward"
+version = "0.1.0"
+description = "TOPReward: Token Probabilities as Zero-Shot Rewards for Robotics"
+readme = "README.md"
+authors = [
+    { name = "Shirui Chen", email = "sc256@uw.edu" },
+    { name = "Cole Harrison", email = "j.cole.harrison@gmail.com" },
+    { name = "Zhongzheng Ren" },
+]
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "accelerate>=1.8.1",
+    "datasets>=2.19.0",
+    "dotenv>=0.9.9",
+    "google-genai>=1.24.0",
+    "google-generativeai>=0.8.5",
+    "ipykernel>=6.30.1",
+    "isort>=6.0.1",
+    "loguru>=0.7.3",
+    "marimo>=0.14.10",
+    "openai>=1.93.0",
+    "lerobot==0.4.3",
+    "pyright>=1.1.405",
+    "pytest>=8.4.1",
+    "ruff>=0.12.2",
+    "scipy>=1.16.0",
+    "torch==2.8.0",
+    "torchvision==0.23.0",
+    "transformers==4.57.1",
+    "tiktoken>=0.11.0",
+    "blobfile>=3.1.0",
+    "seaborn>=0.13.2",
+    "omegaconf>=2.3.0",
+    "hydra-core>=1.3.2",
+    "qwen-vl-utils>=0.0.14",
+    "torchcodec==0.7.0",
+    "molmo_utils",
+    "flash-attn==2.8.3",
+]
+
+[tool.uv]
+override-dependencies = ["torch==2.8.0", "torchcodec==0.6.0", "torchvision==0.23.0"]
+
+[tool.uv.extra-build-dependencies]
+flash-attn = ["torch==2.8.0", "wheel"]
+
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "pytest>=8.4.1",
+    "ruff>=0.12.2",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 160
+fix = true
+
+
+[tool.ruff.lint]
+select = [
+    # flake8-2020
+    "YTT",
+    # flake8-bandit
+    "S",
+    # flake8-bugbear
+    "B",
+    # flake8-builtins
+    "A",
+    # flake8-comprehensions
+    "C4",
+    # flake8-debugger
+    "T10",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # mccabe
+    "C90",
+    # pycodestyle
+    "E", "W",
+    # pyflakes
+    "F",
+    # pygrep-hooks
+    "PGH",
+    # pyupgrade
+    "UP",
+    # ruff
+    "RUF",
+    # tryceratops
+    "TRY",
+]
+ignore = [
+    # Long exception messages outside class definitions
+    "TRY003",
+    "TRY300",
+    # Abstract `raise` to an inner functionRuff
+    "TRY301",
+    # Don't force wrapping single raise statements into helper functions
+    # Allow broad exception catching in tests / integration scaffolding if present
+    "TRY002",
+    "C901",
+    "S112",
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S603"]
+"notebooks/*.ipynb" = ["F"]  # Ignore pyflakes typing/name checks inside notebooks
+
+[tool.ruff.lint.isort]
+required-imports = []
+
+[tool.isort]
+profile = "black"
+line_length = 160
+
+[tool.black]
+line-length = 160
+
+[tool.setuptools.packages.find]
+include = ["topreward*"]
+
+# [tool.uv.sources]
+# lerobot = { git = "https://github.com/huggingface/lerobot.git", rev = "a0d7627d81c57f9ca826029e581deca313e0d548" }
+

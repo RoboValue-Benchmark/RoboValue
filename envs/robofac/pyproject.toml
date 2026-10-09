@@ -1,0 +1,16 @@
+[project]
+name = "robofac-runtime"
+version = "0.1.0"
+description = "Reproducible vLLM inference and evaluation runtime for RoboFAC-7B"
+requires-python = "==3.10.*"
+dependencies = [
+    "huggingface-hub==0.34.4",
+    "httpx==0.28.1",
+    "opencv-python-headless==4.11.0.86",
+    "transformers==4.55.2",
+    "vllm==0.10.2",
+]
+
+[tool.uv]
+package = false
+exclude-newer = "2025-09-15T00:00:00Z"

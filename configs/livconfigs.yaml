@@ -1,0 +1,14 @@
+model: liv
+gpu: 0
+batch_size: 32
+python: /path/to/model-envs/liv/bin/python
+checkpoint: ../checkpoints/LIV
+data: /path/to/dataset
+output: /path/to/results
+model_options:
+  source_root: /path/to/vmbmk_codebase/.baseline-sources/liv
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]

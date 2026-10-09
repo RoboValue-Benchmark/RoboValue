@@ -1,0 +1,39 @@
+[project]
+name = "rynnvalue"
+version = "0.1.0"
+description = "RynnValue: a general-purpose value model for robot manipulation (model + inference toolkit)"
+license = { file = "LICENSE" }
+requires-python = "==3.10.*"
+dependencies = [
+    "accelerate==1.14.0",
+    "einops==0.8.2",
+    "imageio[ffmpeg]==2.37.4",
+    "matplotlib==3.10.9",
+    "numpy==2.2.6",
+    "pillow==12.3.0",
+    "torch==2.6.0",
+    "torchvision==0.21.0",
+    "transformers==4.57.6",
+]
+
+[tool.uv]
+package = false
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+constraint-dependencies = [
+    "filelock==3.32.3",
+    "idna==3.18",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu124" }
+torchvision = { index = "pytorch-cu124" }
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true

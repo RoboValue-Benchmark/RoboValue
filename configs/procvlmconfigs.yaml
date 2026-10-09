@@ -1,0 +1,16 @@
+model: procvlm
+gpu: 0
+batch_size: 64
+python: /path/to/model-envs/procvlm/bin/python
+checkpoint: /path/to/checkpoints/ProcVLM-2B
+data: /path/to/dataset
+output: /path/to/results
+# Optional task LoRA mapping enables one-shot; omit for the base model.
+# model_options:
+#   checkpoint_by_task:
+#     organize_table: /path/to/task-lora/organize_table/checkpoint
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]

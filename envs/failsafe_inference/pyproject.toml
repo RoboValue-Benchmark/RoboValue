@@ -1,0 +1,49 @@
+[project]
+name = "failsafe-inference-runtime"
+version = "0.1.0"
+description = "Reproducible inference runtime for FailSafe"
+requires-python = "==3.10.*"
+dependencies = [
+    "accelerate>=0.29.1",
+    "av",
+    "bitsandbytes==0.41.0",
+    "datasets==2.16.1",
+    "decord==0.6.0",
+    "deepspeed==0.14.4",
+    "einops==0.6.1",
+    "einops-exts==0.0.4",
+    "fastapi",
+    "fsspec[http]==2023.10.0",
+    "ftfy",
+    "gradio-client==0.2.9",
+    "hf-transfer",
+    "httpx==0.24.0",
+    "huggingface-hub>=0.19.3,<1.0",
+    "llava",
+    "markdown2[all]",
+    "numpy==1.26.1",
+    "open-clip-torch",
+    "opencv-python",
+    "peft==0.4.0",
+    "pydantic==1.10.8",
+    "requests",
+    "scikit-learn==1.2.2",
+    "scipy",
+    "sentencepiece~=0.1.99",
+    "shortuuid",
+    "timm",
+    "tokenizers~=0.15.2",
+    "torch==2.1.2",
+    "torchvision==0.16.2",
+    "transformers @ git+https://github.com/huggingface/transformers.git@1c39974a4c4036fd641bc1191cc32799f85715a4",
+    "tyro",
+    "urllib3<=2.0.0",
+    "uvicorn",
+    "wandb",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+llava = { path = "../../../vmbmk/baselines/FailSafe_inference", editable = true }

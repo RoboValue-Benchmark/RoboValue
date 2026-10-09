@@ -1,0 +1,79 @@
+robometer:
+  project: robometer
+  probe_gpu_required: true
+  upstream:
+    repository: https://github.com/robometer/robometer.git
+    revision: 352d160389daa964788de1ec933d1925f3a6de4f
+    directories: [robometer]
+  source:
+    - robometer/data/dataset_types.py
+    - robometer/evals/eval_server.py
+    - robometer/utils/save.py
+    - robometer/utils/setup_utils.py
+  imports: [robometer.data.dataset_types, robometer.evals.eval_server]
+robodopamine:
+  project: robo-dopamine
+  imports: [vllm, transformers]
+procvlm:
+  project: procvlm
+  upstream:
+    repository: https://github.com/RUCKBReasoning/ProcVLM.git
+    revision: 377523a31f05bab9c0db5ac8b9edfa7b7f03968a
+    directories: [evqa, core]
+  source: [evqa/model.py, evqa/inference.py, evqa/templates/procedural_c.txt, core/backends/vllm.py]
+  imports: [evqa.model, evqa.inference, core.backends.vllm]
+  build: [deepspeed]
+roboreward:
+  project: roboreward
+  ffmpeg: [4, 5, 6, 7, 8]
+  imports: [torchcodec.decoders, transformers.video_utils]
+vlac:
+  project: vlac
+  upstream:
+    repository: https://github.com/InternRobotics/VLAC.git
+    revision: c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1
+    directories: [evo_vlac]
+  source: [evo_vlac/__init__.py, evo_vlac/utils/model_utils.py]
+  imports: [evo_vlac, flash_attn, pyarrow.parquet]
+rynnvalue:
+  project: rynnvalue
+  imports: [transformers, imageio]
+topreward:
+  project: topreward
+  upstream:
+    repository: https://github.com/TOPReward/TOPReward.git
+    revision: 4877a0ee5098cbec18485125466631b1dcc4a573
+    directories: [topreward]
+  ffmpeg: [4, 5, 6, 7]
+  source: [topreward/clients/qwen.py, topreward/utils/images.py]
+  imports: [topreward.clients.qwen, qwen_vl_utils, flash_attn, torchcodec.decoders]
+  build: [flash-attn]
+topreward_molmo:
+  project: topreward
+  ffmpeg: [4, 5, 6, 7]
+  imports: [transformers, molmo_utils, flash_attn, torchcodec.decoders]
+  build: [flash-attn]
+robofac:
+  project: robofac
+  imports: [qwen_vl_utils, transformers]
+liv:
+  project: liv
+  upstream:
+    repository: https://github.com/penn-pal-lab/LIV.git
+    revision: a12991f53aab01f3cecc1315a81068ba12e2bd6b
+    directories: [liv]
+  source:
+    - liv/models/model_liv.py
+    - liv/models/clip/clip/__init__.py
+    - liv/models/clip/clip/bpe_simple_vocab_16e6.txt.gz
+  paths: [liv/models/clip]
+  imports: [clip, ftfy]
+failsafe:
+  project: failsafe_inference
+  upstream:
+    repository: https://github.com/XCXJasonHsia/LLaVA-NeXT.git
+    revision: 72999db7b210d23856a21b80a67bf52fe14b92e9
+    directories: [llava]
+  source: [llava/model/builder.py, llava/constants.py, llava/conversation.py, llava/mm_utils.py]
+  imports: [llava.model.builder, llava.mm_utils]
+  build: [deepspeed]

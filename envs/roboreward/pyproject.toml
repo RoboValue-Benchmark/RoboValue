@@ -1,0 +1,27 @@
+[project]
+name = "roboreward"
+version = "0.1.0"
+description = "RoboReward: General-Purpose Robot Reward Models"
+readme = "README.md"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "accelerate>=1.0",
+    "decord==0.6.0",
+    "huggingface-hub>=0.34",
+    "qwen-vl-utils==0.0.14",
+    "safetensors>=0.4",
+    "torch==2.11.0",
+    "torchcodec==0.11.0",
+    "torchvision==0.26.0",
+    "transformers>=4.57,<6",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchcodec = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

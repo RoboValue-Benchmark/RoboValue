@@ -1,0 +1,13 @@
+# Common run fields; select a supported model and its environment.
+model: robometer
+gpu: 0
+batch_size: 2
+python: /path/to/model-env/bin/python
+checkpoint: /path/to/checkpoints/robometer
+data: /path/to/dataset
+output: /path/to/results
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]

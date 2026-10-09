@@ -1,0 +1,67 @@
+[build-system]
+requires = [
+  "setuptools>=65.7.0",
+  "wheel>=0.40.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "failgen"
+version = "0.0.1"
+description = "Failure generation and recovery for vision-language-action models"
+readme = "README.md"
+requires-python = ">=3.9,<3.10"
+license = "MIT"
+authors = [
+  { name = "Wilbert Pumacay", email = "wilbert.pumacay@ucsp.edu.pe" },
+]
+dependencies = [
+  "h5py==3.13.0",
+  "mani-skill==3.0.0b20",
+  "numpy==1.26.4",
+  "omegaconf==2.3.0",
+  "pillow==11.1.0",
+  "sapien==3.0.0b1",
+  "torch==1.12.1+cu113",
+  "torchaudio==0.12.1+cu113",
+  "torchvision==0.13.1+cu113",
+  "transforms3d==0.4.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/wpumacay/maniskill-failgen"
+
+[dependency-groups]
+dev = [
+  "black>=25.1.0",
+  "ipykernel==6.29.5",
+  "isort>=6.0.0",
+  "pyright>=1.1.400",
+]
+
+[tool.setuptools.packages.find]
+include = ["failgen*"]
+
+[tool.uv.sources]
+mani-skill = { path = "ManiSkill", editable = true }
+torch = { index = "pytorch-cu113" }
+torchaudio = { index = "pytorch-cu113" }
+torchvision = { index = "pytorch-cu113" }
+
+[[tool.uv.index]]
+name = "pytorch-cu113"
+url = "https://download.pytorch.org/whl/cu113"
+explicit = true
+
+[tool.black]
+line-length = 80
+target-version = ['py39']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+
+[tool.pyright]
+pythonVersion = '3.9'
+venvPath = ''
+venv = ''

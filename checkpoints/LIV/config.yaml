@@ -1,0 +1,16 @@
+
+device: cuda
+agent:
+  _target_: liv.LIV
+  scratch: false
+  grad_text: true
+  metric: cos
+  device: ${device}
+  lr: 1.0e-5
+  weight_decay: 0.001
+  modelid: RN50
+  clipweight: 1.0
+  visionweight: 1.0
+  langweight: 0.0
+  gamma: 0.98
+  num_negatives: 0

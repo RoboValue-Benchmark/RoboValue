@@ -1,0 +1,21 @@
+# One TOPReward adapter; backend selects the model implementation.
+model: topreward
+gpu: 0
+batch_size: 2
+python: /path/to/model-envs/topreward/bin/python
+checkpoint: /path/to/checkpoints/Qwen3-VL-8B-Instruct
+data: /path/to/dataset
+output: /path/to/results
+model_options:
+  backend: qwen
+# To use Molmo, change these four fields together:
+# model_options.backend: molmo
+# batch_size: 1
+# python: /path/to/model-envs/topreward_molmo/bin/python
+# checkpoint: /path/to/checkpoints/Molmo2
+# Keep model: topreward. Other backend-specific defaults stay in the adapter.
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]

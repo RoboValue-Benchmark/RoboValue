@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vmbmk-liv-environment"
+version = "0.1.0"
+description = "Locked runtime for the VMBMK LIV-EPIC RN50 baseline"
+requires-python = "==3.10.*"
+dependencies = [
+    "av==17.1.0",
+    "ftfy==6.3.1",
+    "numpy==1.24.4",
+    "opencv-python-headless==4.11.0.86",
+    "pillow==9.0.1",
+    "pytest==9.1.1",
+    "pyyaml==6.0.3",
+    "regex==2025.7.34",
+    "setuptools==80.9.0",
+    "torch==1.13.1+cu117",
+    "torchvision==0.14.1+cu117",
+    "tqdm==4.67.1",
+]
+
+[tool.setuptools]
+packages = []
+
+[tool.uv]
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu117" }
+torchvision = { index = "pytorch-cu117" }
+
+[[tool.uv.index]]
+name = "pytorch-cu117"
+url = "https://download.pytorch.org/whl/cu117"
+explicit = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true

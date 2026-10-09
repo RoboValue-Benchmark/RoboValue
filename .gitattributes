@@ -1,0 +1,11 @@
+/src/**/*.py text eol=lf
+/src/vmbmk/metrics/vs/scoring.py -text
+/tools/*.py text eol=lf
+/envs/*.py text eol=lf
+/envs/*.sh text eol=lf
+/vmbmk.sh text eol=lf
+/tests/*.py text eol=lf
+/run.sh text eol=lf
+/checkpoints/LIV/model.pt filter=lfs diff=lfs merge=lfs -text
+/checkpoints/LIV/RN50.pt filter=lfs diff=lfs merge=lfs -text
+/checkpoints/LIV/config.yaml -text

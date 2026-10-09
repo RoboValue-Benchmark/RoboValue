@@ -1,0 +1,14 @@
+model: vlac
+gpu: 0
+batch_size: 5
+python: /path/to/model-envs/vlac/bin/python
+checkpoint: /path/to/checkpoints/VLAC-2B
+data: /path/to/dataset
+output: /path/to/results
+# No reference_data means zero-shot. Add it to select one-shot.
+# reference_data: /path/to/disjoint-reference-data
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [organize_table]

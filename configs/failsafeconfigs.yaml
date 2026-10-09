@@ -1,0 +1,16 @@
+# SIA-only template. Setup and provenance: docs/baselines/failsafe.md.
+model: failsafe
+gpu: 0
+batch_size: 512
+python: /path/to/model-envs/failsafe/bin/python
+checkpoint: /path/to/checkpoints/failsafe
+# Reuse the original evaluated runtime/checkpoint; see docs/baselines/failsafe.md.
+data: /path/to/dataset
+output: /path/to/results
+# SIA only; judge settings live in src/vmbmk/metrics/sia/config.yaml.
+# Environment variables can override them. Never put credentials in this file.
+metrics:
+  sia:
+    mode: base
+    domains: [id]
+tasks: [organize_table]
