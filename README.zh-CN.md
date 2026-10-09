@@ -26,7 +26,7 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准。它通过细粒度诊断轨迹，评测模型的任务状态理解、时序进度监测、失败与恢复推理以及价值一致性。统一的标量、成对比较和文本接口，在保留各模型原生价值语义的同时，支持对不同类型模型进行统一评测。
+**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准。它通过细粒度诊断轨迹，评测模型的任务状态理解、时序进度监测、失败与恢复推理以及价值一致性。统一的标量、成对比较和文本接口支持不同类型的模型；接口细节详见[项目文档](docs/developer_guide.md#query-and-result-records)。
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" />
@@ -56,17 +56,15 @@
 | One-Shot | 🥈 2 | ProcVLM-2B | 57.82 |
 | One-Shot | 🥉 3 | Robo-Dopamine 2.0-4B Preview | 57.52 |
 
-Few-Shot 评测已完成，协议详情和排行榜条目将陆续补充。Full-Data 评测已列入计划。详见下文的[评测协议与进展](#评测协议与进展)。
+各评测设置的范围详见[评测协议与进展](#评测协议与进展)。
 
 ## 最新动态
 
-- **[2026/10]** 🎉 Few-Shot 评测已完成，协议详情和排行榜条目将陆续补充。
-- **[2026/10]** 🔥 Zero-Shot 和 One-Shot 结果已在[排行榜](https://robovalue-benchmark.github.io/leaderboard/)上线。
-- **[2026/10]** 🔥 评测代码、[基线配置指南](docs/baselines/README.md)和[项目网站](https://robovalue-benchmark.github.io/)已提供。公开论文和数据集下载链接即将提供。
+- [2026/10] 🔥 我们的论文 **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** 正式发布。
 
 ## 基准概览
 
-RoboValue 将**诊断数据**、**面向不同能力的指标**与**受控评测协议**相结合，考察机器人价值模型在任务执行过程中的理解能力。
+RoboValue 利用仿真与真实世界的诊断轨迹，评测机器人价值模型在**四个能力维度**上的表现。
 
 ### 数据集
 
@@ -80,14 +78,9 @@ RoboValue 将**诊断数据**、**面向不同能力的指标**与**受控评测
   <img src="docs/assets/dataset.png" alt="RoboValue 数据集：仿真与真实世界任务，以及失败与恢复、时序和多解轨迹" width="100%" />
 </div>
 
-| 场景 | 标准机器人平台 | 跨具身机器人平台 |
-| --- | --- | --- |
-| **仿真** | ARX | 双臂 UR5e |
-| **真实世界** | AgiBot Genie02 | 双臂 ARX |
+训练示范在域内条件下采集。测试轨迹覆盖**域内**、**跨本体**和**跨环境**条件；任务设计与泛化设置详见论文。
 
-训练示范在标准域内条件下采集。测试轨迹覆盖**域内**、**跨具身**和**跨环境**条件，提供子任务识别、失败定位、恢复推理和跨解决方案比较的标注。
-
-**数据集下载即将开放。** 完整数据集独立于本代码仓库分发。数据结构、标注和资源路径详见[数据准备指南](docs/data.md)。
+**数据集下载即将开放。** 数据集结构与使用方式详见[数据准备指南](docs/data.md)。
 
 ### 评测指标
 
@@ -100,22 +93,20 @@ RoboValue 将**诊断数据**、**面向不同能力的指标**与**受控评测
 | **失败与恢复推理** | 失败发生时刻、尚未解决的错误，以及有效或无效的恢复 | FPL, TRR |
 | **价值一致性** | 稳定的反馈，以及不同有效解决方案中可比较的子任务价值增益 | VS, CSVC |
 
-**FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。缺失或不支持的指标结果以 **N/A** 标记。仿真与真实世界结果分别报告，并分别展示两类分布偏移下的结果；TRR 和 CSVC 使用域内轨迹。各指标衡量的内容详见[指标定义](https://robovalue-benchmark.github.io/doc/get-started/protocol/)；评分对齐与版本变更详见[指标实现与协议说明](docs/metric_alignment.md)。
-
-在 YAML 配置中，TGA-CT、TGA-CF 和 Memory-VOC 分别使用 `tga_easy`、`tga_hard` 和 `voc_mem`。代码文档将 Memory-VOC 称为 MEM-VOC；详见[指标选择](docs/configuration.md#metric-selection)。
+**FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。缺失或不支持的指标结果以 **N/A** 标记。评分方式与评测条件详见[指标定义](https://robovalue-benchmark.github.io/doc/get-started/protocol/)；代码中的指标名称与选项详见[配置指南](docs/configuration.md#metric-selection)。
 
 ### 评测协议与进展
 
 评测设置规定了**模型可用于条件输入或适应的任务专属示范数据**，与上述测试条件属于不同维度。参考数据和适应数据均与测试轨迹分离。
 
-| 设置 | 任务专属数据 | 评测进展 | 结果与配置 |
-| --- | --- | --- | --- |
-| **Zero&#8209;Shot** | 无 | ✅ 已完成 | [排行榜](https://robovalue-benchmark.github.io/leaderboard/) · [配置指南](docs/baselines/README.md) |
-| **One&#8209;Shot** | 每个任务 1 条训练示范 | ✅ 已完成 | [排行榜](https://robovalue-benchmark.github.io/leaderboard/?track=one) · [配置指南](docs/baselines/README.md) |
-| **Few&#8209;Shot** | 每个任务若干条示范；具体数量待补充 | ✅ 已完成 | 协议、配置和结果待补充 |
-| **Full&#8209;Data** | 完整训练集 | 📋 计划中 | 结果待发布 |
+| 设置 | 任务专属数据 | 评测进展 |
+| --- | --- | --- |
+| **Zero&#8209;Shot** | 无 | ✅ [结果已公布](https://robovalue-benchmark.github.io/leaderboard/) |
+| **One&#8209;Shot** | 每个任务 1 条训练示范 | ✅ [结果已公布](https://robovalue-benchmark.github.io/leaderboard/?track=one) |
+| **Few&#8209;Shot** | 每个任务多条示范 | — 暂无评测报告 |
+| **Full&#8209;Data** | 完整训练集 | 📋 计划中 |
 
-已发布的工具文档涵盖 Zero-Shot 和 One-Shot 模型设置。支持的模型与指标组合详见[配置与命令](docs/configuration.md)；基线模板需根据具体实验调整。
+当前结果与工具文档涵盖 **Zero-Shot 和 One-Shot** 模型设置。支持的模型与指标组合详见[配置与命令](docs/configuration.md)。
 
 ## 快速开始
 
@@ -240,10 +231,14 @@ RoboValue/
 
 欢迎参与贡献！你可以添加**模型适配器**、提交**可复现的评测结果**、**改进任务与标注**，或**修正文档**。请先阅读[开发者指南](docs/developer_guide.md)和[测试指南](docs/testing.md)，然后提交 Pull Request，说明改动内容及验证方式。
 
-如有问题或需报告错误，请提交 [Issue](https://github.com/RoboValue-Benchmark/RoboValue/issues)，并附上基线、指标、环境版本、不含凭据的配置和相关错误堆栈。欢迎加入 [RoboValue 社区](https://robovalue-benchmark.github.io/community/)，讨论评测协议与机器人价值模型。
+如有问题或需报告错误，请提交 [Issue](https://github.com/RoboValue-Benchmark/RoboValue/issues)，并附上基线、指标、环境版本、不含凭据的配置和相关错误堆栈。欢迎加入我们的 [WeChat 微信群](https://robovalue-benchmark.github.io/community/)，讨论评测协议与机器人价值模型。
 
 ## 引用与致谢
 
-如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的工作。公开论文链接和 BibTeX 条目将在发表信息确定后补充。
+如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的论文：
+
+```bibtex
+% 待补充正式 BibTeX 引用。
+```
 
 感谢 RoboValue 所使用的模型实现与权重背后的团队，包括 [RoboMeter](docs/baselines/robometer.md)、[Robo-Dopamine](docs/baselines/robodopamine.md)、[ProcVLM](docs/baselines/procvlm.md)、[RoboReward](docs/baselines/roboreward.md)、[VLAC](docs/baselines/vlac.md)、[TOPReward](docs/baselines/topreward.md)、[RoboFAC](docs/baselines/robofac.md)、[RynnValue](docs/baselines/rynnvalue.md) 和 [LIV](docs/baselines/liv.md)。对应配置指南提供了上游项目与模型资源的链接。

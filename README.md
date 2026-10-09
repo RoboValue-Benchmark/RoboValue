@@ -26,7 +26,7 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real world. It measures task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through fine-grained diagnostic trajectories. Shared scalar, pairwise, and textual interfaces enable unified evaluation of heterogeneous models while preserving their native value semantics.
+**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real world. It measures task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through fine-grained diagnostic trajectories. Shared scalar, pairwise, and textual interfaces support heterogeneous model families; see the [project documentation](docs/developer_guide.md#query-and-result-records) for interface details.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
@@ -56,17 +56,15 @@ The table shows the top three configurations per track from the [2026-10-07 manu
 | One-Shot | 🥈 2 | ProcVLM-2B | 57.82 |
 | One-Shot | 🥉 3 | Robo-Dopamine 2.0-4B Preview | 57.52 |
 
-Few-Shot evaluation is complete; its protocol details and leaderboard entries will be added. Full-Data evaluation is planned. See [evaluation protocols and status](#evaluation-protocols-and-status) below.
+See [evaluation protocols and status](#evaluation-protocols-and-status) for the scope of each evaluation setting.
 
 ## What's NEW!
 
-- **[2026/10]** 🎉 Few-Shot evaluation is complete. Protocol details and leaderboard entries will follow.
-- **[2026/10]** 🔥 Zero-Shot and One-Shot results are available on the [leaderboard](https://robovalue-benchmark.github.io/leaderboard/).
-- **[2026/10]** 🔥 Evaluation code, [baseline setup guides](docs/baselines/README.md), and the [project website](https://robovalue-benchmark.github.io/) are available. Public paper and dataset download links are coming soon.
+- [2026/10] 🔥 Our paper **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** is officially released.
 
 ## Benchmark Overview
 
-RoboValue connects **diagnostic data**, **capability-specific metrics**, and **controlled evaluation protocols** to examine what robotic value models understand throughout task execution.
+RoboValue evaluates robotic value models across **four capability dimensions** using diagnostic trajectories from simulation and the real world.
 
 ### Dataset
 
@@ -80,14 +78,9 @@ RoboValue connects **diagnostic data**, **capability-specific metrics**, and **c
   <img src="docs/assets/dataset.png" alt="RoboValue dataset: simulation and real-world tasks with failure and recovery, temporal, and multi-solution trajectories" width="100%" />
 </div>
 
-| Domain | Standard embodiment | Cross-embodiment platform |
-| --- | --- | --- |
-| **Simulation** | ARX | Dual-arm UR5e |
-| **Real world** | AgiBot Genie02 | Dual-arm ARX |
+Training demonstrations are collected in-domain. Test trajectories cover **in-domain**, **cross-embodiment**, and **cross-environment** conditions. See the paper for task design and generalization settings.
 
-Training demonstrations are collected under standard in-domain conditions. Test trajectories cover **in-domain**, **cross-embodiment**, and **cross-environment** conditions, with annotations for subtask identification, failure localization, recovery reasoning, and cross-solution comparison.
-
-**Dataset downloads are coming soon.** The full dataset is distributed separately from this code repository. See the [data preparation guide](docs/data.md) for schemas, annotations, and asset paths.
+**Dataset downloads are coming soon.** See the [data preparation guide](docs/data.md) for dataset structure and usage.
 
 ### Evaluation Metrics
 
@@ -100,22 +93,20 @@ Four complementary capabilities are assessed through **11 metrics**, including S
 | **Failure and Recovery Reasoning** | Failure onset, unresolved errors, and effective or ineffective recovery | FPL, TRR |
 | **Value Consistency** | Stable feedback and comparable subtask gains across valid solutions | VS, CSVC |
 
-**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. Metric-level results report missing or unsupported coverage as **N/A**. Simulation and real-world results, including the two distribution shifts, are reported separately; TRR and CSVC use in-domain trajectories. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for what each metric measures and the [implementation and protocol notes](docs/metric_alignment.md) for scoring alignment and version changes.
-
-For YAML configuration, TGA-CT, TGA-CF, and Memory-VOC use `tga_easy`, `tga_hard`, and `voc_mem`, respectively. Memory-VOC is called MEM-VOC in the code documentation; see [metric selection](docs/configuration.md#metric-selection).
+**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. Missing or unsupported metric results are reported as **N/A**. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring and evaluation conditions, and the [configuration guide](docs/configuration.md#metric-selection) for metric names and options used in code.
 
 ### Evaluation Protocols and Status
 
 Evaluation settings specify the **task-specific demonstrations available to a model** for conditioning or adaptation. They are distinct from the test conditions above. Reference and adaptation data are kept separate from test trajectories.
 
-| Setting | Task-specific data | Evaluation status | Results and setup |
-| --- | --- | --- | --- |
-| **Zero&#8209;Shot** | None | ✅ Complete | [Leaderboard](https://robovalue-benchmark.github.io/leaderboard/) · [Setup guides](docs/baselines/README.md) |
-| **One&#8209;Shot** | 1 training demonstration per task | ✅ Complete | [Leaderboard](https://robovalue-benchmark.github.io/leaderboard/?track=one) · [Setup guides](docs/baselines/README.md) |
-| **Few&#8209;Shot** | Several demonstrations per task; count to be documented | ✅ Complete | Protocol, configurations, and results to be added |
-| **Full&#8209;Data** | Complete training split | 📋 Planned | Results to follow |
+| Setting | Task-specific data | Evaluation status |
+| --- | --- | --- |
+| **Zero&#8209;Shot** | None | ✅ [Results available](https://robovalue-benchmark.github.io/leaderboard/) |
+| **One&#8209;Shot** | 1 training demonstration per task | ✅ [Results available](https://robovalue-benchmark.github.io/leaderboard/?track=one) |
+| **Few&#8209;Shot** | Multiple demonstrations per task | — Not reported |
+| **Full&#8209;Data** | Complete training split | 📋 Planned |
 
-The released tools document Zero-Shot and One-Shot model settings. See [configuration and commands](docs/configuration.md) for supported model and metric combinations; baseline templates must be adapted to each experiment.
+Current results and documented model settings cover **Zero-Shot and One-Shot**. See [configuration and commands](docs/configuration.md) for supported model and metric combinations.
 
 ## Quick Start
 
@@ -240,10 +231,14 @@ These paths are conventions; external storage is supported through configuration
 
 Contributions are welcome! Help extend RoboValue with **model adapters**, **reproducible evaluation results**, **task and annotation improvements**, or **documentation fixes**. Start with the [developer guide](docs/developer_guide.md) and [testing guide](docs/testing.md), then open a pull request describing the change and its validation.
 
-For questions or bug reports, open an [issue](https://github.com/RoboValue-Benchmark/RoboValue/issues) with the baseline, metric, environment versions, configuration without credentials, and relevant traceback. Join the [RoboValue community](https://robovalue-benchmark.github.io/community/) to discuss evaluation protocols and robotic value models.
+For questions or bug reports, open an [issue](https://github.com/RoboValue-Benchmark/RoboValue/issues) with the baseline, metric, environment versions, configuration without credentials, and relevant traceback. Join our [WeChat group](https://robovalue-benchmark.github.io/community/) to discuss evaluation protocols and robotic value models.
 
 ## Citation and Acknowledgement
 
-If you find **RoboValue** helpful in your research, please cite our work. The public paper link and BibTeX entry will be added when publication details are finalized.
+If you find **RoboValue** helpful in your research, please cite our paper:
+
+```bibtex
+% BibTeX citation to be added.
+```
 
 We thank the teams behind the model implementations and checkpoints used by RoboValue, including [RoboMeter](docs/baselines/robometer.md), [Robo-Dopamine](docs/baselines/robodopamine.md), [ProcVLM](docs/baselines/procvlm.md), [RoboReward](docs/baselines/roboreward.md), [VLAC](docs/baselines/vlac.md), [TOPReward](docs/baselines/topreward.md), [RoboFAC](docs/baselines/robofac.md), [RynnValue](docs/baselines/rynnvalue.md), and [LIV](docs/baselines/liv.md). Their setup guides link to the corresponding upstream projects and model assets.
