@@ -2,6 +2,10 @@
   <img src="docs/assets/robovalue-logo.png" alt="RoboValue" width="520" />
 </div>
 
+<p align="center">
+  <a href="README.md">English README</a> | <strong>中文 README</strong>
+</p>
+
 <div align="center">
   <!-- Add official arXiv and Hugging Face URLs once released. -->
   <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文" height="20" />
@@ -10,12 +14,6 @@
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="项目网站" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="排行榜" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/WeChat-green?logo=wechat&amp;logoColor=white" alt="微信群" height="20" /></a>
-</div>
-
-<div align="center">
-
-[![English](https://img.shields.io/badge/lang-English-blue.svg)](README.md) [![简体中文](https://img.shields.io/badge/语言-简体中文-red.svg)](README.zh-CN.md)
-
 </div>
 
 <h1 align="center">
@@ -38,6 +36,8 @@
 </p>
 
 ## 排行榜
+
+完整结果与模型详情见[**交互式排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。
 
 下表展示 Zero-Shot 和 One-Shot 两个赛道中排名前三的模型配置，各赛道独立排名。Overall 是四类能力归一化得分的均值，范围为 **0–100**，越高越好；**SIA 单独报告，不计入 Overall**。
 

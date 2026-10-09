@@ -2,6 +2,10 @@
   <img src="docs/assets/robovalue-logo.png" alt="RoboValue" width="520" />
 </div>
 
+<p align="center">
+  <strong>English README</strong> | <a href="README.zh-CN.md">中文 README</a>
+</p>
+
 <div align="center">
   <!-- Add official arXiv and Hugging Face URLs once released. -->
   <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv: paper" height="20" />
@@ -10,12 +14,6 @@
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="Website" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/WeChat-green?logo=wechat&amp;logoColor=white" alt="WeChat group" height="20" /></a>
-</div>
-
-<div align="center">
-
-[![English](https://img.shields.io/badge/lang-English-blue.svg)](README.md) [![简体中文](https://img.shields.io/badge/语言-简体中文-red.svg)](README.zh-CN.md)
-
 </div>
 
 <h1 align="center">
@@ -38,6 +36,8 @@
 </p>
 
 ## Leaderboard
+
+See the [**interactive leaderboard**](https://robovalue-benchmark.github.io/leaderboard/) for full results and model details.
 
 The table below lists the top three model configurations in the Zero-Shot and One-Shot tracks, ranked separately. Overall is the mean of four normalized capability scores on a **0–100** scale (higher is better); **SIA is reported separately and excluded from Overall**.
 
