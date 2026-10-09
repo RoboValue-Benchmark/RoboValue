@@ -51,20 +51,15 @@ per-module standalone runners or workflow regression modules.
 
 ## Run
 
-Remote API contract tests are in tests/adapters/test_remote_api.py. They use
-synthetic PNGs and loopback HTTP, not held-out observations or a real model.
-They cover native/difference comparisons, text, sampling/history, strict
-responses, opaque IDs, bounded retry, TLS/redirect behavior and compatible
-resume. They also check one-shot mode without reference uploads, rejection of
-unsupported reference fields and evaluation-setting mismatches. Cache checks
-cover declared external videos, and oversized responses fail without retry.
-Run them with the existing Pillow environment and standard unittest:
+Model service adapter tests are in tests/adapters/test_mock_service.py. They
+exercise the ordinary CPU worker and runner with synthetic RGB frames, not
+held-out observations or a running API. Coverage includes scalar/comparison/text
+outputs, history order, checkpoint recovery, SA aggregation and changed-config
+rejection. A test-only frame reader replaces video decoding in the subprocess;
+these tests do not validate codecs, network behavior or real models.
+Use an existing environment with Pillow and PyYAML:
 
-    PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_remote_api.py -v
-
-The YAML run-configuration test is explicitly skipped if PyYAML is unavailable.
-This does not certify the untested YAML/CLI path. JSON inference keeps YAML
-loading lazy; no replacement parser or dependency installation is performed.
+    PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_service.py -v
 
 Use an existing Python environment with PyYAML and pytest. Do not install model
 packages or download weights to run this suite. From the repository root:

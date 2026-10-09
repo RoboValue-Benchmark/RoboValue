@@ -29,10 +29,17 @@ def compare_value_difference(
 
 
 def require_config(
-    config: Mapping[str, Any], adapter: str, optional_fields: set[str]
+    config: Mapping[str, Any],
+    adapter: str,
+    optional_fields: set[str],
+    *,
+    requires_checkpoint: bool = True,
 ) -> None:
-    expected = {"adapter", "python", "checkpoint", *optional_fields}
-    missing = sorted({"adapter", "python", "checkpoint"} - set(config))
+    required = {"adapter", "python"}
+    if requires_checkpoint:
+        required.add("checkpoint")
+    expected = required | optional_fields
+    missing = sorted(required - set(config))
     unknown = sorted(set(config) - expected)
     if missing or unknown:
         raise ConfigurationError(
@@ -62,6 +69,9 @@ def positive_number(value: Any, label: str) -> float:
 
 class Adapter(ABC):
     """Ordered inference contract implemented by isolated model adapters."""
+
+    requires_gpu: bool = True
+    requires_checkpoint: bool = True
 
     def value(self, queries: Sequence[ValueQuery]) -> list[float]:
         raise NotImplementedError(

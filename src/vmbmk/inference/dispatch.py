@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from vmbmk.data.dataset import Dataset
+from vmbmk.adapters.registry import adapter_class
 from vmbmk.errors import ConfigurationError, VMBMKError
 from .queries import (
     CompareQuery,
@@ -74,7 +75,7 @@ def validate_results(queries: list[Query], result_path: str | Path) -> None:
         )
 
 
-def _normalize_gpus(gpu: int | Sequence[int]) -> tuple[int, ...]:
+def _normalize_gpus(gpu: int | Sequence[int] | None) -> tuple[int, ...]:
     values = (gpu,) if isinstance(gpu, int) and not isinstance(gpu, bool) else gpu
     if (
         not isinstance(values, Sequence)
@@ -161,7 +162,7 @@ def _run_worker_process(
     config: Mapping[str, Any],
     result_path: Path,
     queries: list[Query],
-    gpu: int,
+    gpu: int | None,
     native_metric: str | None,
 ) -> None:
     if result_path.exists():
@@ -173,13 +174,14 @@ def _run_worker_process(
             pass
 
     python = Path(str(config.get("python", "")))
-    checkpoint = Path(str(config.get("checkpoint", "")))
     if not python.is_file():
         raise ConfigurationError(f"configured python does not exist: {python}")
-    if not checkpoint.exists():
-        raise ConfigurationError(f"configured checkpoint does not exist: {checkpoint}")
+    if adapter_class(config["adapter"]).requires_checkpoint:
+        checkpoint = Path(str(config.get("checkpoint", "")))
+        if not config.get("checkpoint") or not checkpoint.exists():
+            raise ConfigurationError(f"configured checkpoint does not exist: {checkpoint}")
     environment = os.environ.copy()
-    environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
+    environment["CUDA_VISIBLE_DEVICES"] = "" if gpu is None else str(gpu)
     source_roots = [str(Path(__file__).resolve().parents[2])]
     adapter_source = config.get("source_root")
     if adapter_source is not None:
@@ -216,8 +218,9 @@ def _run_worker_process(
             command.extend(("--native-metric", native_metric))
         completed = subprocess.run(command, env=environment)
         if completed.returncode != 0:
+            device = "CPU" if gpu is None else f"gpu {gpu}"
             raise VMBMKError(
-                f"adapter worker on gpu {gpu} failed with exit code "
+                f"adapter worker on {device} failed with exit code "
                 f"{completed.returncode}"
             )
         validate_results(queries, result_path)
@@ -388,27 +391,12 @@ def run_inference(
     native_metric: str | None = None,
 ) -> Path:
     result_path = Path(output_path).resolve()
-    if config.get("adapter") == "remote_api":
-        if native_metric is not None:
-            raise ConfigurationError("Remote API v2 supports only mode=base")
-        from vmbmk.adapters.remote_api import validate_api_config
-        from .worker import run_worker
-
-        allowed = {
-            "adapter", "model_id", "api", "batch_size", "sia_base_url",
-            "sia_model", "sia_seed", "sia_workers", "sia_timeout",
-        }
-        if set(config) - allowed:
-            raise ConfigurationError("Remote inference configuration has unknown fields")
-        config = dict(config, api=validate_api_config(config.get("api")))
-        result_path.parent.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix="vmbmk-remote-") as directory:
-            config_path = Path(directory) / "config.json"
-            config_path.write_text(json.dumps(config), encoding="utf-8")
-            run_worker(data_root, query_path, config_path, result_path)
-        validate_results(read_queries(query_path), result_path)
-        return result_path
-    gpus = _normalize_gpus(gpu)
+    if adapter_class(config["adapter"]).requires_gpu:
+        gpus = _normalize_gpus(gpu)
+    else:
+        if gpu is not None:
+            raise ConfigurationError("CPU adapters do not accept a gpu selection")
+        gpus = ()
     result_path.parent.mkdir(parents=True, exist_ok=True)
     queries = read_queries(query_path)
     if result_path.exists():
@@ -420,14 +408,14 @@ def run_inference(
             # interrupted final line, and appends the missing queries.
             pass
 
-    if len(gpus) == 1:
+    if len(gpus) <= 1:
         _run_worker_process(
             data_root,
             query_path,
             config,
             result_path,
             queries,
-            gpus[0],
+            gpus[0] if gpus else None,
             native_metric,
         )
     else:

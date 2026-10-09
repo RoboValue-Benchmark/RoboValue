@@ -104,6 +104,17 @@ Metric eligibility and verification scope vary by model; see the [configuration 
 
 <sup>†</sup> The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
 
+## Provide a Model Service and Adapter
+
+Provide your model's inference service and a model-specific adapter for review.
+The adapter owns native input preparation, service calls and output conversion;
+RoboValue retains query planning and evaluation. See the
+[integration guide](docs/api.md), [CPU mock adapter](src/vmbmk/adapters/mock_service.py)
+and [example configuration](configs/mock_service.example.yaml).
+The held-out test set is not publicly released for download or local evaluation.
+Only necessary inference observations are sent to an external service, never
+test labels. Training references are prepared on the model side before evaluation.
+
 ## 🚀 Quick Start <a name="quick-start"></a>
 
 The steps below assume you already have access to the benchmark data; public downloads are coming soon. Start with **one baseline**, prepare its runtime and checkpoint, then validate the data and run an evaluation. The supplied installation path targets **Linux x86_64** and requires a launcher with **Python 3.10+ and PyYAML**, plus **uv** and the baseline-specific CUDA/build dependencies. See the [shared prerequisites](docs/baselines/README.md#prerequisites) before installation.
@@ -174,7 +185,7 @@ Validation checks schemas and assets without loading a model and prints `valid` 
 | [Baseline setup](docs/baselines/README.md) | Installation prerequisites and model-specific instructions |
 | [Data preparation](docs/data.md) | Dataset structure, metadata, annotations, and asset paths |
 | [Configuration and commands](docs/configuration.md) | YAML fields, evaluation modes, and CLI usage |
-| [Model API integration](docs/api.md) | Organizer-run remote inference, service contract, and CPU mock validation |
+| [Model services and adapters](docs/api.md) | Provider handoff, native interfaces, references, and the CPU mock example |
 | [Environment details](docs/environments.md) | Lockfiles, custom roots, and native builds |
 | [Metric implementation notes](docs/metric_alignment.md) | Scoring alignment and protocol changes |
 | [Result interfaces](docs/result_publication.md) | Validation, publication, and SIA intermediate outputs |

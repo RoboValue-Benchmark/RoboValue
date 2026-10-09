@@ -67,11 +67,11 @@ def build_parser() -> argparse.ArgumentParser:
     infer.add_argument(
         "--model",
         required=True,
-        choices=tuple(name for name in ADAPTERS if name != "remote_api"),
+        choices=tuple(ADAPTERS),
     )
-    infer.add_argument("--gpu", required=True, type=int)
+    infer.add_argument("--gpu", type=int)
     infer.add_argument("--python", required=True)
-    infer.add_argument("--checkpoint", required=True)
+    infer.add_argument("--checkpoint")
     infer.add_argument("--use-lora", action="store_true")
     infer.add_argument("--shot-mode", choices=("zero_shot", "one_shot"))
     infer.add_argument("--reference-data")
@@ -108,8 +108,9 @@ def _inference_model(args: argparse.Namespace) -> dict[str, Any]:
     model = {
         "adapter": args.model,
         "python": args.python,
-        "checkpoint": args.checkpoint,
     }
+    if args.checkpoint is not None:
+        model["checkpoint"] = args.checkpoint
     if args.model == "vlac":
         if args.ref_num is not None:
             model["ref_num"] = args.ref_num

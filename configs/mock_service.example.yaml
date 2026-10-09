@@ -1,0 +1,13 @@
+model: mock_service
+python: /path/to/cpu-env/bin/python
+batch_size: 2
+data: /path/to/synthetic-dataset
+output: /path/to/mock-results
+metrics:
+  sa:
+    mode: base
+    domains: [id]
+tasks: [task_001]
+model_options:
+  view: front
+  model_version: mock-1

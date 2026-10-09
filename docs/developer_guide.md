@@ -154,8 +154,12 @@ protocol IDs, query IDs, frames, scoring and aggregation do not change in this p
 
 ### Run settings and paths
 
-The required fields are model, gpu, batch_size, python, checkpoint, data, output,
-metrics and tasks. See [configuration](configuration.md) for model-specific fields.
+Ordinary runs require model, batch_size, python, data, output, metrics and tasks.
+Adapters require gpu and checkpoint by default. A CPU/service adapter may declare
+`requires_gpu = False` and/or `requires_checkpoint = False` to omit those fields;
+this does not relax existing baseline requirements. See the
+[model service integration guide](api.md) and
+[configuration](configuration.md) for model-specific fields.
 Top-level python/checkpoint/data/output paths and reference_data are resolved
 relative to the YAML directory when relative; sia_responses is also config-relative.
 Paths inside model_options follow the consuming Adapter's contract and are not
@@ -165,7 +169,7 @@ gpu is a nonnegative integer or a nonempty list of distinct nonnegative integers
 tasks defines the run scope; metric_tasks optionally selects a subset per metric.
 candidate_tasks records TGA candidate vocabulary separately from scored target
 tasks. Neither task scope is passed to model adapters.
-The Adapter mapping contains adapter, python, checkpoint and batch_size, then
+The Adapter mapping contains adapter, python, optional checkpoint and batch_size, then
 reference settings and model_options. Reserved options cannot override core fields.
 Do not put credentials in this mapping or result files.
 
