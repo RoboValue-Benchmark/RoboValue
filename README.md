@@ -11,11 +11,17 @@
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-4F9D69?logo=wechat&amp;logoColor=white" alt="Community" /></a>
 </div>
 
+<div align="center">
+
+[![English](https://img.shields.io/badge/lang-English-blue.svg)](README.md) [![简体中文](https://img.shields.io/badge/语言-简体中文-red.svg)](README.zh-CN.md)
+
+</div>
+
 <h1 align="center">
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** is an evaluation benchmark for robotic value models across **simulation and the real world**. It measures **task-state understanding**, **temporal progress monitoring**, **failure and recovery reasoning**, and **value consistency** through fine-grained diagnostic trajectories. Shared scalar, pairwise, and textual interfaces enable unified evaluation of heterogeneous models while preserving their native value semantics.
+**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real world. It measures task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through fine-grained diagnostic trajectories. Shared scalar, pairwise, and textual interfaces enable unified evaluation of heterogeneous models while preserving their native value semantics.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
