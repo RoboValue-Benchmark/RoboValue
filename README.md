@@ -219,6 +219,7 @@ These paths are conventions; external storage is supported through configuration
 | [Baseline setup](docs/baselines/README.md) | Installation prerequisites and model-specific instructions |
 | [Data preparation](docs/data.md) | Dataset structure, metadata, annotations, and asset paths |
 | [Configuration and commands](docs/configuration.md) | YAML fields, evaluation modes, and CLI usage |
+| [Model API integration](docs/api.md) | Organizer-run remote inference, service contract, and CPU mock validation |
 | [Environment details](docs/environments.md) | Lockfiles, custom roots, and native builds |
 | [Metric implementation notes](docs/metric_alignment.md) | Scoring alignment and protocol changes |
 | [Result interfaces](docs/result_publication.md) | Validation, publication, and SIA intermediate outputs |

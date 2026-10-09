@@ -37,6 +37,8 @@ def _implementation_digest(metric: str, adapter: str) -> str:
     if metric == "voc":
         metric_modules.update({"cycle_voc_vs.cycle", "cycle_voc_vs.planning"})
     adapter_modules = {adapter, "base", "video_inputs", "__init__"}
+    if adapter == "remote_api":
+        adapter_modules.update({"robometer", "rynnvalue", "procvlm"})
     paths = {
         package / "metrics" / (name.replace(".", "/") + ".py")
         for name in metric_modules
@@ -78,7 +80,7 @@ def resume_contract(
     mode, domains = next((mode, domains) for name, mode, domains in config.metrics if name == metric)
     model = config.model_config()
     model.pop("batch_size", None)
-    code_identity = _implementation_digest(metric, config.model)
+    code_identity = _implementation_digest(metric, "remote_api" if config.backend == "remote_api" else config.model)
     identity = _digest({
         "version": CONTRACT_VERSION, "metric": metric, "mode": mode,
         "model": model, "data": str(config.data), "code": code_identity,

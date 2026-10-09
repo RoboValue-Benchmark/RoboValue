@@ -1,5 +1,10 @@
 # Configuration and evaluation
 
+For organizer-run HTTP model inference, use `backend: remote_api` and follow
+the [model API integration guide](api.md). That backend does not require local
+`python`, `checkpoint` or `gpu` settings. The baseline setup below describes
+local model execution.
+
 A configuration identifies a baseline environment, checkpoint, dataset, output
 root, selected tasks and metric settings. Paths are explicit and refer to the
 machine executing inference. Replace placeholders before running examples.

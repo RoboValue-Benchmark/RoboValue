@@ -205,6 +205,8 @@ def plan_metric_tasks(
         template = yaml.safe_load(templates[baseline].read_text(encoding="utf-8"))
         if not isinstance(template, dict):
             raise ValueError(f"{templates[baseline]} must contain a YAML object")
+        if template.get("backend") == "remote_api":
+            raise ValueError("Remote API v2 uses single-config vmbmk run, not the GPU batch scheduler")
         canonical_name = canonical_baseline(template, fallback=baseline)
         policy = evaluation_policy(template)
         publication_baseline = canonical_name

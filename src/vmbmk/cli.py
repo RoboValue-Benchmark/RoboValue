@@ -67,7 +67,7 @@ def build_parser() -> argparse.ArgumentParser:
     infer.add_argument(
         "--model",
         required=True,
-        choices=tuple(ADAPTERS),
+        choices=tuple(name for name in ADAPTERS if name != "remote_api"),
     )
     infer.add_argument("--gpu", required=True, type=int)
     infer.add_argument("--python", required=True)

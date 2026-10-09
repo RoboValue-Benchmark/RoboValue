@@ -16,6 +16,7 @@ def run_identity(dataset: Dataset) -> dict[str, Any]:
         code.update(path.relative_to(package).as_posix().encode())
         code.update(path.read_bytes())
     data = hashlib.sha256()
+    scanned_assets: set[Path] = set()
     for task_id, task in sorted(dataset.tasks.items()):
         task_root = dataset.root / task_id
         paths = [task_root / "metadata.json"]
@@ -28,10 +29,21 @@ def run_identity(dataset: Dataset) -> dict[str, Any]:
             if path.suffix == ".json":
                 data.update(path.read_bytes())
             else:
+                scanned_assets.add(path.resolve())
                 stat = path.stat()
                 data.update(f"{stat.st_size}:{stat.st_mtime_ns}".encode())
+    videos = {
+        video.resolve()
+        for task in dataset.tasks.values()
+        for episode in task.episodes.values()
+        for video in episode.videos.values()
+    }
+    for video in sorted(videos - scanned_assets):
+        data.update(str(video).encode())
+        stat = video.stat()
+        data.update(f"{stat.st_size}:{stat.st_mtime_ns}".encode())
     return {
-        "protocol": "local-run-identity-v1",
+        "protocol": "local-run-identity-v2",
         "code_sha256": code.hexdigest(),
         "dataset_sha256": data.hexdigest(),
         "dataset_root": str(dataset.root),

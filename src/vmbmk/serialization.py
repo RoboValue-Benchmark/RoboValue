@@ -5,11 +5,10 @@ import os
 from pathlib import Path
 from typing import Any, Iterable, Iterator
 
-import yaml
-
-
 def read_yaml_object(path: str | Path) -> dict[str, Any]:
     """Read a YAML mapping with source context and no metadata fallback."""
+    import yaml
+
     source = Path(path)
     try:
         value = yaml.safe_load(source.read_text(encoding="utf-8"))

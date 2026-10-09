@@ -1,6 +1,7 @@
 """Lazy adapter registration and explicit checkpoint identities."""
 from __future__ import annotations
 
+import hashlib
 import re
 from importlib import import_module
 from pathlib import Path
@@ -21,6 +22,7 @@ ADAPTERS = {
     "rynnvalue": "RynnValueAdapter",
     "failsafe": "FailSafeAdapter",
     "liv": "LIVAdapter",
+    "remote_api": "RemoteAPIAdapter",
 }
 
 
@@ -31,6 +33,10 @@ def adapter_class(name: str) -> type[Adapter]:
 def canonical_baseline(config: Mapping[str, Any], *, fallback: str | None = None) -> str:
     """Recognize known checkpoints; never guess the size of an unknown model."""
     model = str(config.get("model") or fallback or "unknown")
+    if config.get("backend") == "remote_api":
+        version = config["api"]["model_version"]
+        version_id = hashlib.sha256(version.encode()).hexdigest()[:12]
+        return f"{model}__api__{version_id}"
     checkpoint = str(config.get("checkpoint") or "").rstrip("/")
     name = Path(checkpoint).name.lower()
     if model == "topreward" and (config.get("model_options") or {}).get("backend", "qwen") == "molmo":

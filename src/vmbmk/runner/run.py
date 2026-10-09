@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import tempfile
 from dataclasses import dataclass
@@ -356,10 +357,10 @@ class RunConfig:
     """Validated run settings; metric tuples contain (name, mode, domains)."""
 
     model: str
-    gpu: int | tuple[int, ...]
+    gpu: int | tuple[int, ...] | None
     batch_size: int
-    python: Path
-    checkpoint: Path
+    python: Path | None
+    checkpoint: Path | None
     data: Path
     output: Path
     metrics: tuple[tuple[str, str, tuple[str, ...]], ...]
@@ -373,9 +374,19 @@ class RunConfig:
     model_options: dict[str, Any] | None = None
     sia_stage: str = "all"
     sia_responses: Path | None = None
+    backend: str = "local"
+    api: dict[str, Any] | None = None
 
     def model_config(self) -> dict[str, Any]:
         """Return the adapter mapping shared by evaluation and visualization."""
+        if self.backend == "remote_api":
+            return {
+                "adapter": "remote_api",
+                "model_id": self.model,
+                "api": self.api,
+                "batch_size": self.batch_size,
+                **(self.model_options or {}),
+            }
         model = {
             "adapter": self.model,
             "python": str(self.python),
@@ -401,6 +412,9 @@ class RunConfig:
             raise ConfigurationError(f"{source}: invalid YAML: {exc}") from exc
         if not isinstance(row, dict):
             raise ConfigurationError(f"{source}: run config must be an object")
+        backend = row.get("backend", "local")
+        if backend not in {"local", "remote_api"}:
+            raise ConfigurationError(f"{source}.backend must be local or remote_api")
         required = {
             "model",
             "gpu",
@@ -413,6 +427,7 @@ class RunConfig:
             "tasks",
         }
         optional = {
+            "backend",
             "shot_mode",
             "reference_data",
             "reference_view",
@@ -423,6 +438,9 @@ class RunConfig:
             "sia_stage",
             "sia_responses",
         }
+        if backend == "remote_api":
+            required -= {"gpu", "python", "checkpoint"}
+            required.add("api")
         missing = sorted(required - set(row))
         unknown = sorted(set(row) - required - optional)
         if missing or unknown:
@@ -438,8 +456,12 @@ class RunConfig:
             if not sia_responses.is_absolute():
                 sia_responses = (source.parent / sia_responses).resolve()
         model = _text(row["model"], f"{source}.model")
-        if model not in ADAPTERS:
-            raise ConfigurationError(f"{source}.model must be one of {sorted(ADAPTERS)}")
+        if backend == "local" and (model not in ADAPTERS or model == "remote_api"):
+            local_models = sorted(name for name in ADAPTERS if name != "remote_api")
+            raise ConfigurationError(f"{source}.model must be one of {local_models}")
+        if backend == "remote_api":
+            if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", model) is None:
+                raise ConfigurationError("Remote model must be a portable model identifier")
         model_options = row.get("model_options")
         if model_options is not None and not isinstance(model_options, dict):
             raise ConfigurationError(f"{source}.model_options must be an object")
@@ -450,6 +472,8 @@ class RunConfig:
                 "python",
                 "checkpoint",
                 "batch_size",
+                "api",
+                "model_id",
                 "sia_api_key",
                 "sia_auth_token",
             }
@@ -462,33 +486,54 @@ class RunConfig:
             raise ConfigurationError(
                 f"{source}.model_options.tga_candidate_tasks is retired; use top-level candidate_tasks"
             )
-        reference = _reference_settings(row, model, source)
+        api = None
         parsed_metrics = _metrics(row["metrics"], f"{source}.metrics")
+        if backend == "remote_api":
+            from vmbmk.adapters.remote_api import (
+                validate_api_config,
+                validate_metric_capabilities,
+            )
+
+            if {"shot_mode", "reference_data", "reference_view", "ref_num"} & set(row):
+                raise ConfigurationError(
+                    "Remote shot_mode belongs in api; "
+                    "training references are prepared by the model service"
+                )
+            judge_options = {
+                "sia_base_url", "sia_model", "sia_seed", "sia_workers", "sia_timeout"
+            }
+            if set(model_options or {}) - judge_options:
+                raise ConfigurationError("Remote model_options supports only SIA judge settings")
+            api = validate_api_config(row["api"])
+            validate_metric_capabilities(api, parsed_metrics)
+            reference = _ReferenceSettings()
+        else:
+            reference = _reference_settings(row, model, source)
         configured_names = {name for name, _, _ in parsed_metrics}
         metric_tasks = _task_scope(row.get("metric_tasks"), configured_names, source, "metric_tasks")
         candidate_tasks = _task_scope(
             row.get("candidate_tasks"), configured_names & {"tga_easy", "tga_hard"},
             source, "candidate_tasks",
         )
-        gpu = _gpu_selection(row["gpu"], source)
+        gpu = _gpu_selection(row["gpu"], source) if backend == "local" else None
         batch_size = row["batch_size"]
         if (
             isinstance(batch_size, bool)
             or not isinstance(batch_size, int)
             or batch_size == 0
             or batch_size < -1
-            or (batch_size == -1 and model != "procvlm")
+            or (batch_size == -1 and (backend != "local" or model != "procvlm"))
         ):
             raise ConfigurationError(
                 f"{source}.batch_size must be a positive integer"
-                + (" or -1 for procvlm" if model == "procvlm" else "")
+                + (" or -1 for procvlm" if backend == "local" and model == "procvlm" else "")
             )
-        python = Path(_text(row["python"], f"{source}.python"))
-        checkpoint = Path(_text(row["checkpoint"], f"{source}.checkpoint"))
+        python = Path(_text(row["python"], f"{source}.python")) if backend == "local" else None
+        checkpoint = Path(_text(row["checkpoint"], f"{source}.checkpoint")) if backend == "local" else None
         data = Path(_text(row["data"], f"{source}.data"))
         output = Path(_text(row["output"], f"{source}.output"))
         python, checkpoint, data, output = (
-            path if path.is_absolute() else (source.parent / path).resolve()
+            path if path is None or path.is_absolute() else (source.parent / path).resolve()
             for path in (python, checkpoint, data, output)
         )
         reference_data = reference.data
@@ -508,6 +553,8 @@ class RunConfig:
             output=output,
             metrics=parsed_metrics,
             tasks=_text_list(row["tasks"], f"{source}.tasks"),
+            backend=backend,
+            api=api,
             metric_tasks=metric_tasks,
             candidate_tasks=candidate_tasks,
             shot_mode=reference.shot_mode,
@@ -526,7 +573,7 @@ def _select_metric_tasks(config: RunConfig, dataset: Dataset) -> dict[str, tuple
         "model": config.model, "checkpoint": str(config.checkpoint),
         "model_options": config.model_options or {},
     }
-    policy = evaluation_policy(policy_config)
+    policy = evaluation_policy(policy_config) if config.backend == "local" else None
     for metric, _, domains in config.metrics:
         requested = (config.metric_tasks or {}).get(metric, config.tasks)
         unknown = sorted(set(requested) - set(config.tasks))
@@ -539,7 +586,7 @@ def _select_metric_tasks(config: RunConfig, dataset: Dataset) -> dict[str, tuple
                 raise ConfigurationError(f"candidate_tasks.{metric} contains unknown tasks: {unknown_candidates}")
         selected = selected_task_ids(metric, dataset, requested, domains)
         for task in selected:
-            reason = policy.reason(policy_config, metric, task)
+            reason = policy.reason(policy_config, metric, task) if policy is not None else None
             if reason is not None:
                 raise ConfigurationError(f"{metric}/{task}: {reason}")
         if not selected:
@@ -614,7 +661,7 @@ def run_evaluation(
     run_dir = config.output / source.stem
     temporary = config.output / f".{source.stem}.tmp"
     metric_names = tuple(metric for metric, _, _ in config.metrics)
-    if config.model == "failsafe" and metric_names != ("sia",):
+    if config.backend == "local" and config.model == "failsafe" and metric_names != ("sia",):
         raise ConfigurationError("FailSafe supports only SIA evaluation")
     if sia_stage not in {"all", "generate", "judge"}:
         raise ConfigurationError(f"invalid SIA stage: {sia_stage}")

@@ -15,7 +15,7 @@ def run_queries(
     queries: Sequence[Query],
     model: Mapping[str, Any],
     operation_path: str | Path,
-    gpu: int,
+    gpu: int | Sequence[int] | None,
     *,
     metric: str,
     mode: str,

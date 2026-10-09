@@ -384,10 +384,30 @@ def run_inference(
     config: Mapping[str, Any],
     output_path: str | Path,
     *,
-    gpu: int | Sequence[int],
+    gpu: int | Sequence[int] | None,
     native_metric: str | None = None,
 ) -> Path:
     result_path = Path(output_path).resolve()
+    if config.get("adapter") == "remote_api":
+        if native_metric is not None:
+            raise ConfigurationError("Remote API v2 supports only mode=base")
+        from vmbmk.adapters.remote_api import validate_api_config
+        from .worker import run_worker
+
+        allowed = {
+            "adapter", "model_id", "api", "batch_size", "sia_base_url",
+            "sia_model", "sia_seed", "sia_workers", "sia_timeout",
+        }
+        if set(config) - allowed:
+            raise ConfigurationError("Remote inference configuration has unknown fields")
+        config = dict(config, api=validate_api_config(config.get("api")))
+        result_path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="vmbmk-remote-") as directory:
+            config_path = Path(directory) / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            run_worker(data_root, query_path, config_path, result_path)
+        validate_results(read_queries(query_path), result_path)
+        return result_path
     gpus = _normalize_gpus(gpu)
     result_path.parent.mkdir(parents=True, exist_ok=True)
     queries = read_queries(query_path)

@@ -51,5 +51,7 @@ _POLICIES = {
 
 def evaluation_policy(config: Mapping[str, Any]) -> EvaluationPolicy:
     """Resolve effective model mode independently of config filename or checkpoint size."""
+    if config.get("backend") == "remote_api":
+        return EvaluationPolicy()
     identity = canonical_baseline(dict(config))
     return _POLICIES.get(identity, _POLICIES.get(str(config.get("model")), EvaluationPolicy()))

@@ -117,8 +117,12 @@ def run_worker(
     output_path: str | Path,
     native_metric: str | None = None,
 ) -> None:
-    _configure_torch_threads()
     config = read_json(config_path)
+    remote = config.get("adapter") == "remote_api"
+    if remote and native_metric is not None:
+        raise ConfigurationError("Remote API v2 supports only mode=base")
+    if not remote:
+        _configure_torch_threads()
     queries = read_queries(query_path)
     from vmbmk.metrics.registry import SUPPORTED_METRICS
 
@@ -129,24 +133,31 @@ def run_worker(
     )
     validate_queries(dataset, queries)
     output = Path(output_path)
+    if remote:
+        adapter = create_adapter(config, dataset)
+        adapter.prepare_run(output, queries)
     completed_ids = _read_checkpoint(output, queries)
     pending = [query for query in queries if query.query_id not in completed_ids]
     if not pending:
         return
 
-    adapter = create_adapter(config, dataset)
+    if not remote:
+        adapter = create_adapter(config, dataset)
     try:
-        configured_batch = config.get("batch_size", 1)
-        if (
-            isinstance(configured_batch, bool)
-            or not isinstance(configured_batch, int)
-            or configured_batch < 1
-        ):
-            configured_batch = 1
-        # Amortize model-call and fsync overhead while keeping recovery loss
-        # bounded. This is derived from the consumed adapter batch size and
-        # does not add another run-config field.
-        chunk_size = _checkpoint_chunk_size(configured_batch)
+        if remote:
+            chunk_size = adapter.batch_size
+        else:
+            configured_batch = config.get("batch_size", 1)
+            if (
+                isinstance(configured_batch, bool)
+                or not isinstance(configured_batch, int)
+                or configured_batch < 1
+            ):
+                configured_batch = 1
+            # Amortize model-call and fsync overhead while keeping recovery loss
+            # bounded. This is derived from the consumed adapter batch size and
+            # does not add another run-config field.
+            chunk_size = _checkpoint_chunk_size(configured_batch)
         for start in range(0, len(pending), chunk_size):
             chunk = pending[start : start + chunk_size]
             results = _evaluate_chunk(adapter, chunk, native_metric, config)

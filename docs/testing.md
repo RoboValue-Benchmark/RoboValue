@@ -51,6 +51,21 @@ per-module standalone runners or workflow regression modules.
 
 ## Run
 
+Remote API contract tests are in tests/adapters/test_remote_api.py. They use
+synthetic PNGs and loopback HTTP, not held-out observations or a real model.
+They cover native/difference comparisons, text, sampling/history, strict
+responses, opaque IDs, bounded retry, TLS/redirect behavior and compatible
+resume. They also check one-shot mode without reference uploads, rejection of
+unsupported reference fields and evaluation-setting mismatches. Cache checks
+cover declared external videos, and oversized responses fail without retry.
+Run them with the existing Pillow environment and standard unittest:
+
+    PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_remote_api.py -v
+
+The YAML run-configuration test is explicitly skipped if PyYAML is unavailable.
+This does not certify the untested YAML/CLI path. JSON inference keeps YAML
+loading lazy; no replacement parser or dependency installation is performed.
+
 Use an existing Python environment with PyYAML and pytest. Do not install model
 packages or download weights to run this suite. From the repository root:
 
@@ -74,8 +89,10 @@ Then run the full reduced suite. Syntax/whitespace checks remain available:
     python -m compileall -q tests
     git diff --check
 
-The suite requires no GPU, checkpoints, video decoding, network access, API
-credentials, NumPy, PIL or Torch. Fixture video files are placeholders.
+The suite requires no GPU, checkpoints, video decoding, external network access,
+API credentials or Torch. Remote API tests require Pillow and loopback HTTP;
+metric and local adapter smoke tests do not require Pillow or NumPy.
+Fixture video files are placeholders.
 
 ## Deliberate exclusions
 
