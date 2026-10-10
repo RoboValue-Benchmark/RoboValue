@@ -13,7 +13,7 @@
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="排行榜" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-2E8B57" alt="社区" height="20" /></a>
 
-  <p><sub>论文、Hugging Face 与中文文档链接待补充。</sub></p>
+
 </div>
 
 <div align="center">
