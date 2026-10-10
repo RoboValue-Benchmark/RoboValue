@@ -78,7 +78,7 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 | --- | --- | --- |
 | **Zero-Shot** | None | ✅ Results available |
 | **One-Shot** | 1 training demonstration per task | ✅ Results available |
-| **Full-Data** | Complete training split | 📋 Planned |
+| **Full-Shot** | Complete training split | 📋 Planned |
 
 ## 🧩 Supported Value Models
 
