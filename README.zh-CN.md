@@ -26,15 +26,11 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** 是一个覆盖仿真与真实世界的机器人价值模型评测基准，通过细粒度诊断轨迹评测任务结果与执行过程。
+**RoboValue** 通过诊断轨迹与统一评测协议，衡量机器人价值模型在仿真与真实世界中评估任务结果和执行过程的可靠性。
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" />
 </div>
-
-## 🏆 排行榜
-
-完整排名与模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)，Zero-Shot 和 One-Shot 赛道分别排名。
 
 ## 📰 最新动态 <a name="最新动态"></a>
 
@@ -42,13 +38,13 @@
 
 ## ✨ Highlights
 
-- 🎯 **细粒度价值评测。** 通过统一评测协议，衡量模型的任务状态理解、时序进度监测、失败与恢复推理和价值一致性。
+- 🤖 **RoboValue-Dataset。** 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**，覆盖多样的操作技能与任务要求。专家示范用于模型适应；独立测试轨迹考察成功执行、失败与恢复、依赖历史的进度判断，以及多种有效解决方案。
 
-- 🤖 **丰富的仿真与真实世界操作任务。** RoboValue 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**。
+- 🎯 **RoboValue-Benchmark。** 通过统一协议评测**任务状态理解**、**时序进度监测**、**失败与恢复推理**和**价值一致性**。诊断轨迹与反事实指令揭示仅凭结果判别和正向进度相关性难以发现的能力缺陷。
 
-- 🔍 **面向诊断的执行场景。** 通过反事实指令、重复出现的视觉状态、有效与无效恢复，以及不同的有效子任务顺序，揭示结果准确率和正向进度相关性可能掩盖的错误。
+- 🌍 **受控泛化评测。** 分别设置**跨本体**与**跨环境**评测，检验机器人平台或视觉条件变化时，价值判断能否保持可靠，且不针对变化后的条件进行额外适应。
 
-- 🌍 **分别检验两类泛化能力。** 在域内条件及独立的**跨本体**、**跨环境**条件下评测，不针对变化后的条件进行额外适应。
+- 🏆 **RoboValue-Leaderboard。** 在各赛道内提供总体排名与分能力表现，既呈现模型的综合水平，也指出仍需改进的具体能力。
 
 <div align="center">
   <img src="docs/assets/dataset.png" alt="RoboValue 数据集：仿真与真实世界任务，以及失败与恢复、时序和多解轨迹" width="100%" />
@@ -74,46 +70,36 @@
 
 </details>
 
-### 评测进展
-
-| 设置 | 任务专属数据 | 评测进展 |
-| --- | --- | --- |
-| **Zero-Shot** | 无 | ✅ 结果已公布 |
-| **One-Shot** | 每个任务 1 条训练示范 | ✅ 结果已公布 |
-| **Full-Shot** | 完整训练集 | 📋 计划中 |
-
 ## 🧩 支持的价值模型
 
 **✅** 表示当前实现的 `base` 模式支持，**—** 表示不支持。模型配置与适用范围见[基线指南](docs/baselines/README.md)（也可点击模型名称），实际验证情况见[验证记录](docs/testing.md)。
 
 下列模型是可选评测基线。运行公开 CPU mock 或接入自己的模型无需安装这些基线。
 
-**TGA** 包含 TGA-CT 和 TGA-CF；**VOC 系列**包含 VOC、Cycle-VOC 和 Memory-VOC。CSVC 当前仅支持 ID 评测。
-
 | 模型系列 | SA / TGA | SIA | VOC 系列 | FPL / TRR | VS / CSVC | 配置 |
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
-| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
-| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
-| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
-| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
-| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
-| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
-| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
 | [**标记为 FailSafe 的集成**](docs/baselines/failsafe.md) | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
+| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
+| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
+| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
+| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
+| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
+| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
 
 ## 🚀 如何评测你的模型 <a name="快速开始"></a>
 
 RoboValue 数据由团队提供。提交模型时，请提供**推理服务（可调用的模型预测 API）**和**模型专用适配器（Adapter）**；**RoboValue 团队负责审核、构造查询，并计算和报告评测指标**。正式测试集由团队保管，不公开下载或供参与者本地评测。
 
-**1. 明确模型版本与评测设置。**
+**1. 明确模型版本与评测赛道。**
 
-说明模型或检查点版本、预处理和提示词修订版本，以及采用的评测设置。评测期间保持这些版本不变。
+说明模型或检查点版本、预处理和提示词修订版本，以及采用的评测赛道。评测期间保持这些版本不变。
 
-- **Zero-Shot：** 不进行任务专属微调，也不使用参考示范。
-- **One-Shot：** 通过适配器使用团队在评测端提供的每任务 1 条参考示范。
-- **Full-Shot（计划中）：** 在提供服务前，使用团队提供的训练集完成微调，并记录训练设置。微调后的模型使用与 Zero-Shot 相同的推理接口，无需在每次查询中附带训练示范。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
+- **Zero-Shot：** 不进行任务专属训练，也不使用参考示范。
+- **One-Shot：** 每个任务使用团队提供的 1 条训练示范，作为参考输入或用于任务专属微调，并说明具体使用方式。
+- **Full-Shot（计划中）：** 在提供服务前，使用团队提供的训练集完成训练或微调，并记录训练设置。训练后的模型使用与 Zero-Shot 相同的推理接口，无需在每次查询中附带训练示范。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
 
 **2. 提供推理服务。**
 
@@ -125,7 +111,7 @@ RoboValue 数据由团队提供。提交模型时，请提供**推理服务（�
 
 **4. 交付接入材料并对接评测。**
 
-向 [RoboValue 团队](#contact)提供适配器源码与依赖、示例配置、服务说明、模型和预处理版本、评测设置，以及可运行的合成数据集成示例。连接信息和凭据通过私密渠道分享；凭据从环境变量中读取。团队审核接入后，按约定协议运行适用指标。
+向 [RoboValue 团队](#contact)提供适配器源码与依赖、示例配置、服务说明、模型和预处理版本、评测赛道，以及可运行的合成数据集成示例。连接信息和凭据通过私密渠道分享；凭据从环境变量中读取。团队审核接入后，按约定协议运行适用指标。
 
 适配器示例与交付清单见 [Service & Adapter](https://robovalue-benchmark.github.io/doc/model-api/)；各方职责和结果报告流程见[评测流程](https://robovalue-benchmark.github.io/doc/get-started/evaluation/)。
 
@@ -202,13 +188,25 @@ RoboValue/
 └── vmbmk.sh              # 评测启动脚本
 ```
 
+## 🏆 排行榜
+
+总体排名、分能力得分和模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。根据可使用的任务专属训练数据，基准设立三个赛道：
+
+| 赛道 | 任务专属数据 | 评测进展 |
+| --- | --- | --- |
+| **Zero-Shot** | 无 | ✅ 结果已公布 |
+| **One-Shot** | 每个任务 1 条训练示范 | ✅ 结果已公布 |
+| **Full-Shot** | 完整训练集 | 📋 计划中 |
+
+已开放的赛道分别排名。Full-Shot 将支持使用完整 RoboValue 训练集进行训练或微调的模型。
+
 ## 📝 引用 <a name="引用"></a>
 
 如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的论文。论文链接和正式 BibTeX 条目待补充。
 
 ## 📬 Contact <a name="contact"></a>
 
-模型评测与研究交流，请联系：
+模型评测与研究交流，请联系 RoboValue 团队的主要成员：
 
 - **Shengbang Liu**: [liushengbang0209@gmail.com](mailto:liushengbang0209@gmail.com)
 - **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)

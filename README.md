@@ -26,15 +26,11 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
-**RoboValue** is an evaluation benchmark for robotic value models across simulation and the real-world, using fine-grained diagnostic trajectories to assess task outcomes and execution processes.
+**RoboValue** evaluates how reliably robotic value models assess task outcomes and execution processes across simulation and the real world, using diagnostic trajectories and a shared evaluation protocol.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
 </div>
-
-## 🏆 Leaderboard
-
-View full rankings and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/), with separate Zero-Shot and One-Shot tracks.
 
 ## 📰 What's New <a name="whats-new"></a>
 
@@ -42,13 +38,13 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 
 ## ✨ Highlights
 
-- 🎯 **Fine-grained value evaluation.** Assess task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through a shared evaluation protocol.
+- 🤖 **RoboValue-Dataset.** **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks** span diverse skills and task requirements. Expert demonstrations support model adaptation; held-out test trajectories probe successful execution, failure and recovery, history-dependent progress, and alternative valid solutions.
 
-- 🤖 **Diverse sim-and-real manipulation tasks.** RoboValue covers **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**.
+- 🎯 **RoboValue-Benchmark.** A shared protocol evaluates **task-state understanding**, **temporal progress monitoring**, **failure and recovery reasoning**, and **value consistency**. Diagnostic trajectories and counterfactual instructions reveal limitations that outcome discrimination and forward-progress correlation alone can overlook.
 
-- 🔍 **Diagnostic execution scenarios.** Counterfactual instructions, recurring visual states, effective and ineffective recoveries, and alternative valid subtask orders expose errors that outcome accuracy and forward-progress correlation can overlook.
+- 🌍 **Controlled generalization.** Separate **cross-embodiment** and **cross-environment** evaluations test whether value judgments remain reliable when robot platforms or visual conditions change, without additional adaptation to the shifted settings.
 
-- 🌍 **Controlled generalization tests.** Evaluate in-domain and under separate **cross-embodiment** and **cross-environment** shifts, without additional adaptation to the shifted conditions.
+- 🏆 **RoboValue-Leaderboard.** Overall rankings and capability profiles compare models within each evaluation track, showing both aggregate performance and the specific capabilities that need improvement.
 
 <div align="center">
   <img src="docs/assets/dataset.png" alt="RoboValue dataset: simulation and real-world tasks with failure and recovery, temporal, and multi-solution trajectories" width="100%" />
@@ -74,46 +70,36 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 
 </details>
 
-### Evaluation Status
-
-| Setting | Task-specific data | Status |
-| --- | --- | --- |
-| **Zero-Shot** | None | ✅ Results available |
-| **One-Shot** | 1 training demonstration per task | ✅ Results available |
-| **Full-Shot** | Complete training split | 📋 Planned |
-
 ## 🧩 Supported Value Models
 
 **✅** marks metrics supported by the current implementation in `base` mode; **—** means unsupported. See the [baseline guides](docs/baselines/README.md) or follow the model names for setup and scope, and [validation evidence](docs/testing.md) for tested coverage.
 
 These models are optional evaluation baselines. Running the public CPU mock or integrating your own model does not require installing them.
 
-**TGA** includes TGA-CT and TGA-CF; **VOC family** includes VOC, Cycle-VOC, and Memory-VOC. CSVC currently supports ID evaluation only.
-
 | Model family | SA / TGA | SIA | VOC family | FPL / TRR | VS / CSVC | Config |
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
-| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
-| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
-| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
-| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
-| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
-| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
-| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
 | [**FailSafe-labeled integration**](docs/baselines/failsafe.md) | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
+| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
+| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
+| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
+| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
+| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
+| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
 
 ## 🚀 Evaluate Your Model <a name="quick-start"></a>
 
 The RoboValue team supplies the benchmark data. To submit a model, provide an **inference service (a callable model prediction API)** and a **model-specific adapter**; the **team reviews the integration, prepares queries, and computes and reports metrics**. The team retains the private test set, which is not publicly released for download or participant-side evaluation.
 
-**1. Identify your model and evaluation setting.**
+**1. Identify your model and evaluation track.**
 
-Specify the model or checkpoint version, preprocessing and prompt revisions, and evaluation setting. Keep these versions fixed during evaluation.
+Specify the model or checkpoint version, preprocessing and prompt revisions, and evaluation track. Keep these versions fixed during evaluation.
 
-- **Zero-Shot:** use the model without task-specific fine-tuning or reference demonstrations.
-- **One-Shot:** use one reference demonstration per task, supplied by the team on the evaluation side, through your adapter.
-- **Full-Shot (planned):** fine-tune on the training split supplied by the team before providing your service, and record the training setup. The fine-tuned model uses the same inference interface as Zero-Shot, without training demonstrations attached to each query. See the [data guide](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training) for training-data access information.
+- **Zero-Shot:** use the model without task-specific training or reference demonstrations.
+- **One-Shot:** use one team-provided training demonstration per task for reference conditioning or task-specific fine-tuning, and document how it is used.
+- **Full-Shot (planned):** train or fine-tune on the training split supplied by the team before providing your service, and record the training setup. The resulting model uses the same inference interface as Zero-Shot, without training demonstrations attached to each query. See the [data guide](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training) for training-data access information.
 
 **2. Provide your inference service.**
 
@@ -125,7 +111,7 @@ Start from the [adapter interface](src/vmbmk/adapters/base.py) and [CPU mock ada
 
 **4. Hand over the integration for evaluation.**
 
-[Contact the RoboValue team](#contact) with the adapter source and dependencies, an example configuration, service specification, model/preprocessing versions, evaluation setting, and a runnable synthetic integration example. Share connection details and credentials privately; read credentials from environment variables. The team reviews the integration and runs the applicable metrics under the agreed protocol.
+[Contact the RoboValue team](#contact) with the adapter source and dependencies, an example configuration, service specification, model/preprocessing versions, evaluation track, and a runnable synthetic integration example. Share connection details and credentials privately; read credentials from environment variables. The team reviews the integration and runs the applicable metrics under the agreed protocol.
 
 See [Service & Adapter](https://robovalue-benchmark.github.io/doc/model-api/) for examples and the handoff checklist, and [Evaluation Workflow](https://robovalue-benchmark.github.io/doc/get-started/evaluation/) for responsibilities and reporting.
 
@@ -202,13 +188,25 @@ RoboValue/
 └── vmbmk.sh              # Evaluation launcher
 ```
 
+## 🏆 Leaderboard
+
+View rankings, capability scores, and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/). The benchmark defines three tracks according to access to task-specific training data:
+
+| Track | Task-specific data | Status |
+| --- | --- | --- |
+| **Zero-Shot** | None | ✅ Results available |
+| **One-Shot** | 1 training demonstration per task | ✅ Results available |
+| **Full-Shot** | Complete training split | 📋 Planned |
+
+Rankings are reported separately for each available track. Full-Shot will support models trained or fine-tuned on the complete RoboValue training split.
+
 ## 📝 Citation <a name="citation"></a>
 
 If you find **RoboValue** helpful in your research, please cite our paper. The paper link and official BibTeX entry will be added here.
 
 ## 📬 Contact <a name="contact"></a>
 
-For model evaluation and research enquiries, please contact:
+For model evaluation and research enquiries, please contact the main members of the RoboValue team:
 
 - **Shengbang Liu**: [liushengbang0209@gmail.com](mailto:liushengbang0209@gmail.com)
 - **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)
