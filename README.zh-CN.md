@@ -38,7 +38,7 @@
 
 ## ✨ Highlights
 
-- 🤖 **RoboValue-Dataset。** 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**，覆盖多样的操作技能与任务要求。专家示范用于模型适应；独立测试轨迹考察成功执行、失败与恢复、依赖历史的进度判断，以及多种有效解决方案。
+- 🤖 **RoboValue-Dataset。** 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**，覆盖多样的操作技能与任务要求。专家示范支持推理参考与任务适应；独立测试轨迹考察成功执行、失败与恢复、依赖历史的进度判断，以及多种有效解决方案。
 
 - 🎯 **RoboValue-Benchmark。** 通过统一协议评测**任务状态理解**、**时序进度监测**、**失败与恢复推理**和**价值一致性**。诊断轨迹与反事实指令揭示仅凭结果判别和正向进度相关性难以发现的能力缺陷。
 
@@ -97,9 +97,9 @@ RoboValue 数据由团队提供。提交模型时，请提供**推理服务（�
 
 说明模型或检查点版本、预处理和提示词修订版本，以及采用的评测赛道。评测期间保持这些版本不变。
 
-- **Zero-Shot：** 不进行任务专属训练，也不使用参考示范。
-- **One-Shot：** 每个任务使用团队提供的 1 条训练示范，作为参考输入或用于任务专属微调，并说明具体使用方式。
-- **Full-Shot（计划中）：** 在提供服务前，使用团队提供的训练集完成训练或微调，并记录训练设置。训练后的模型使用与 Zero-Shot 相同的推理接口，无需在每次查询中附带训练示范。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
+- **Zero-Shot：** 不进行任务专属适应，也不使用参考示范。
+- **One-Shot：** 每个任务使用从训练集中选取的 **1 条专家示范**，可**在推理时作为参考，或用于任务专属适应**。论文实验中，Robo-Dopamine 和 VLAC 使用参考观测，不更新模型参数；ProcVLM 则使用该示范进行 LoRA 微调。
+- **Full-Shot（计划中）：** 使用完整 RoboValue 训练集进行训练或微调，并记录训练设置。该赛道将随数据集发布开放。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
 
 **2. 提供推理服务。**
 
@@ -190,15 +190,15 @@ RoboValue/
 
 ## 🏆 排行榜
 
-总体排名、分能力得分和模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。根据可使用的任务专属训练数据，基准设立三个赛道：
+总体排名、分能力得分和模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。根据可使用的任务专属示范，基准设立三个赛道：
 
-| 赛道 | 任务专属数据 | 评测进展 |
-| --- | --- | --- |
-| **Zero-Shot** | 无 | ✅ 结果已公布 |
-| **One-Shot** | 每个任务 1 条训练示范 | ✅ 结果已公布 |
-| **Full-Shot** | 完整训练集 | 📋 计划中 |
+| 赛道 | 任务专属示范 | 使用方式 | 评测进展 |
+| --- | --- | --- | --- |
+| **Zero-Shot** | 无 | 不进行任务专属适应 | ✅ 结果已公布 |
+| **One-Shot** | 每个任务 1 条示范 | 推理时作为参考，或用于任务专属适应 | ✅ 结果已公布 |
+| **Full-Shot** | 完整训练集 | 训练或微调 | 📋 计划中 |
 
-已开放的赛道分别排名。Full-Shot 将支持使用完整 RoboValue 训练集进行训练或微调的模型。
+三个赛道使用相同的独立测试集与评测指标，并分别排名。目前已报告 Zero-Shot 和 One-Shot 的结果。
 
 ## 📝 引用 <a name="引用"></a>
 

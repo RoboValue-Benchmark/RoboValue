@@ -38,7 +38,7 @@
 
 ## ✨ Highlights
 
-- 🤖 **RoboValue-Dataset.** **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks** span diverse skills and task requirements. Expert demonstrations support model adaptation; held-out test trajectories probe successful execution, failure and recovery, history-dependent progress, and alternative valid solutions.
+- 🤖 **RoboValue-Dataset.** **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks** span diverse skills and task requirements. Expert demonstrations serve as references or adaptation data; held-out test trajectories probe successful execution, failure and recovery, history-dependent progress, and alternative valid solutions.
 
 - 🎯 **RoboValue-Benchmark.** A shared protocol evaluates **task-state understanding**, **temporal progress monitoring**, **failure and recovery reasoning**, and **value consistency**. Diagnostic trajectories and counterfactual instructions reveal limitations that outcome discrimination and forward-progress correlation alone can overlook.
 
@@ -97,9 +97,9 @@ The RoboValue team supplies the benchmark data. To submit a model, provide an **
 
 Specify the model or checkpoint version, preprocessing and prompt revisions, and evaluation track. Keep these versions fixed during evaluation.
 
-- **Zero-Shot:** use the model without task-specific training or reference demonstrations.
-- **One-Shot:** use one team-provided training demonstration per task for reference conditioning or task-specific fine-tuning, and document how it is used.
-- **Full-Shot (planned):** train or fine-tune on the training split supplied by the team before providing your service, and record the training setup. The resulting model uses the same inference interface as Zero-Shot, without training demonstrations attached to each query. See the [data guide](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training) for training-data access information.
+- **Zero-Shot:** use the model without task-specific adaptation or reference demonstrations.
+- **One-Shot:** use **one expert demonstration per task**, selected from the training split, for **inference-time conditioning or task-specific adaptation**. In the reported experiments, Robo-Dopamine and VLAC use reference observations without updating model parameters, while ProcVLM uses the demonstration for LoRA fine-tuning.
+- **Full-Shot (planned):** train or fine-tune on the complete RoboValue training split and record the training setup. This track will open with the dataset release. See the [data guide](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training) for training-data access information.
 
 **2. Provide your inference service.**
 
@@ -190,15 +190,15 @@ RoboValue/
 
 ## 🏆 Leaderboard
 
-View rankings, capability scores, and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/). The benchmark defines three tracks according to access to task-specific training data:
+View rankings, capability scores, and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/). The benchmark defines three tracks according to access to task-specific demonstrations:
 
-| Track | Task-specific data | Status |
-| --- | --- | --- |
-| **Zero-Shot** | None | ✅ Results available |
-| **One-Shot** | 1 training demonstration per task | ✅ Results available |
-| **Full-Shot** | Complete training split | 📋 Planned |
+| Track | Task-specific demonstrations | How they are used | Status |
+| --- | --- | --- | --- |
+| **Zero-Shot** | None | No task-specific adaptation | ✅ Results available |
+| **One-Shot** | 1 demonstration per task | Inference-time conditioning or task-specific adaptation | ✅ Results available |
+| **Full-Shot** | Complete training split | Training or fine-tuning | 📋 Planned |
 
-Rankings are reported separately for each available track. Full-Shot will support models trained or fine-tuned on the complete RoboValue training split.
+All three tracks share the held-out test set and evaluation metrics, with separate rankings. Current results cover Zero-Shot and One-Shot.
 
 ## 📝 Citation <a name="citation"></a>
 
