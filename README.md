@@ -38,13 +38,11 @@
 
 ## ✨ Highlights
 
-- 🤖 **RoboValue-Dataset.** **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks** span diverse skills and task requirements. Expert demonstrations serve as references or adaptation data; held-out test trajectories probe successful execution, failure and recovery, history-dependent progress, and alternative valid solutions.
+- 🤖 **RoboValue-Dataset.** Expert demonstrations and annotated test trajectories cover **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world manipulation tasks**. Counterfactual instructions, recurring visual states with different histories, contrasting recovery outcomes, and alternative valid subtask orders expose specific errors in value judgments. Separate **cross-embodiment** and **cross-environment** settings test generalization.
 
-- 🎯 **RoboValue-Benchmark.** A shared protocol evaluates **task-state understanding**, **temporal progress monitoring**, **failure and recovery reasoning**, and **value consistency**. Diagnostic trajectories and counterfactual instructions reveal limitations that outcome discrimination and forward-progress correlation alone can overlook.
+- 🎯 **RoboValue-Benchmark.** A unified framework evaluates **four complementary capabilities**: task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency. A shared protocol compares models with different interfaces and value semantics, testing whether their feedback reflects how well task requirements are fulfilled throughout execution.
 
-- 🌍 **Controlled generalization.** Separate **cross-embodiment** and **cross-environment** evaluations test whether value judgments remain reliable when robot platforms or visual conditions change, without additional adaptation to the shifted settings.
-
-- 🏆 **RoboValue-Leaderboard.** Overall rankings and capability profiles compare models within each evaluation track, showing both aggregate performance and the specific capabilities that need improvement.
+- 🏆 **RoboValue-Leaderboard.** We pair overall rankings with capability profiles and analyses of model failure modes. Strong outcome and forward-progress scores can coexist with poor instruction grounding, limited execution memory, incorrect recovery assessment, and inconsistent subtask credit. These findings identify supervision targets for more reliable value feedback in policy learning, action planning, and execution monitoring.
 
 <div align="center">
   <img src="docs/assets/dataset.png" alt="RoboValue dataset: simulation and real-world tasks with failure and recovery, temporal, and multi-solution trajectories" width="100%" />
