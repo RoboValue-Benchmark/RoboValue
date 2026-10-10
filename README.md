@@ -186,6 +186,13 @@ If you find **RoboValue** helpful in your research, please cite our paper. The B
 
 ## 📬 Contact <a name="contact"></a>
 
-For model evaluation and research enquiries, reach the team through the [RoboValue community](https://robovalue-benchmark.github.io/community/).
+For model evaluation and research enquiries, please contact:
 
-<!-- Add author names and contact emails once confirmed. -->
+- **Shengbang Liu**: [liushengbang0209@gmail.com](mailto:liushengbang0209@gmail.com)
+- **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)
+- **Zhilong Wan**: [zhilongwan666@gmail.com](mailto:zhilongwan666@gmail.com)
+- **Chang Ge**: [gechang0706@gmail.com](mailto:gechang0706@gmail.com)
+- **Nan Wang**: [bigcileng@gmail.com](mailto:bigcileng@gmail.com)
+- **Chao Yu**: [zoeyuchao@gmail.com](mailto:zoeyuchao@gmail.com)
+
+<!-- Contact emails for Chenxiang Xia and Jinyang Xiao will be added when provided. -->

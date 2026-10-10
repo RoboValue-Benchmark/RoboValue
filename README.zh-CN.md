@@ -186,6 +186,13 @@ RoboValue/
 
 ## 📬 Contact <a name="contact"></a>
 
-模型评测与研究交流可通过 [RoboValue 社区](https://robovalue-benchmark.github.io/community/)联系团队。
+模型评测与研究交流，请联系：
 
-<!-- Add author names and contact emails once confirmed. -->
+- **Shengbang Liu**: [liushengbang0209@gmail.com](mailto:liushengbang0209@gmail.com)
+- **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)
+- **Zhilong Wan**: [zhilongwan666@gmail.com](mailto:zhilongwan666@gmail.com)
+- **Chang Ge**: [gechang0706@gmail.com](mailto:gechang0706@gmail.com)
+- **Nan Wang**: [bigcileng@gmail.com](mailto:bigcileng@gmail.com)
+- **Chao Yu**: [zoeyuchao@gmail.com](mailto:zoeyuchao@gmail.com)
+
+<!-- Contact emails for Chenxiang Xia and Jinyang Xiao will be added when provided. -->
