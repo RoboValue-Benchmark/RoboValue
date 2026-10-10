@@ -42,7 +42,7 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 
 - 🎯 **Fine-grained value evaluation.** Assess task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through a shared evaluation protocol.
 
-- 🤖 **Diverse sim-and-real manipulation tasks.** RoboValue covers **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**, spanning stacking, insertion, cloth folding, object organization, and repeated or ordered interactions.
+- 🤖 **Diverse sim-and-real manipulation tasks.** RoboValue covers **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**.
 
 - 🔍 **Diagnostic execution scenarios.** Counterfactual instructions, recurring visual states, effective and ineffective recoveries, and alternative valid subtask orders expose errors that outcome accuracy and forward-progress correlation can overlook.
 
@@ -52,12 +52,8 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
   <img src="docs/assets/dataset.png" alt="RoboValue dataset: simulation and real-world tasks with failure and recovery, temporal, and multi-solution trajectories" width="100%" />
 </div>
 
-**The benchmark test set remains private; only demo examples are provided for integration.** See [Quick Start](#quick-start) to evaluate your model with us.
-
 <details>
 <summary><strong>Capability and metric reference</strong></summary>
-
-Following Section 4.3 of the paper, RoboValue evaluates four complementary capabilities:
 
 | Capability | Metric | What it evaluates |
 | --- | --- | --- |
@@ -72,13 +68,17 @@ Following Section 4.3 of the paper, RoboValue evaluates four complementary capab
 | **Value Consistency** | **VS ↑** — Value Stability | Stable, informative feedback that avoids unnecessary fluctuations and prolonged flat regions |
 | | **CSVC ↑** — Cross-Solution Value Consistency | Comparable local value gains for the same semantic subtask across different valid solutions |
 
-**↑ Higher is better; ↓ lower is better. SIA is reported separately and excluded from Overall.** Unmeasured leaderboard entries are shown as **—**; missing metrics contribute zero after normalization, without redistributing their weights. See the [evaluation protocol](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring details.
+**↑ Higher is better; ↓ lower is better.**
 
 </details>
 
 ### Evaluation Status
 
-📋 **Full-Data — Planned.** Train or fine-tune on the complete training split, then evaluate on the held-out test set with the same metrics and a separate ranking.
+| Setting | Task-specific data | Status |
+| --- | --- | --- |
+| **Zero-Shot** | None | ✅ Results available |
+| **One-Shot** | 1 training demonstration per task | ✅ Results available |
+| **Full-Data** | Complete training split | 📋 Planned |
 
 ## 🧩 Supported Value Models
 
