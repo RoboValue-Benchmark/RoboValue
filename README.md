@@ -13,7 +13,7 @@
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="Leaderboard" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-2E8B57" alt="Community" height="20" /></a>
 
-  <p><sub>Paper, Hugging Face, and Chinese documentation links will be added here.</sub></p>
+
 </div>
 
 <div align="center">
