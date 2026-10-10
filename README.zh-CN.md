@@ -42,7 +42,7 @@
 
 - 🎯 **细粒度价值评测。** 通过统一评测协议，衡量模型的任务状态理解、时序进度监测、失败与恢复推理和价值一致性。
 
-- 🤖 **覆盖仿真与真实世界的 35 个任务。** RoboValue 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**，提供 **3,500 条专家训练示范**及 **2,792 条独立测试轨迹**。
+- 🤖 **丰富的仿真与真实世界操作任务。** RoboValue 包含基于 [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) 构建的 **15 个仿真任务**和 **20 个真实世界双臂操作任务**，涵盖堆叠、插入、衣物折叠、物品整理，以及重复操作和顺序操作。
 
 - 🔍 **面向诊断的执行场景。** 通过反事实指令、重复出现的视觉状态、有效与无效恢复，以及不同的有效子任务顺序，揭示结果准确率和正向进度相关性可能掩盖的错误。
 
@@ -52,119 +52,95 @@
   <img src="docs/assets/dataset.png" alt="RoboValue 数据集：仿真与真实世界任务，以及失败与恢复、时序和多解轨迹" width="100%" />
 </div>
 
-**数据集下载即将开放。** 数据集结构与使用方式详见[数据准备指南](docs/data.md)。
+**正式测试集不公开下载，仅提供演示示例用于了解接入流程。** 参评方式见[快速开始](#快速开始)。
 
 <details>
 <summary><strong>能力与指标速查</strong></summary>
 
-| 能力 | 评测内容 | 指标 |
+与论文第 4.3 节一致，RoboValue 从四类互补能力评测价值模型：
+
+| 能力 | 指标 | 评测内容 |
 | --- | --- | --- |
-| **任务状态理解** | 执行是否成功、指令与状态是否对应，以及当前所处的子任务 | SA, TGA-CT, TGA-CF, SIA |
-| **时序进度监测** | 任务进展与回退，包括视觉状态相近但历史不同的情况 | VOC, Cycle-VOC, Memory-VOC |
-| **失败与恢复推理** | 失败发生时刻、尚未解决的错误，以及有效或无效的恢复 | FPL, TRR |
-| **价值一致性** | 稳定的反馈，以及不同有效解决方案中可比较的子任务价值增益 | VS, CSVC |
+| **任务状态理解** | **SA ↑** — 成功准确率 | 成功轨迹的终止价值是否高于失败轨迹 |
+| | **TGA-CT / TGA-CF ↑** — 任务语义对齐准确率 | 对同一执行，正确指令的价值增益是否高于跨任务（CT）或反事实（CF）指令 |
+| | **SIA ↑** — 子任务识别准确率 | 从模型生成的描述识别当前子任务，由独立 LLM 裁判评分 |
+| **时序进度监测** | **VOC ↑** — 价值顺序相关性 | 成功轨迹中，预测价值与时序进度的秩相关性 |
+| | **Cycle-VOC ↑** | 在保留前序历史的连续正放—倒放过程中，价值是否反映进展与回退 |
+| | **Memory-VOC ↑** | 在相似视觉状态反复出现、执行历史不同的长时序轨迹中，价值是否反映进度顺序 |
+| **失败与恢复推理** | **FPL ↓** — 失败点定位 | 最大检测价值下降所指示的失败起点与标注起点之间的归一化时间误差 |
+| | **TRR ↑** — 轨迹恢复推理 | 初始失败、错误延续、恢复尝试及其成功或失败结果各阶段的价值变化方向 |
+| **价值一致性** | **VS ↑** — 价值稳定性 | 反馈是否稳定且持续提供信息，避免多余波动和长时间不变 |
+| | **CSVC ↑** — 跨解决方案价值一致性 | 不同有效解决方案中，同一语义子任务是否获得可比较的局部价值增益 |
 
-**FPL ↓** 衡量定位误差，越低越好；**其余主要指标 ↑** 均越高越好。**SIA 单独报告，不计入排行榜的 Overall 得分。**
-
-排行榜中未测量的指标以 **—** 标记。汇总时，缺失指标在归一化后按零计入，权重不重新分配。评分方式与评测条件详见[指标定义](https://robovalue-benchmark.github.io/doc/get-started/protocol/)。
+**↑ 越高越好；↓ 越低越好。SIA 单独报告，不计入 Overall。** 排行榜中未测量的指标以 **—** 标记；汇总时，缺失指标在归一化后按零计入，权重不重新分配。评分细节见[评测协议](https://robovalue-benchmark.github.io/doc/get-started/protocol/)。
 
 </details>
 
 ### 评测进展
 
-赛道规定了**模型可用于条件输入或适应的任务专属示范数据**。这些示范与测试轨迹分离，泛化条件独立评测。
-
-| 设置 | 任务专属数据 | 评测进展 |
-| --- | --- | --- |
-| **Zero-Shot** | 无 | ✅ 结果已公布 |
-| **One-Shot** | 每个任务 1 条训练示范 | ✅ 结果已公布 |
-| **Few-Shot** | 每个任务多条示范 | 📋 计划中 |
-| **Full-Data** | 完整训练集 | 📋 计划中 |
+📋 **Full-Data — 计划中。** 使用完整训练集训练或微调模型，再以相同指标在独立测试集上评测，并单独排名。
 
 ## 🧩 支持的价值模型
 
-各模型适配器提供统一的**标量打分**、**成对比较**和**子任务文本**接口，同时保留模型自身的价值语义。
+**✅** 表示当前适配器与运行策略在 `base` 模式下支持的指标，仍需满足任务覆盖范围和模型资源要求；**—** 表示不支持。模型名称链接到接入指南，实际验证范围见[验证记录](docs/testing.md)。
 
-**✅** 表示已有适配器接口，包含模型专用的输出转换；**—** 表示不支持。点击模型名称可查看配置指南，输入输出格式详见[接口定义](docs/developer_guide.md#query-and-result-records)。
+**TGA** 包含 TGA-CT 和 TGA-CF；**VOC 系列**包含 VOC、Cycle-VOC 和 Memory-VOC。CSVC 当前仅支持 ID 评测。
 
-| 模型系列 | 标量打分 | 成对比较 | 文本（SIA） | 配置 |
-| --- | :---: | :---: | :---: | --- |
-| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | ✅ | — | [YAML](configs/robometerconfigs.yaml) |
-| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | ✅ | — | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | ✅ | — | [YAML](configs/roborewardconfigs.yaml) |
-| [**VLAC**](docs/baselines/vlac.md) | ✅ | ✅ | — | [YAML](configs/vlacconfigs.yaml) |
-| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | ✅ | — | [YAML](configs/toprewardconfigs.yaml) |
-| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
-| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | ✅ | — | [YAML](configs/rynnvalueconfigs.yaml) |
-| [**LIV**](docs/baselines/liv.md) | ✅ | ✅ | — | [YAML](configs/livconfigs.yaml) |
-| [**标记为 FailSafe 的集成**](docs/baselines/failsafe.md)<sup>†</sup> | — | — | ✅ | [YAML](configs/failsafeconfigs.yaml) |
+| 模型系列 | SA / TGA | SIA | VOC 系列 | FPL / TRR | VS / CSVC | 配置 |
+| --- | :---: | :---: | :---: | :---: | :---: | --- |
+| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
+| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md)<sup>1</sup> | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md)<sup>2</sup> | ✅ | — | — | ✅ | ✅<sup>2</sup> | [YAML](configs/roborewardconfigs.yaml) |
+| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
+| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
+| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
+| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
+| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
+| [**标记为 FailSafe 的集成**](docs/baselines/failsafe.md)<sup>3</sup> | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
 
-适用指标与验证范围因模型而异，详见[配置指南](docs/configuration.md#metric-selection)及各模型指南。
+<sup>1</sup> ProcVLM one-shot 需要任务专属 LoRA 权重，且该模式的 VOC 和 Memory-VOC 不包含 `press_by_number` 与 `swap_blocks`。
 
-<sup>†</sup> 标记为 FailSafe 的集成仅用于 SIA，需要原有本地资源；其与官方实现的等价性尚未验证。
+<sup>2</sup> RoboReward 当前运行策略禁用了 VOC 系列。VS 和 CSVC 保留了实现，但论文未报告 RoboReward 的这两项评测；本行表示代码支持范围，不代表论文结果覆盖范围。
+
+<sup>3</sup> 仅支持 SIA 的 FailSafe 集成需要原始本地资源；尚未验证其与官方实现的等价性。
 
 ## 🚀 快速开始 <a name="快速开始"></a>
 
-以下步骤假设你已获得基准数据访问权限；公开下载即将开放。从**一个基线模型**开始，准备运行环境和模型权重，然后验证数据并运行评测。提供的安装流程面向 **Linux x86_64**，需要用于启动评测的 **Python 3.10+ 和 PyYAML**，以及 **uv** 和对应基线所需的 CUDA 与构建依赖。安装前请查看[通用前置条件](docs/baselines/README.md#prerequisites)。
+评测自己的模型时，只需提供**模型推理服务和专用 Adapter**。Adapter 封装模型现有的预测接口；**RoboValue 团队负责查询构造、指标计算、汇总和结果报告**，并在私有测试集上执行评测。完整流程见[模型接入指南](docs/api.md)。
 
-**1. 克隆仓库。**
+**1. 准备模型服务。**
+
+在自己的环境中运行模型，说明推理端点、原生请求与响应格式，以及固定的模型和预处理版本。若评测设置需要训练参考示范，请按约定在评测前于模型侧准备。
+
+**2. 实现并检查 Adapter。**
 
 ```bash
 GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/RoboValue-Benchmark/RoboValue.git
 cd RoboValue
 ```
 
-此命令将 LIV 权重的下载推迟到实际需要时。使用 LIV 时，请按照 [LIV 指南](docs/baselines/liv.md)获取对应的 Git LFS 资源。
+参考 [Adapter 接口](src/vmbmk/adapters/base.py)和 [CPU mock Adapter](src/vmbmk/adapters/mock_service.py)，按模型原生方式完成输入准备、服务调用和输出映射。只实现模型支持的操作，并按原始查询顺序返回预测：
 
-**2. 配置基线并下载模型权重。**
+| 方法 | 返回内容 |
+| --- | --- |
+| `value` | 模型给出的标量评价 |
+| `compare` | 对有序上下文 A、B 的比较分数 |
+| `subtask` | 当前子任务的文本描述 |
 
-以下以 **RoboReward** 为例，需要已有的 **Python 3.10.x** 解释器。请先满足通用前置条件，包括安装 `hf` CLI，并按照 [RoboReward 指南](docs/baselines/roboreward.md)准备 FFmpeg 4–8 共享库。
+保留模型原生的相机视角、历史输入要求和输出语义。RoboValue 会根据这些预测计算评测指标。
 
-```bash
-bash envs/setup.sh roboreward --plan
-bash envs/setup.sh roboreward
-
-hf download teetone/RoboReward-8B \
-  --revision 3a185b4fce2b1253643105be1f234ae618b9732f \
-  --local-dir checkpoints/RoboReward-8B
-```
-
-模型依赖在隔离环境中运行。使用其他模型时，请选择相应的[基线指南](docs/baselines/README.md)；各指南说明了源码、兼容依赖、权重资源和验证范围。
-
-**3. 准备数据、配置运行参数并开始评测。**
-
-单独获取数据集，并按照[数据指南](docs/data.md)准备数据。复制基线模板：
+使用已安装 **PyYAML 和 Pillow 的 Python 3.10+**，可运行公开的 CPU mock 示例检查：
 
 ```bash
-cp configs/roborewardconfigs.yaml configs/roboreward-local.yaml
+PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_service.py -v
 ```
 
-假设数据位于 `data/dataset_real/`，按下例编辑 `configs/roboreward-local.yaml`。首次运行仅评测**一个任务在 ID 条件下的 SA 指标**。请设置可用的 GPU；如果数据集中的任务 ID 不同，请替换 `organize_table`。
+该检查使用合成图像验证示例 Adapter，无需 GPU、模型权重、运行中的 API 或私有测试数据。[示例配置](configs/mock_service.example.yaml)展示交付格式，其中路径需要按部署环境填写。
 
-```yaml
-model: roboreward
-gpu: 0
-batch_size: 1
-python: ../.model-envs/roboreward/bin/python
-checkpoint: ../checkpoints/RoboReward-8B
-data: ../data/dataset_real
-output: ../output
-metrics:
-  sa:
-    mode: base
-    domains: [id]
-tasks: [organize_table]
-```
+**3. 对接正式评测。**
 
-YAML 中的路径相对于 `configs/` 解析：其中的 `../data/dataset_real` 与从仓库根目录运行以下命令时的 `data/dataset_real` 指向同一数据集。若数据、环境或权重位于其他位置，也可使用绝对路径。
-
-```bash
-bash vmbmk.sh validate data/dataset_real
-bash vmbmk.sh run configs/roboreward-local.yaml
-```
-
-验证过程检查数据结构和资源，不加载模型；成功时输出 `valid`。使用上述配置完成评测后，结果保存在 **`output/roboreward-local/metrics.json`**，同一运行目录内还会保存 **`config.yaml`** 以及各指标对应的操作记录和溯源文件。首次运行成功后，先在 `configs/` 下复制为新的配置文件名，以生成独立运行目录，再按照[配置与命令](docs/configuration.md)扩展任务和适用指标。
+向 [RoboValue 团队](#contact)提供 Adapter、示例配置、服务说明、模型与预处理版本，以及可运行的合成示例。服务凭据单独提供。团队审核接入后，使用私有测试集运行适用指标。
 
 <details>
 <summary><strong>更多文档</strong></summary>
@@ -174,7 +150,7 @@ bash vmbmk.sh run configs/roboreward-local.yaml
 | [基线配置](docs/baselines/README.md) | 安装前置条件与各模型的使用说明 |
 | [数据准备](docs/data.md) | 数据集结构、元数据、标注和资源路径 |
 | [配置与命令](docs/configuration.md) | YAML 字段、评测模式和 CLI 用法 |
-| [模型 API 集成](docs/api.md) | 组织方运行的远程推理、服务接口约定与 CPU 模拟验证 |
+| [模型服务与 Adapter](docs/api.md) | 接入交付、原生接口、参考示范和 CPU mock 示例 |
 | [环境详情](docs/environments.md) | 依赖锁定文件、自定义根目录和原生依赖构建 |
 | [指标实现说明](docs/metric_alignment.md) | 评分对齐与协议变更 |
 | [结果接口](docs/result_publication.md) | 验证、发布和 SIA 中间输出 |
@@ -204,12 +180,12 @@ RoboValue/
 
 数据集、下载的模型资源、运行环境和生成结果单独配置；存储约定详见[数据准备](docs/data.md)与[基线配置](docs/baselines/README.md#source-runtime-and-checkpoint-roots)。随仓库分发的 LIV 资源使用 Git LFS。
 
-## 🤝 参与贡献 <a name="参与贡献"></a>
-
-欢迎参与贡献！你可以添加**模型适配器**、提交**可复现的评测结果**、**改进任务与标注**，或**修正文档**。请先阅读[开发者指南](docs/developer_guide.md)和[测试指南](docs/testing.md)，然后提交 Pull Request，说明改动内容及验证方式。
-
-如有问题或需报告错误，请提交 [Issue](https://github.com/RoboValue-Benchmark/RoboValue/issues)，并附上基线、指标、环境版本、不含凭据的配置和相关错误堆栈。欢迎加入 [RoboValue 社区](https://robovalue-benchmark.github.io/community/)，讨论评测协议与机器人价值模型。
-
 ## 📝 引用 <a name="引用"></a>
 
 如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的论文。正式 BibTeX 条目将在此补充。
+
+## 📬 Contact <a name="contact"></a>
+
+模型评测与研究交流可通过 [RoboValue 社区](https://robovalue-benchmark.github.io/community/)联系团队。
+
+<!-- Add author names and contact emails once confirmed. -->

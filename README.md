@@ -42,7 +42,7 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 
 - 🎯 **Fine-grained value evaluation.** Assess task-state understanding, temporal progress monitoring, failure and recovery reasoning, and value consistency through a shared evaluation protocol.
 
-- 🤖 **35 tasks across simulation and the real world.** RoboValue includes **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**, with **3,500 expert training demonstrations** and **2,792 separate test trajectories**.
+- 🤖 **Diverse sim-and-real manipulation tasks.** RoboValue covers **15 simulation tasks** adapted from [RoboDojo](https://github.com/RoboDojo-Benchmark/RoboDojo/blob/main/README.md) and **20 real-world dual-arm manipulation tasks**, spanning stacking, insertion, cloth folding, object organization, and repeated or ordered interactions.
 
 - 🔍 **Diagnostic execution scenarios.** Counterfactual instructions, recurring visual states, effective and ineffective recoveries, and alternative valid subtask orders expose errors that outcome accuracy and forward-progress correlation can overlook.
 
@@ -52,130 +52,95 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
   <img src="docs/assets/dataset.png" alt="RoboValue dataset: simulation and real-world tasks with failure and recovery, temporal, and multi-solution trajectories" width="100%" />
 </div>
 
-**Dataset downloads are coming soon.** See the [data preparation guide](docs/data.md) for dataset structure and usage.
+**The benchmark test set remains private; only demo examples are provided for integration.** See [Quick Start](#quick-start) to evaluate your model with us.
 
 <details>
 <summary><strong>Capability and metric reference</strong></summary>
 
-| Capability | What it evaluates | Metrics |
+Following Section 4.3 of the paper, RoboValue evaluates four complementary capabilities:
+
+| Capability | Metric | What it evaluates |
 | --- | --- | --- |
-| **Task-State Understanding** | Successful execution, instruction grounding, and the active subtask | SA, TGA-CT, TGA-CF, SIA |
-| **Temporal Progress Monitoring** | Progress and regression, including similar visual states with different histories | VOC, Cycle-VOC, Memory-VOC |
-| **Failure and Recovery Reasoning** | Failure onset, unresolved errors, and effective or ineffective recovery | FPL, TRR |
-| **Value Consistency** | Stable feedback and comparable subtask gains across valid solutions | VS, CSVC |
+| **Task-State Understanding** | **SA ↑** — Success Accuracy | Whether successful episodes receive higher terminal values than unsuccessful ones |
+| | **TGA-CT / TGA-CF ↑** — Task Grounding Accuracy | Whether the correct instruction yields a larger value gain than cross-task (CT) or counterfactual (CF) instructions for the same execution |
+| | **SIA ↑** — Subtask Identification Accuracy | Identification of the active subtask from generated descriptions, scored by a separate LLM judge |
+| **Temporal Progress Monitoring** | **VOC ↑** — Value-Order Correlation | Rank correlation between predicted values and temporal progress along successful trajectories |
+| | **Cycle-VOC ↑** | Progress and regression during continuous forward–reverse playback, with preceding history retained |
+| | **Memory-VOC ↑** | Progress ordering in long-horizon trajectories where similar visual states recur under different execution histories |
+| **Failure and Recovery Reasoning** | **FPL ↓** — Failure-Point Localization | Normalized timing error between the onset inferred from the largest detected value decline and the annotated failure onset |
+| | **TRR ↑** — Trajectory Recovery Reasoning | Required value trends during initial failure, continued error, recovery attempts, and their successful or failed outcomes |
+| **Value Consistency** | **VS ↑** — Value Stability | Stable, informative feedback that avoids unnecessary fluctuations and prolonged flat regions |
+| | **CSVC ↑** — Cross-Solution Value Consistency | Comparable local value gains for the same semantic subtask across different valid solutions |
 
-**FPL ↓** measures localization error; **all other primary metrics ↑** are better when higher. **SIA is reported separately and excluded from the leaderboard's Overall score.**
-
-Unmeasured leaderboard entries are shown as **—**. Missing metrics contribute zero after normalization, without redistributing their weights. See the [metric definitions](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring and evaluation conditions.
+**↑ Higher is better; ↓ lower is better. SIA is reported separately and excluded from Overall.** Unmeasured leaderboard entries are shown as **—**; missing metrics contribute zero after normalization, without redistributing their weights. See the [evaluation protocol](https://robovalue-benchmark.github.io/doc/get-started/protocol/) for scoring details.
 
 </details>
 
 ### Evaluation Status
 
-Tracks specify the **task-specific demonstrations available for conditioning or adaptation**. These demonstrations are kept separate from test trajectories; generalization conditions are evaluated independently.
-
-| Setting | Task-specific data | Status |
-| --- | --- | --- |
-| **Zero-Shot** | None | ✅ Results available |
-| **One-Shot** | 1 training demonstration per task | ✅ Results available |
-| **Few-Shot** | Multiple demonstrations per task | 📋 Planned |
-| **Full-Data** | Complete training split | 📋 Planned |
+📋 **Full-Data — Planned.** Train or fine-tune on the complete training split, then evaluate on the held-out test set with the same metrics and a separate ranking.
 
 ## 🧩 Supported Value Models
 
-Model-specific adapters expose shared **scalar scoring**, **pairwise comparison**, and **textual subtask** interfaces while retaining model-dependent value semantics.
+**✅** marks metrics available through the current adapters and runner policy in `base` mode, subject to task coverage and required model assets; **—** means unavailable. Model names link to setup guides; [validation evidence](docs/testing.md) records the tested scope.
 
-**✅** marks an available adapter interface, including model-specific conversions; **—** means unavailable. Model names link to setup guides; see the [interface definitions](docs/developer_guide.md#query-and-result-records) for input/output formats.
+**TGA** includes TGA-CT and TGA-CF; **VOC family** includes VOC, Cycle-VOC, and Memory-VOC. CSVC currently supports ID evaluation only.
 
-| Model family | Scalar | Pairwise | Text (SIA) | Configuration |
-| --- | :---: | :---: | :---: | --- |
-| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | ✅ | — | [YAML](configs/robometerconfigs.yaml) |
-| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | ✅ | — | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | ✅ | — | [YAML](configs/roborewardconfigs.yaml) |
-| [**VLAC**](docs/baselines/vlac.md) | ✅ | ✅ | — | [YAML](configs/vlacconfigs.yaml) |
-| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | ✅ | — | [YAML](configs/toprewardconfigs.yaml) |
-| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
-| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | ✅ | — | [YAML](configs/rynnvalueconfigs.yaml) |
-| [**LIV**](docs/baselines/liv.md) | ✅ | ✅ | — | [YAML](configs/livconfigs.yaml) |
-| [**FailSafe-labeled integration**](docs/baselines/failsafe.md)<sup>†</sup> | — | — | ✅ | [YAML](configs/failsafeconfigs.yaml) |
+| Model family | SA / TGA | SIA | VOC family | FPL / TRR | VS / CSVC | Config |
+| --- | :---: | :---: | :---: | :---: | :---: | --- |
+| [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
+| [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md)<sup>1</sup> | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md)<sup>2</sup> | ✅ | — | — | ✅ | ✅<sup>2</sup> | [YAML](configs/roborewardconfigs.yaml) |
+| [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
+| [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
+| [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
+| [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
+| [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
+| [**FailSafe-labeled integration**](docs/baselines/failsafe.md)<sup>3</sup> | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
 
-Metric eligibility and verification scope vary by model; see the [configuration guide](docs/configuration.md#metric-selection) and each setup guide.
+<sup>1</sup> ProcVLM one-shot requires task-specific LoRA checkpoints and excludes `press_by_number` and `swap_blocks` from VOC and Memory-VOC.
 
-<sup>†</sup> The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
+<sup>2</sup> RoboReward's current runner disables the VOC family. VS and CSVC remain implemented but were not evaluated for RoboReward in the paper; this row describes code support, not published result coverage.
 
-## Provide a Model Service and Adapter
-
-Provide your model's inference service and a model-specific adapter for review.
-The adapter owns native input preparation, service calls and output conversion;
-RoboValue retains query planning and evaluation. See the
-[integration guide](docs/api.md), [CPU mock adapter](src/vmbmk/adapters/mock_service.py)
-and [example configuration](configs/mock_service.example.yaml).
-The held-out test set is not publicly released for download or local evaluation.
-Only necessary inference observations are sent to an external service, never
-test labels. Training references are prepared on the model side before evaluation.
+<sup>3</sup> The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
 
 ## 🚀 Quick Start <a name="quick-start"></a>
 
-The steps below assume you already have access to the benchmark data; public downloads are coming soon. Start with **one baseline**, prepare its runtime and checkpoint, then validate the data and run an evaluation. The supplied installation path targets **Linux x86_64** and requires a launcher with **Python 3.10+ and PyYAML**, plus **uv** and the baseline-specific CUDA/build dependencies. See the [shared prerequisites](docs/baselines/README.md#prerequisites) before installation.
+To evaluate your model, provide its **inference service and a model-specific Adapter**. The Adapter wraps your model's existing predictions; the **RoboValue team handles query planning, metric computation, aggregation, and reporting** on the private test set. Follow the [model integration guide](docs/api.md).
 
-**1. Clone the repository.**
+**1. Prepare your model service.**
+
+Keep your model running in its own environment. Document its inference endpoint, native request/response format, and fixed model and preprocessing versions. Prepare any training references on the model side before evaluation, according to the agreed setting.
+
+**2. Implement and check your Adapter.**
 
 ```bash
 GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/RoboValue-Benchmark/RoboValue.git
 cd RoboValue
 ```
 
-This defers the LIV weight download until needed; LIV users should follow the [LIV guide](docs/baselines/liv.md) for its Git LFS assets.
+Start from the [Adapter interface](src/vmbmk/adapters/base.py) and [CPU mock Adapter](src/vmbmk/adapters/mock_service.py). Adapt input preparation, service calls, and output mapping to your model. Implement only the operations it supports, returning one prediction per query in the original order:
 
-**2. Set up a baseline and download its checkpoint.**
+| Method | Returns |
+| --- | --- |
+| `value` | A scalar assessment from your model |
+| `compare` | A score comparing ordered contexts A and B |
+| `subtask` | A description of the current subtask |
 
-The example below uses **RoboReward** with an existing **Python 3.10.x** interpreter. Complete the shared prerequisites, including the `hf` CLI, and provide FFmpeg 4–8 shared libraries as described in the [RoboReward guide](docs/baselines/roboreward.md).
+Preserve the model's native camera/history requirements and output semantics. RoboValue computes benchmark metrics from these predictions.
 
-```bash
-bash envs/setup.sh roboreward --plan
-bash envs/setup.sh roboreward
-
-hf download teetone/RoboReward-8B \
-  --revision 3a185b4fce2b1253643105be1f234ae618b9732f \
-  --local-dir checkpoints/RoboReward-8B
-```
-
-Model dependencies run in isolated environments. For other models, choose a [baseline guide](docs/baselines/README.md); each guide specifies source code, compatible dependencies, checkpoint assets, and verification scope.
-
-**3. Prepare the data, configure the run, and evaluate.**
-
-Obtain the dataset separately and follow the [data guide](docs/data.md). Copy the baseline template:
+To try the public CPU mock example, use **Python 3.10+ with PyYAML and Pillow** and run:
 
 ```bash
-cp configs/roborewardconfigs.yaml configs/roboreward-local.yaml
+PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_service.py -v
 ```
 
-For data placed in `data/dataset_real/`, edit `configs/roboreward-local.yaml` as below. This starter run evaluates **SA on one task in the ID condition**. Set an available GPU and replace `organize_table` if your dataset uses a different task ID.
+This checks the example Adapter with synthetic images; it needs no GPU, model checkpoint, running API, or private test data. The [example configuration](configs/mock_service.example.yaml) illustrates the handoff format with placeholder paths.
 
-```yaml
-model: roboreward
-gpu: 0
-batch_size: 1
-python: ../.model-envs/roboreward/bin/python
-checkpoint: ../checkpoints/RoboReward-8B
-data: ../data/dataset_real
-output: ../output
-metrics:
-  sa:
-    mode: base
-    domains: [id]
-tasks: [organize_table]
-```
+**3. Arrange evaluation.**
 
-The YAML paths are relative to `configs/`: `../data/dataset_real` points to the same dataset as the CLI argument `data/dataset_real` when you run these commands from the repository root. Use absolute paths for data, environments, or checkpoints stored elsewhere.
-
-```bash
-bash vmbmk.sh validate data/dataset_real
-bash vmbmk.sh run configs/roboreward-local.yaml
-```
-
-Validation checks schemas and assets without loading a model and prints `valid` on success. With this configuration, a successful evaluation writes **`output/roboreward-local/metrics.json`**, the saved **`config.yaml`**, and metric-specific operation/provenance artifacts in the same run directory. After the first run succeeds, copy the configuration to a new filename under `configs/` to create a separate run directory before expanding the task and eligible metric selections. See [configuration and commands](docs/configuration.md).
+[Contact the RoboValue team](#contact) with your Adapter, example configuration, service specification, model/preprocessing versions, and a runnable synthetic example. Share any service credentials separately. The team reviews the integration and runs compatible metrics on the private test set.
 
 <details>
 <summary><strong>More documentation</strong></summary>
@@ -215,12 +180,12 @@ RoboValue/
 
 Datasets, downloaded model assets, environments, and generated outputs are configured separately; see [data preparation](docs/data.md) and [baseline setup](docs/baselines/README.md#source-runtime-and-checkpoint-roots) for storage conventions. LIV's distributed assets use Git LFS.
 
-## 🤝 Contributing <a name="contributing"></a>
-
-Contributions are welcome! Help extend RoboValue with **model adapters**, **reproducible evaluation results**, **task and annotation improvements**, or **documentation fixes**. Start with the [developer guide](docs/developer_guide.md) and [testing guide](docs/testing.md), then open a pull request describing the change and its validation.
-
-For questions or bug reports, open an [issue](https://github.com/RoboValue-Benchmark/RoboValue/issues) with the baseline, metric, environment versions, configuration without credentials, and relevant traceback. Join the [RoboValue community](https://robovalue-benchmark.github.io/community/) to discuss evaluation protocols and robotic value models.
-
 ## 📝 Citation <a name="citation"></a>
 
 If you find **RoboValue** helpful in your research, please cite our paper. The BibTeX entry will be added here.
+
+## 📬 Contact <a name="contact"></a>
+
+For model evaluation and research enquiries, reach the team through the [RoboValue community](https://robovalue-benchmark.github.io/community/).
+
+<!-- Add author names and contact emails once confirmed. -->
