@@ -192,7 +192,7 @@ RoboValue/
 - **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)
 - **Zhilong Wan**: [zhilongwan666@gmail.com](mailto:zhilongwan666@gmail.com)
 - **Chang Ge**: [gechang0706@gmail.com](mailto:gechang0706@gmail.com)
+- **Chenxiang Xia**: [chenxiangxia48@gmail.com](mailto:chenxiangxia48@gmail.com)
+- **Jinyang Xiao**: [xiaojy36@gmail.com](mailto:xiaojy36@gmail.com)
 - **Nan Wang**: [bigcileng@gmail.com](mailto:bigcileng@gmail.com)
 - **Chao Yu**: [zoeyuchao@gmail.com](mailto:zoeyuchao@gmail.com)
-
-<!-- Contact emails for Chenxiang Xia and Jinyang Xiao will be added when provided. -->
