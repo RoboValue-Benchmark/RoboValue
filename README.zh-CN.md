@@ -84,7 +84,7 @@
 
 ## 🧩 支持的价值模型
 
-**✅** 表示当前适配器与运行策略在 `base` 模式下支持的指标，仍需满足任务覆盖范围和模型资源要求；**—** 表示不支持。模型名称链接到接入指南，实际验证范围见[验证记录](docs/testing.md)。
+**✅** 表示当前实现的 `base` 模式支持，**—** 表示不支持。模型配置与适用范围见[基线指南](docs/baselines/README.md)（也可点击模型名称），实际验证情况见[验证记录](docs/testing.md)。
 
 下列模型是可选评测基线。运行公开 CPU mock 或接入自己的模型无需安装这些基线。
 
@@ -94,20 +94,14 @@
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
 | [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
 | [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md)<sup>1</sup> | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md)<sup>2</sup> | ✅ | — | — | ✅ | ✅<sup>2</sup> | [YAML](configs/roborewardconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
 | [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
 | [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
 | [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
 | [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
 | [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
-| [**标记为 FailSafe 的集成**](docs/baselines/failsafe.md)<sup>3</sup> | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
-
-<sup>1</sup> ProcVLM one-shot 需要任务专属 LoRA 权重，且该模式的 VOC 和 Memory-VOC 不包含 `press_by_number` 与 `swap_blocks`。
-
-<sup>2</sup> RoboReward 当前运行策略禁用了 VOC 系列。VS 和 CSVC 保留了实现，但论文未报告 RoboReward 的这两项评测；本行表示代码支持范围，不代表论文结果覆盖范围。
-
-<sup>3</sup> 仅支持 SIA 的 FailSafe 集成需要原始本地资源；尚未验证其与官方实现的等价性。
+| [**标记为 FailSafe 的集成**](docs/baselines/failsafe.md) | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
 
 ## 🚀 如何评测你的模型 <a name="快速开始"></a>
 

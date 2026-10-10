@@ -84,7 +84,7 @@ View full rankings and model configurations on the [**RoboValue Leaderboard**](h
 
 ## 🧩 Supported Value Models
 
-**✅** marks metrics available through the current adapters and runner policy in `base` mode, subject to task coverage and required model assets; **—** means unavailable. Model names link to setup guides; [validation evidence](docs/testing.md) records the tested scope.
+**✅** marks metrics supported by the current implementation in `base` mode; **—** means unsupported. See the [baseline guides](docs/baselines/README.md) or follow the model names for setup and scope, and [validation evidence](docs/testing.md) for tested coverage.
 
 These models are optional evaluation baselines. Running the public CPU mock or integrating your own model does not require installing them.
 
@@ -94,20 +94,14 @@ These models are optional evaluation baselines. Running the public CPU mock or i
 | --- | :---: | :---: | :---: | :---: | :---: | --- |
 | [**RoboMeter**](docs/baselines/robometer.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robometerconfigs.yaml) |
 | [**Robo-Dopamine**](docs/baselines/robodopamine.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/robodopamineconfigs.yaml) |
-| [**ProcVLM**](docs/baselines/procvlm.md)<sup>1</sup> | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
-| [**RoboReward**](docs/baselines/roboreward.md)<sup>2</sup> | ✅ | — | — | ✅ | ✅<sup>2</sup> | [YAML](configs/roborewardconfigs.yaml) |
+| [**ProcVLM**](docs/baselines/procvlm.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/procvlmconfigs.yaml) |
+| [**RoboReward**](docs/baselines/roboreward.md) | ✅ | — | — | ✅ | ✅ | [YAML](configs/roborewardconfigs.yaml) |
 | [**VLAC**](docs/baselines/vlac.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/vlacconfigs.yaml) |
 | [**TOPReward (Qwen / Molmo)**](docs/baselines/topreward.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/toprewardconfigs.yaml) |
 | [**RoboFAC**](docs/baselines/robofac.md) | ✅ | ✅ | ✅ | ✅ | ✅ | [YAML](configs/robofacconfigs.yaml) |
 | [**RynnValue**](docs/baselines/rynnvalue.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/rynnvalueconfigs.yaml) |
 | [**LIV**](docs/baselines/liv.md) | ✅ | — | ✅ | ✅ | ✅ | [YAML](configs/livconfigs.yaml) |
-| [**FailSafe-labeled integration**](docs/baselines/failsafe.md)<sup>3</sup> | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
-
-<sup>1</sup> ProcVLM one-shot requires task-specific LoRA checkpoints and excludes `press_by_number` and `swap_blocks` from VOC and Memory-VOC.
-
-<sup>2</sup> RoboReward's current runner disables the VOC family. VS and CSVC remain implemented but were not evaluated for RoboReward in the paper; this row describes code support, not published result coverage.
-
-<sup>3</sup> The SIA-only FailSafe integration requires the original local assets; equivalence to the official implementation remains unverified.
+| [**FailSafe-labeled integration**](docs/baselines/failsafe.md) | — | ✅ | — | — | — | [YAML](configs/failsafeconfigs.yaml) |
 
 ## 🚀 Evaluate Your Model <a name="quick-start"></a>
 
