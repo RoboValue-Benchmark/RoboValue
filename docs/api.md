@@ -5,9 +5,10 @@ with a model-specific adapter. You implement the adapter; the RoboValue team
 reviews it and runs the evaluation. The service may use its native interface.
 There is no required universal HTTP payload or shared sampling profile.
 
-RoboValue uses a private, held-out test set. Participants provide a model API,
-and the RoboValue team conducts the evaluation. The test set is not publicly
-released for download or local evaluation.
+The RoboValue team supplies the benchmark data and conducts the evaluation with
+a private, held-out test set. Participants provide an inference service, adapter
+and runnable synthetic example. The test set is not publicly released for
+download or local evaluation.
 
 ## Prepare your service
 
@@ -62,17 +63,19 @@ a shared generic service identity.
 
 ## Prepare training references
 
-References are prepared on the model side before evaluation, not attached by
-RoboValue to each inference request:
+Choose and document the evaluation setting:
 
-- **Zero-shot:** do not use training trajectories as inference references.
-- **One-shot:** use the first training trajectory for the relevant task in the
-  supplied order, consistently across queries.
-- **Few-shot:** use all 100 training trajectories for the relevant task.
+- **Zero-Shot:** no task-specific fine-tuning or reference demonstrations.
+- **One-Shot:** use one training demonstration per task, supplied by the
+  evaluation organizers through the adapter. Document how the reference enters
+  your model's native interface.
+- **Full-Shot (planned):** fine-tune on the RoboValue training split before
+  providing the service, and record the training settings. The fine-tuned model
+  uses the same inference interface as Zero-Shot; training demonstrations do not
+  need to accompany each query.
 
-These selection rules apply to both simulation and real-world tasks. Your
-adapter/service documents how the selected references enter the model. The
-mock does not implement reference-conditioned inference or train a model.
+These settings apply to both simulation and real-world tasks. The mock does not
+implement reference-conditioned inference or train a model.
 
 ## Hand over the integration
 

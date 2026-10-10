@@ -2,6 +2,10 @@
 
 [Back to README](../../README.md) | [Data preparation](../data.md) | [Environment internals](../environments.md)
 
+These guides are for organizers running selected baselines in an evaluation
+deployment. Submitting your own model does not require installing these
+baselines; follow the [service and adapter guide](../api.md).
+
 Install **one baseline at a time**. Each family guide follows the same sequence:
 prepare its runtime, download the required model assets, configure local paths,
 then validate and run. Setup scripts download dependencies, not weights or data.

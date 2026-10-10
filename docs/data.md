@@ -2,10 +2,19 @@
 
 [Back to README](../README.md) | [Baseline setup](baselines/README.md) | [Run configuration](configuration.md)
 
+This guide describes data storage and validation for organizer-side evaluation
+deployments. The RoboValue team supplies the benchmark data and keeps the
+held-out test set private for centralized evaluation. Model submitters provide
+an inference service, adapter and runnable synthetic example, as described in
+the [service and adapter guide](api.md); they do not need to source an additional
+robotics dataset.
+
 ## Choose a dataset root
 
-Obtain the benchmark data separately. This repository does not provide a complete
-dataset download or convert arbitrary videos into benchmark annotations.
+Use the RoboValue dataset supplied for the evaluation deployment. Dataset assets
+are distributed separately from the source code; the private test set is not publicly
+available for download or local evaluation. This repository does not convert
+arbitrary videos into benchmark annotations.
 Recommended roots are `data/dataset_sim/` and `data/dataset_real/`; alternative
 storage locations are accepted by the YAML `data` field.
 
@@ -42,8 +51,6 @@ Dataset metadata therefore selects files outside the dataset directory as well;
 only load trusted metadata. This rule applies to videos and declared robot data.
 
 Do not point `data` to `data/` if it contains several datasets and references.
-The small tracked `data/organize_table/exceptional_intervals.json` file is an
-auxiliary input, not a substitute for a complete dataset.
 
 ## Configure paths and coverage
 
@@ -66,7 +73,8 @@ paths for LIV source roots and ProcVLM task LoRA checkpoints.
 
 ## One-shot references
 
-Keep reference demonstrations in a separate supplied dataset, for example
+The RoboValue team supplies one training demonstration per task for One-Shot.
+Keep these references in a separate supplied dataset, for example
 `data/reference/`, and set `reference_data: ../data/reference` when appropriate.
 Do not use evaluated episodes as reference demonstrations. The reference schema
 is baseline-dependent: RoboDopamine requires its reference input, while adding
@@ -91,8 +99,8 @@ For a read-only frame-count check, see the `data check-frames` command in the
 ## Keep data out of Git
 
 The repository ignores evaluation datasets, checkpoint directories and generated
-outputs, with an explicit exception for the small tracked auxiliary file above.
-LIV's three distributed checkpoint assets are also an explicit exception;
-see the [LIV guide](baselines/liv.md). Other weights remain outside Git.
+outputs. LIV's distributed assets are an explicit exception: `config.yaml` is
+a regular Git file, while `model.pt` and `RN50.pt` use Git LFS; see the
+[LIV guide](baselines/liv.md). Other weights remain outside Git.
 Keep secrets out of run configs. Store result artifacts in the configured output
 root; do not mix generated scores into the dataset or checkpoint folders.

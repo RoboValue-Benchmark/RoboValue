@@ -3,15 +3,17 @@
 </div>
 
 <div align="center">
-  <!-- Add official arXiv and Hugging Face URLs once released. -->
-  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文" height="20" />
-  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace" height="20" />
+  <!-- Add official arXiv and Hugging Face URLs when available. -->
+  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文：链接待补充" height="20" />
+  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace：链接待补充" height="20" />
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="文档" height="20" /></a>
   <!-- Add the Chinese documentation URL when available. -->
-  <img src="https://img.shields.io/badge/中文文档-red?logo=readthedocs" alt="中文文档" height="20" />
+  <img src="https://img.shields.io/badge/中文文档-red?logo=readthedocs" alt="中文文档：链接待补充" height="20" />
   <a href="https://robovalue-benchmark.github.io/"><img src="https://img.shields.io/badge/Website-blue?logo=googlechrome&amp;logoColor=white" alt="项目网站" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/leaderboard/"><img src="https://img.shields.io/badge/Leaderboard-527BC3?logo=weightsandbiases&amp;logoColor=white" alt="排行榜" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/community/"><img src="https://img.shields.io/badge/Community-2E8B57" alt="社区" height="20" /></a>
+
+  <p><sub>论文、Hugging Face 与中文文档链接待补充。</sub></p>
 </div>
 
 <div align="center">
@@ -78,11 +80,13 @@
 | --- | --- | --- |
 | **Zero-Shot** | 无 | ✅ 结果已公布 |
 | **One-Shot** | 每个任务 1 条训练示范 | ✅ 结果已公布 |
-| **Full-Data** | 完整训练集 | 📋 计划中 |
+| **Full-Shot** | 完整训练集 | 📋 计划中 |
 
 ## 🧩 支持的价值模型
 
 **✅** 表示当前适配器与运行策略在 `base` 模式下支持的指标，仍需满足任务覆盖范围和模型资源要求；**—** 表示不支持。模型名称链接到接入指南，实际验证范围见[验证记录](docs/testing.md)。
+
+下列模型是可选评测基线。运行公开 CPU mock 或接入自己的模型无需安装这些基线。
 
 **TGA** 包含 TGA-CT 和 TGA-CF；**VOC 系列**包含 VOC、Cycle-VOC 和 Memory-VOC。CSVC 当前仅支持 ID 评测。
 
@@ -105,52 +109,76 @@
 
 <sup>3</sup> 仅支持 SIA 的 FailSafe 集成需要原始本地资源；尚未验证其与官方实现的等价性。
 
-## 🚀 快速开始 <a name="快速开始"></a>
+## 🚀 如何评测你的模型 <a name="快速开始"></a>
 
-评测自己的模型时，只需提供**模型推理服务和专用 Adapter**。Adapter 封装模型现有的预测接口；**RoboValue 团队负责查询构造、指标计算、汇总和结果报告**，并在私有测试集上执行评测。完整流程见[模型接入指南](docs/api.md)。
+RoboValue 数据由团队提供。提交模型时，请提供**推理服务（可调用的模型预测 API）**和**模型专用适配器（Adapter）**；**RoboValue 团队负责审核、构造查询，并计算和报告评测指标**。正式测试集由团队保管，不公开下载或供参与者本地评测。
 
-**1. 准备模型服务。**
+**1. 明确模型版本与评测设置。**
 
-在自己的环境中运行模型，说明推理端点、原生请求与响应格式，以及固定的模型和预处理版本。若评测设置需要训练参考示范，请按约定在评测前于模型侧准备。
+说明模型或检查点版本、预处理和提示词修订版本，以及采用的评测设置。评测期间保持这些版本不变。
 
-**2. 实现并检查 Adapter。**
+- **Zero-Shot：** 不进行任务专属微调，也不使用参考示范。
+- **One-Shot：** 通过适配器使用团队在评测端提供的每任务 1 条参考示范。
+- **Full-Shot（计划中）：** 在提供服务前，使用团队提供的训练集完成微调，并记录训练设置。微调后的模型使用与 Zero-Shot 相同的推理接口，无需在每次查询中附带训练示范。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
+
+**2. 提供推理服务。**
+
+模型可以继续在你的环境中运行。请提供可访问的服务端点，并说明原生输入输出格式和身份认证要求。服务会接收推理所需的观测和指令；测试标签与评分由组织方掌握。若观测数据必须保留在组织方管控的系统内，则将服务部署在该环境中。
+
+**3. 实现模型专用适配器。**
+
+参考 [Adapter 接口](src/vmbmk/adapters/base.py)和 [CPU mock 适配器](src/vmbmk/adapters/mock_service.py)，按模型要求准备相机视角、历史观测、采样帧、填充和预处理，再调用服务并返回模型预测。请说明这些输入要求，并确认所需观测数据可用。仅实现模型支持的 `value`、`compare` 和/或 `subtask` 方法。因不支持相应操作而无法评测的指标记为 **N/A，而非零分**。
+
+**4. 交付接入材料并对接评测。**
+
+向 [RoboValue 团队](#contact)提供适配器源码与依赖、示例配置、服务说明、模型和预处理版本、评测设置，以及可运行的合成数据集成示例。连接信息和凭据通过私密渠道分享；凭据从环境变量中读取。团队审核接入后，按约定协议运行适用指标。
+
+适配器示例与交付清单见 [Service & Adapter](https://robovalue-benchmark.github.io/doc/model-api/)；各方职责和结果报告流程见[评测流程](https://robovalue-benchmark.github.io/doc/get-started/evaluation/)。
+
+<details>
+<summary><strong>适配器方法与预测语义</strong></summary>
+
+| 方法 | 每条查询的输入 | 返回内容 |
+| --- | --- | --- |
+| `value` | 一条观测序列和任务指令 | 以模型原生单位表示的有限标量 |
+| `compare` | 按 A、B 顺序排列的两条观测序列和任务指令 | 有限的比较分数，需说明分数方向的含义 |
+| `subtask` | 一条观测序列和任务指令 | 非空的预测子任务描述 |
+
+每种方法接收一批查询，并按相同顺序为每条查询返回一个预测。保留模型原生的预测目标、单位和分数方向，无需统一进行最小—最大归一化。请声明 `compare` 使用模型的原生比较，还是 `V(b) − V(a)`；仅当差值符合模型的比较语义时，才使用现有差值辅助函数。二者是明确选择的实现方式，不会自动作为彼此的备用方案。
+
+对于 SIA，返回预测的子任务描述，由组织方的评判器计算分数。服务调用失败时应报错，不得返回零值预测或 N/A。
+
+</details>
+
+<details>
+<summary><strong>运行公开 CPU mock 示例检查</strong></summary>
+
+先准备 **Python 3.10+**。可用 `python3 --version` 检查版本；如果默认版本过旧，请将下方创建环境命令中的 `python3` 换为已安装的兼容解释器，例如 `python3.12`。以下命令适用于 macOS / Linux：
 
 ```bash
 GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/RoboValue-Benchmark/RoboValue.git
 cd RoboValue
-```
-
-参考 [Adapter 接口](src/vmbmk/adapters/base.py)和 [CPU mock Adapter](src/vmbmk/adapters/mock_service.py)，按模型原生方式完成输入准备、服务调用和输出映射。只实现模型支持的操作，并按原始查询顺序返回预测：
-
-| 方法 | 返回内容 |
-| --- | --- |
-| `value` | 模型给出的标量评价 |
-| `compare` | 对有序上下文 A、B 的比较分数 |
-| `subtask` | 当前子任务的文本描述 |
-
-保留模型原生的相机视角、历史输入要求和输出语义。RoboValue 会根据这些预测计算评测指标。
-
-使用已安装 **PyYAML 和 Pillow 的 Python 3.10+**，可运行公开的 CPU mock 示例检查：
-
-```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install PyYAML Pillow
 PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_service.py -v
 ```
 
-该检查使用合成图像验证示例 Adapter，无需 GPU、模型权重、运行中的 API 或私有测试数据。[示例配置](configs/mock_service.example.yaml)展示交付格式，其中路径需要按部署环境填写。
+克隆命令会跳过模型权重的大文件下载。测试自动生成临时数据和合成图像，用本地演示预测验证 mock 适配器；成功时最后显示 `OK`。无需 GPU、模型权重、运行中的 API 或私有测试数据。该检查不会调用你的服务，也不构成模型的正式评测。
 
-**3. 对接正式评测。**
+接入自己的模型时，请将 mock 的输入准备和预测函数替换为模型自身的输入策略与服务调用，再通过合成示例验证集成。[示例配置](configs/mock_service.example.yaml)展示交付格式，其中路径需要按部署环境填写。
 
-向 [RoboValue 团队](#contact)提供 Adapter、示例配置、服务说明、模型与预处理版本，以及可运行的合成示例。服务凭据单独提供。团队审核接入后，使用私有测试集运行适用指标。
+</details>
 
 <details>
 <summary><strong>更多文档</strong></summary>
 
 | 指南 | 内容 |
 | --- | --- |
-| [基线配置](docs/baselines/README.md) | 安装前置条件与各模型的使用说明 |
-| [数据准备](docs/data.md) | 数据集结构、元数据、标注和资源路径 |
+| [基线配置](docs/baselines/README.md) | 评测端按需部署基线模型的前置条件与使用说明 |
+| [数据准备](docs/data.md) | 评测端的数据集结构、元数据、标注和资源路径 |
 | [配置与命令](docs/configuration.md) | YAML 字段、评测模式和 CLI 用法 |
-| [模型服务与 Adapter](docs/api.md) | 接入交付、原生接口、参考示范和 CPU mock 示例 |
+| [Service & Adapter](https://robovalue-benchmark.github.io/doc/model-api/) | 接入交付、原生接口、参考示范和适配器示例 |
 | [环境详情](docs/environments.md) | 依赖锁定文件、自定义根目录和原生依赖构建 |
 | [指标实现说明](docs/metric_alignment.md) | 评分对齐与协议变更 |
 | [结果接口](docs/result_publication.md) | 验证、发布和 SIA 中间输出 |
@@ -161,15 +189,17 @@ PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_
 
 ## 🗂️ Repository Structure
 
+主要代码、配置与入口如下（省略部分文件）：
+
 ```text
 RoboValue/
-├── configs/              # 各模型的评测配置模板
-├── envs/                 # 隔离运行环境、依赖锁定与安装脚本
+├── configs/              # 通用、基线模型与 mock 评测配置模板
+├── envs/                 # 模型环境定义、依赖锁定与安装脚本
 ├── src/vmbmk/
 │   ├── adapters/         # 模型集成与统一接口
 │   ├── metrics/          # 查询规划与指标评分
-│   ├── data/             # 数据集验证与轨迹回放
-│   ├── inference/        # 类型化查询与模型工作进程
+│   ├── data/             # 数据集读取、验证与轨迹回放代码
+│   ├── inference/        # 查询与结果类型、推理调度与工作进程
 │   ├── runner/           # 评测、批处理与断点续跑
 │   ├── tools/            # 数据检查、结果处理与可视化
 │   └── cli.py            # 命令行入口
@@ -178,11 +208,9 @@ RoboValue/
 └── vmbmk.sh              # 评测启动脚本
 ```
 
-数据集、下载的模型资源、运行环境和生成结果单独配置；存储约定详见[数据准备](docs/data.md)与[基线配置](docs/baselines/README.md#source-runtime-and-checkpoint-roots)。随仓库分发的 LIV 资源使用 Git LFS。
-
 ## 📝 引用 <a name="引用"></a>
 
-如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的论文。正式 BibTeX 条目将在此补充。
+如果 **RoboValue** 对你的研究有所帮助，欢迎引用我们的论文。论文链接和正式 BibTeX 条目待补充。
 
 ## 📬 Contact <a name="contact"></a>
 
@@ -191,8 +219,8 @@ RoboValue/
 - **Shengbang Liu**: [liushengbang0209@gmail.com](mailto:liushengbang0209@gmail.com)
 - **Zhengye Du**: [duzhengye20060120@gmail.com](mailto:duzhengye20060120@gmail.com)
 - **Zhilong Wan**: [zhilongwan666@gmail.com](mailto:zhilongwan666@gmail.com)
-- **Chang Ge**: [gechang0706@gmail.com](mailto:gechang0706@gmail.com)
 - **Chenxiang Xia**: [chenxiangxia48@gmail.com](mailto:chenxiangxia48@gmail.com)
+- **Chang Ge**: [gechang0706@gmail.com](mailto:gechang0706@gmail.com)
 - **Jinyang Xiao**: [xiaojy36@gmail.com](mailto:xiaojy36@gmail.com)
 - **Nan Wang**: [bigcileng@gmail.com](mailto:bigcileng@gmail.com)
 - **Chao Yu**: [zoeyuchao@gmail.com](mailto:zoeyuchao@gmail.com)
