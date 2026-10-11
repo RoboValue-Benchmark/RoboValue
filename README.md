@@ -59,7 +59,11 @@
   <p><sub><sup>*</sup> Equal contribution&nbsp;&nbsp;<sup>†</sup> Project leader&nbsp;&nbsp;<sup>‡</sup> Corresponding authors</sub></p>
 </div>
 
-**RoboValue** evaluates how reliably robotic value models assess task outcomes and execution processes across simulation and the real world, using diagnostic trajectories and a shared evaluation protocol.
+**RoboValue** is a **fine-grained sim-and-real benchmark** for evaluating whether robotic value models provide reliable feedback throughout task execution. These models support data selection, policy learning, planning, and execution monitoring, yet strong final-outcome or forward-progress scores can still hide errors in intermediate value judgments.
+
+Across **35 manipulation tasks (15 simulation and 20 real-world)**, RoboValue evaluates four complementary capabilities: **Task-State Understanding**, **Temporal Progress Monitoring**, **Failure and Recovery Reasoning**, and **Value Consistency**. Diagnostic trajectories and instruction contrasts probe failures such as assigning higher values during reverse playback, overlooking completed subtasks when similar states recur, and mistaking an unsuccessful recovery for improvement.
+
+Shared interfaces and model-specific adapters enable comparisons across heterogeneous models while preserving their native value semantics. Separate **cross-embodiment** and **cross-environment** evaluations test generalization, while capability profiles help identify specific weaknesses in value feedback and directions for improving value supervision.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
