@@ -36,7 +36,7 @@
     <a href="https://gechang27.github.io/">Chang&nbsp;Ge</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://xiaojy36.github.io/">Jinyang&nbsp;Xiao</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://bigcileng.github.io/">Nan&nbsp;Wang</a><sup>2,†</sup>&nbsp;&nbsp;
-    Zhipeng&nbsp;Hu<sup>1</sup><br />
+    <a href="https://huzp22.github.io/">Zhipeng&nbsp;Hu</a><sup>1</sup><br />
     <a href="https://scholar.google.com/citations?user=zmSByPoAAAAJ">Huining&nbsp;Yuan</a><sup>1</sup>&nbsp;&nbsp;
     <a href="https://scholar.google.com/citations?user=wb79fkMAAAAJ">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
     <a href="https://yuechen0614.github.io/">Yue&nbsp;Chen</a><sup>3,5</sup>&nbsp;&nbsp;
