@@ -26,6 +26,39 @@
   <sub>RoboValue: A Fine-Grained Sim-and-Real Benchmark<br />for Unified Evaluation of Robotic Value Models</sub>
 </h1>
 
+<div align="center">
+  <p>
+    <a href="https://liushb9.github.io/">Shengbang&nbsp;Liu</a><sup>1,2,*</sup>&nbsp;&nbsp;
+    <a href="https://duzhengye-droid.github.io/">Zhengye&nbsp;Du</a><sup>1,2,*</sup>&nbsp;&nbsp;
+    <a href="https://loongwz.github.io/">Zhilong&nbsp;Wan</a><sup>1,2,*</sup>&nbsp;&nbsp;
+    Honghao&nbsp;Su<sup>3,*</sup><br />
+    <a href="https://xcxjasonhsia.github.io/">Chenxiang&nbsp;Xia</a><sup>1</sup>&nbsp;&nbsp;
+    Chang&nbsp;Ge<sup>4</sup>&nbsp;&nbsp;
+    <a href="https://xiaojy36.github.io/">Jinyang&nbsp;Xiao</a><sup>4</sup>&nbsp;&nbsp;
+    <a href="https://bigcileng.github.io/">Nan&nbsp;Wang</a><sup>2,†</sup>&nbsp;&nbsp;
+    Zhipeng&nbsp;Hu<sup>1</sup><br />
+    <a href="https://github.com/HuiningYuan">Huining&nbsp;Yuan</a><sup>1</sup>&nbsp;&nbsp;
+    <a href="https://github.com/yushuang200109011">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
+    <a href="https://yuechen0614.github.io/">Yue&nbsp;Chen</a><sup>3,5</sup>&nbsp;&nbsp;
+    <a href="https://tianxingchen.github.io/">Tianxing&nbsp;Chen</a><sup>3,6</sup>&nbsp;&nbsp;
+    Chuankang&nbsp;Li<sup>2</sup><br />
+    <a href="https://openreview.net/profile?id=~Maoqing_Yao1">Maoqing&nbsp;Yao</a><sup>2</sup>&nbsp;&nbsp;
+    <a href="https://ssr-group.net/">Wenbo&nbsp;Ding</a><sup>1,3</sup>&nbsp;&nbsp;
+    <a href="https://nicsefc.ee.tsinghua.edu.cn/people/YuWang">Yu&nbsp;Wang</a><sup>1</sup>&nbsp;&nbsp;
+    <a href="https://sundrops.github.io/">Guanghui&nbsp;Ren</a><sup>2,‡</sup>&nbsp;&nbsp;
+    <a href="https://zoeyuchao.github.io/">Chao&nbsp;Yu</a><sup>1,‡</sup>
+  </p>
+  <p>
+    <sup>1</sup>Tsinghua&nbsp;University&nbsp;&nbsp;
+    <sup>2</sup>AgiBot&nbsp;&nbsp;
+    <sup>3</sup>Xspark&nbsp;AI<br />
+    <sup>4</sup>Sun&nbsp;Yat-sen&nbsp;University&nbsp;&nbsp;
+    <sup>5</sup>Peking&nbsp;University&nbsp;&nbsp;
+    <sup>6</sup>The&nbsp;University&nbsp;of&nbsp;Hong&nbsp;Kong
+  </p>
+  <p><sub><sup>*</sup> Equal contribution&nbsp;&nbsp;<sup>†</sup> Project leader&nbsp;&nbsp;<sup>‡</sup> Corresponding authors</sub></p>
+</div>
+
 **RoboValue** evaluates how reliably robotic value models assess task outcomes and execution processes across simulation and the real world, using diagnostic trajectories and a shared evaluation protocol.
 
 <div align="center">
