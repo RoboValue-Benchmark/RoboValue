@@ -33,7 +33,7 @@
     <a href="https://loongwz.github.io/">Zhilong&nbsp;Wan</a><sup>1,2,*</sup>&nbsp;&nbsp;
     <a href="https://scholar.google.com/citations?user=gAcJUVQAAAAJ">Honghao&nbsp;Su</a><sup>3,*</sup><br />
     <a href="https://xcxjasonhsia.github.io/">Chenxiang&nbsp;Xia</a><sup>1</sup>&nbsp;&nbsp;
-    Chang&nbsp;Ge<sup>4</sup>&nbsp;&nbsp;
+    <a href="https://gechang27.github.io/">Chang&nbsp;Ge</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://xiaojy36.github.io/">Jinyang&nbsp;Xiao</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://bigcileng.github.io/">Nan&nbsp;Wang</a><sup>2,†</sup>&nbsp;&nbsp;
     Zhipeng&nbsp;Hu<sup>1</sup><br />
@@ -41,7 +41,7 @@
     <a href="https://scholar.google.com/citations?user=wb79fkMAAAAJ">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
     <a href="https://yuechen0614.github.io/">Yue&nbsp;Chen</a><sup>3,5</sup>&nbsp;&nbsp;
     <a href="https://tianxingchen.github.io/">Tianxing&nbsp;Chen</a><sup>3,6</sup>&nbsp;&nbsp;
-    Chuankang&nbsp;Li<sup>2</sup><br />
+    <a href="https://github.com/lck1201">Chuankang&nbsp;Li</a><sup>2</sup><br />
     <a href="https://openreview.net/profile?id=~Maoqing_Yao1">Maoqing&nbsp;Yao</a><sup>2</sup>&nbsp;&nbsp;
     <a href="https://ssr-group.net/">Wenbo&nbsp;Ding</a><sup>1,3</sup>&nbsp;&nbsp;
     <a href="https://nicsefc.ee.tsinghua.edu.cn/people/YuWang">Yu&nbsp;Wang</a><sup>1</sup>&nbsp;&nbsp;
@@ -59,11 +59,7 @@
   <p><sub><sup>*</sup> 共同贡献&nbsp;&nbsp;<sup>†</sup> 项目负责人&nbsp;&nbsp;<sup>‡</sup> 通讯作者</sub></p>
 </div>
 
-**RoboValue** 是一个面向机器人价值模型的**细粒度仿真与真实世界评测基准**，检验模型能否在任务执行全程提供可靠反馈。价值模型为数据筛选、策略学习、动作规划和执行监测提供依据，但较高的最终结果判别得分或正向进度相关性，仍可能掩盖执行过程中的价值判断错误。
-
-RoboValue 覆盖 **35 个操作任务（15 个仿真任务、20 个真实世界任务）**，从**任务状态理解**、**时序进度监测**、**失败与恢复推理**和**价值一致性**四类互补能力展开评测。通过诊断轨迹与指令对照，检验模型是否会在逆序回放时仍给出更高价值、在相似状态再次出现时忽略已完成的子任务，或将无效恢复误判为进展。
-
-统一接口与模型专用适配器使不同类型的模型能够在保留原生价值语义的前提下进行比较。独立的**跨本体**与**跨环境**评测检验泛化能力，分能力表现进一步帮助定位价值反馈的具体弱点，并为改进价值模型监督提供方向。
+**RoboValue** 是一个面向机器人价值模型的细粒度评测基准，用于检验模型能否准确判断任务是否完成、执行进展如何。它覆盖 **15 个仿真任务与 20 个真实世界任务**，评测任务理解、进度跟踪、失败与恢复判断以及价值一致性。通过统一评测协议和排行榜，RoboValue 帮助研究者比较模型、定位不可靠的价值反馈，为机器人学习、规划和执行监测中的模型改进提供依据。
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" />

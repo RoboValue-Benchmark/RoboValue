@@ -33,7 +33,7 @@
     <a href="https://loongwz.github.io/">Zhilong&nbsp;Wan</a><sup>1,2,*</sup>&nbsp;&nbsp;
     <a href="https://scholar.google.com/citations?user=gAcJUVQAAAAJ">Honghao&nbsp;Su</a><sup>3,*</sup><br />
     <a href="https://xcxjasonhsia.github.io/">Chenxiang&nbsp;Xia</a><sup>1</sup>&nbsp;&nbsp;
-    Chang&nbsp;Ge<sup>4</sup>&nbsp;&nbsp;
+    <a href="https://gechang27.github.io/">Chang&nbsp;Ge</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://xiaojy36.github.io/">Jinyang&nbsp;Xiao</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://bigcileng.github.io/">Nan&nbsp;Wang</a><sup>2,†</sup>&nbsp;&nbsp;
     Zhipeng&nbsp;Hu<sup>1</sup><br />
@@ -41,7 +41,7 @@
     <a href="https://scholar.google.com/citations?user=wb79fkMAAAAJ">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
     <a href="https://yuechen0614.github.io/">Yue&nbsp;Chen</a><sup>3,5</sup>&nbsp;&nbsp;
     <a href="https://tianxingchen.github.io/">Tianxing&nbsp;Chen</a><sup>3,6</sup>&nbsp;&nbsp;
-    Chuankang&nbsp;Li<sup>2</sup><br />
+    <a href="https://github.com/lck1201">Chuankang&nbsp;Li</a><sup>2</sup><br />
     <a href="https://openreview.net/profile?id=~Maoqing_Yao1">Maoqing&nbsp;Yao</a><sup>2</sup>&nbsp;&nbsp;
     <a href="https://ssr-group.net/">Wenbo&nbsp;Ding</a><sup>1,3</sup>&nbsp;&nbsp;
     <a href="https://nicsefc.ee.tsinghua.edu.cn/people/YuWang">Yu&nbsp;Wang</a><sup>1</sup>&nbsp;&nbsp;
@@ -59,11 +59,7 @@
   <p><sub><sup>*</sup> Equal contribution&nbsp;&nbsp;<sup>†</sup> Project leader&nbsp;&nbsp;<sup>‡</sup> Corresponding authors</sub></p>
 </div>
 
-**RoboValue** is a **fine-grained sim-and-real benchmark** for evaluating whether robotic value models provide reliable feedback throughout task execution. These models support data selection, policy learning, planning, and execution monitoring, yet strong final-outcome or forward-progress scores can still hide errors in intermediate value judgments.
-
-Across **35 manipulation tasks (15 simulation and 20 real-world)**, RoboValue evaluates four complementary capabilities: **Task-State Understanding**, **Temporal Progress Monitoring**, **Failure and Recovery Reasoning**, and **Value Consistency**. Diagnostic trajectories and instruction contrasts probe failures such as assigning higher values during reverse playback, overlooking completed subtasks when similar states recur, and mistaking an unsuccessful recovery for improvement.
-
-Shared interfaces and model-specific adapters enable comparisons across heterogeneous models while preserving their native value semantics. Separate **cross-embodiment** and **cross-environment** evaluations test generalization, while capability profiles help identify specific weaknesses in value feedback and directions for improving value supervision.
+**RoboValue** is a fine-grained benchmark for evaluating how well robotic value models judge task success and execution progress. It covers **15 simulation and 20 real-world tasks**, testing task understanding, progress tracking, failure and recovery reasoning, and value consistency. With a shared evaluation protocol and leaderboard, RoboValue helps researchers compare models, diagnose unreliable feedback, and guide improvements for robot learning, planning, and execution monitoring.
 
 <div align="center">
   <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
