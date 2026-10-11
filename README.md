@@ -31,14 +31,14 @@
     <a href="https://liushb9.github.io/">Shengbang&nbsp;Liu</a><sup>1,2,*</sup>&nbsp;&nbsp;
     <a href="https://duzhengye-droid.github.io/">Zhengye&nbsp;Du</a><sup>1,2,*</sup>&nbsp;&nbsp;
     <a href="https://loongwz.github.io/">Zhilong&nbsp;Wan</a><sup>1,2,*</sup>&nbsp;&nbsp;
-    Honghao&nbsp;Su<sup>3,*</sup><br />
+    <a href="https://scholar.google.com/citations?user=gAcJUVQAAAAJ">Honghao&nbsp;Su</a><sup>3,*</sup><br />
     <a href="https://xcxjasonhsia.github.io/">Chenxiang&nbsp;Xia</a><sup>1</sup>&nbsp;&nbsp;
     Chang&nbsp;Ge<sup>4</sup>&nbsp;&nbsp;
     <a href="https://xiaojy36.github.io/">Jinyang&nbsp;Xiao</a><sup>4</sup>&nbsp;&nbsp;
     <a href="https://bigcileng.github.io/">Nan&nbsp;Wang</a><sup>2,†</sup>&nbsp;&nbsp;
     Zhipeng&nbsp;Hu<sup>1</sup><br />
-    <a href="https://github.com/HuiningYuan">Huining&nbsp;Yuan</a><sup>1</sup>&nbsp;&nbsp;
-    <a href="https://github.com/yushuang200109011">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
+    <a href="https://scholar.google.com/citations?user=zmSByPoAAAAJ">Huining&nbsp;Yuan</a><sup>1</sup>&nbsp;&nbsp;
+    <a href="https://scholar.google.com/citations?user=wb79fkMAAAAJ">Shu’ang&nbsp;Yu</a><sup>1</sup>&nbsp;&nbsp;
     <a href="https://yuechen0614.github.io/">Yue&nbsp;Chen</a><sup>3,5</sup>&nbsp;&nbsp;
     <a href="https://tianxingchen.github.io/">Tianxing&nbsp;Chen</a><sup>3,6</sup>&nbsp;&nbsp;
     Chuankang&nbsp;Li<sup>2</sup><br />
