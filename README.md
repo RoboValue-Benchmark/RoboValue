@@ -82,9 +82,9 @@
 </div>
 
 <details>
-<summary><strong>Capability and metric reference</strong></summary>
+<summary><strong>Overview of RoboValue Evaluation Metrics</strong></summary>
 
-**Overview of RoboValue Evaluation Metrics.** Fine-grained capabilities assessed within the four complementary evaluation dimensions.
+Fine-grained capabilities assessed within the four complementary evaluation dimensions.
 
 <div align="center">
   <img src="docs/assets/evaluation-metrics.png" alt="RoboValue evaluation metrics: task-state understanding (SA, TGA-CT, TGA-CF, SIA), temporal progress monitoring (VOC, Cycle-VOC, Memory-VOC), failure and recovery reasoning (FPL, TRR), and value consistency (VS, CSVC)" width="100%" />

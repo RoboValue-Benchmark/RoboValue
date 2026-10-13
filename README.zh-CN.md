@@ -82,9 +82,9 @@
 </div>
 
 <details>
-<summary><strong>能力与指标速查</strong></summary>
+<summary><strong>RoboValue 评测指标概览</strong></summary>
 
-**RoboValue 评测指标概览。** 在四个互补评测维度下考察的细粒度能力。
+在四个互补评测维度下考察的细粒度能力。
 
 <div align="center">
   <img src="docs/assets/evaluation-metrics.png" alt="RoboValue 评测指标：任务状态理解（SA、TGA-CT、TGA-CF、SIA）、时序进度监测（VOC、Cycle-VOC、Memory-VOC）、失败与恢复推理（FPL、TRR）及价值一致性（VS、CSVC）" width="100%" />
