@@ -62,7 +62,7 @@
 **RoboValue** is a fine-grained benchmark for evaluating how well robotic value models judge task success and execution progress. It covers **15 simulation and 20 real-world tasks**, testing task understanding, progress tracking, failure and recovery reasoning, and value consistency. With a shared evaluation protocol and leaderboard, RoboValue helps researchers compare models, diagnose unreliable feedback, and guide improvements for robot learning, planning, and execution monitoring.
 
 <div align="center">
-  <img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" />
+  <a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" /></a>
 </div>
 
 ## 📰 What's New <a name="whats-new"></a>
@@ -84,20 +84,21 @@
 <details>
 <summary><strong>Capability and metric reference</strong></summary>
 
-| Capability | Metric | What it evaluates |
-| --- | --- | --- |
-| **Task-State Understanding** | **SA ↑** — Success Accuracy | Whether successful episodes receive higher terminal values than unsuccessful ones |
-| | **TGA-CT / TGA-CF ↑** — Task Grounding Accuracy | Whether the correct instruction yields a larger value gain than cross-task (CT) or counterfactual (CF) instructions for the same execution |
-| | **SIA ↑** — Subtask Identification Accuracy | Identification of the active subtask from generated descriptions, scored by a separate LLM judge |
-| **Temporal Progress Monitoring** | **VOC ↑** — Value-Order Correlation | Rank correlation between predicted values and temporal progress along successful trajectories |
-| | **Cycle-VOC ↑** | Progress and regression during continuous forward–reverse playback, with preceding history retained |
-| | **Memory-VOC ↑** | Progress ordering in long-horizon trajectories where similar visual states recur under different execution histories |
-| **Failure and Recovery Reasoning** | **FPL ↓** — Failure-Point Localization | Normalized timing error between the onset inferred from the largest detected value decline and the annotated failure onset |
-| | **TRR ↑** — Trajectory Recovery Reasoning | Required value trends during initial failure, continued error, recovery attempts, and their successful or failed outcomes |
-| **Value Consistency** | **VS ↑** — Value Stability | Stable, informative feedback that avoids unnecessary fluctuations and prolonged flat regions |
-| | **CSVC ↑** — Cross-Solution Value Consistency | Comparable local value gains for the same semantic subtask across different valid solutions |
+**Table 1: Overview of RoboValue Evaluation Metrics.** Fine-grained capabilities assessed within the four complementary evaluation dimensions.
 
-**↑ Higher is better; ↓ lower is better.**
+| Dimension | Metric | Capability |
+| --- | --- | --- |
+| **Task-State Understanding** | **SA** | Discriminating overall goal satisfaction from partial or failed execution. |
+| | **TGA-CT** | Grounding value judgments in language-specified goals across different tasks. |
+| | **TGA-CF** | Fine-grained grounding of object, action, placement, and constraint requirements. |
+| | **SIA** | Recognizing the active semantic subtask within a multi-stage execution. |
+| **Temporal Progress Monitoring** | **VOC** | Ordering intermediate states by their progress toward task completion. |
+| | **Cycle-VOC** | Distinguishing the direction of task progress from elapsed-time cues. |
+| | **Memory-VOC** | Using execution history to resolve progress ambiguity at recurring visual states. |
+| **Failure and Recovery Reasoning** | **FPL** | Temporally localizing the onset of task-relevant execution errors. |
+| | **TRR** | Distinguishing unresolved errors, corrective progress, and recovery outcomes. |
+| **Value Consistency** | **VS** | Maintaining stable local value feedback while retaining informative updates. |
+| | **CSVC** | Consistent valuation of semantic subtasks across valid execution orders. |
 
 </details>
 
