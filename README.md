@@ -84,21 +84,11 @@
 <details>
 <summary><strong>Capability and metric reference</strong></summary>
 
-**Table 1: Overview of RoboValue Evaluation Metrics.** Fine-grained capabilities assessed within the four complementary evaluation dimensions.
+**Overview of RoboValue Evaluation Metrics.** Fine-grained capabilities assessed within the four complementary evaluation dimensions.
 
-| Dimension | Metric | Capability |
-| --- | --- | --- |
-| **Task-State Understanding** | **SA** | Discriminating overall goal satisfaction from partial or failed execution. |
-| | **TGA-CT** | Grounding value judgments in language-specified goals across different tasks. |
-| | **TGA-CF** | Fine-grained grounding of object, action, placement, and constraint requirements. |
-| | **SIA** | Recognizing the active semantic subtask within a multi-stage execution. |
-| **Temporal Progress Monitoring** | **VOC** | Ordering intermediate states by their progress toward task completion. |
-| | **Cycle-VOC** | Distinguishing the direction of task progress from elapsed-time cues. |
-| | **Memory-VOC** | Using execution history to resolve progress ambiguity at recurring visual states. |
-| **Failure and Recovery Reasoning** | **FPL** | Temporally localizing the onset of task-relevant execution errors. |
-| | **TRR** | Distinguishing unresolved errors, corrective progress, and recovery outcomes. |
-| **Value Consistency** | **VS** | Maintaining stable local value feedback while retaining informative updates. |
-| | **CSVC** | Consistent valuation of semantic subtasks across valid execution orders. |
+<div align="center">
+  <img src="docs/assets/evaluation-metrics.png" alt="RoboValue evaluation metrics: task-state understanding (SA, TGA-CT, TGA-CF, SIA), temporal progress monitoring (VOC, Cycle-VOC, Memory-VOC), failure and recovery reasoning (FPL, TRR), and value consistency (VS, CSVC)" width="100%" />
+</div>
 
 </details>
 
