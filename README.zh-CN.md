@@ -5,7 +5,8 @@
 <div align="center">
   <!-- Add official arXiv and Hugging Face URLs when available. -->
   <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv 论文：链接待补充" height="20" />
-  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="HuggingFace：链接待补充" height="20" />
+<a href="https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data">
+  <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="Hugging Face training dataset" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="文档" height="20" /></a>
   <!-- Add the Chinese documentation URL when available. -->
   <img src="https://img.shields.io/badge/中文文档-red?logo=readthedocs" alt="中文文档：链接待补充" height="20" />
