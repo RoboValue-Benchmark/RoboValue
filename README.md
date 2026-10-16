@@ -63,7 +63,7 @@
 **RoboValue** is a fine-grained benchmark for evaluating how well robotic value models judge task success and execution progress. It covers **15 simulation and 20 real-world tasks**, testing task understanding, progress tracking, failure and recovery reasoning, and value consistency. With a shared evaluation protocol and leaderboard, RoboValue helps researchers compare models, diagnose unreliable feedback, and guide improvements for robot learning, planning, and execution monitoring.
 
 <div align="center">
-  <a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" /></a>
+  <a href="docs/assets/overview-20261016.pdf"><img src="docs/assets/overview-20261016.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" /></a>
 </div>
 
 ## 📰 What's New <a name="whats-new"></a>

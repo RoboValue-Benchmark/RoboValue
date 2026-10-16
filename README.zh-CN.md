@@ -63,7 +63,7 @@
 **RoboValue** 是一个面向机器人价值模型的细粒度评测基准，用于检验模型能否准确判断任务是否完成、执行进展如何。它覆盖 **15 个仿真任务与 20 个真实世界任务**，评测任务理解、进度跟踪、失败与恢复判断以及价值一致性。通过统一评测协议和排行榜，RoboValue 帮助研究者比较模型、定位不可靠的价值反馈，为机器人学习、规划和执行监测中的模型改进提供依据。
 
 <div align="center">
-  <a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" /></a>
+  <a href="docs/assets/overview-20261016.pdf"><img src="docs/assets/overview-20261016.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" /></a>
 </div>
 
 ## 📰 最新动态 <a name="最新动态"></a>
