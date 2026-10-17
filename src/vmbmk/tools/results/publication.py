@@ -353,6 +353,11 @@ def _merge_metric_result(
         raise ValueError(f"{metric} merge requires result objects")
     if existing.get("protocol") != incoming.get("protocol"):
         raise ValueError(f"Cannot merge {metric} results with different protocols")
+    if metric == "fpl":
+        from vmbmk.metrics.fpl import FPL_PROTOCOL
+
+        if incoming.get("protocol") != FPL_PROTOCOL:
+            raise ValueError("Cannot merge FPL results with an obsolete cohort protocol")
     if metric == "csvc":
         from vmbmk.metrics.csvc import CSVC_PROTOCOL, aggregate_csvc
 
@@ -452,6 +457,11 @@ def _validate_publication(job: PublicationRequest, merge_existing: bool) -> dict
     for metric, result in job.result.items():
         if not isinstance(result, dict) or result.get("status") == "generated":
             raise ValueError(f"{metric} is not a completed scored result")
+        if metric == "fpl":
+            from vmbmk.metrics.fpl import FPL_PROTOCOL
+
+            if result.get("protocol") != FPL_PROTOCOL:
+                raise ValueError("Cannot publish FPL results with an obsolete cohort protocol")
         json.dumps(result, allow_nan=False)
         if merge_existing and metric not in {
             "csvc", "voc", "cycle_voc", "voc_mem", "sa", "tga_easy", "tga_hard", "fpl", "trr", "vs"

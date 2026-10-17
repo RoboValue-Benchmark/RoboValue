@@ -22,6 +22,7 @@ from vmbmk.metrics.registry import (
 from vmbmk.adapters.registry import ADAPTERS, adapter_class
 from vmbmk.metrics.sia.scoring import SIA_AGGREGATION, SIA_EPISODE_SELECTION, SIA_PROTOCOL
 from vmbmk.metrics.csvc import CSVC_PROTOCOL
+from vmbmk.metrics.fpl import FPL_PROTOCOL
 from vmbmk.metrics.trr import TRR_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.vs import VS_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.forward import VOC_PROTOCOL
@@ -110,6 +111,14 @@ def _read_metrics(path: Path, expected: set[str], label: str) -> dict[str, Any]:
     if unknown:
         raise ConfigurationError(
             f"{label} metrics checkpoint contains unknown metrics: {unknown}"
+        )
+    if "fpl" in value and (
+        not isinstance(value["fpl"], dict)
+        or value["fpl"].get("protocol") != FPL_PROTOCOL
+    ):
+        raise ConfigurationError(
+            f"{label} FPL checkpoint uses an obsolete cohort protocol; "
+            "rescore cached values in a new output directory"
         )
     if "sia" in value and (
         not isinstance(value["sia"], dict)

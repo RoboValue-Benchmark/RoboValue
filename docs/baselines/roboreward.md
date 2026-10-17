@@ -42,10 +42,11 @@ Set `python: <REPO>/.model-envs/roboreward/bin/python` and
 `gpu`, `tasks` and `metrics` for your input. Top-level relative paths resolve
 from the config directory, as explained in [data preparation](../data.md).
 
-The [runner policy](../../src/vmbmk/runner/policy.py) currently disables the VOC
-family (`voc`, `voc_mem`, and `cycle_voc`). VS and CSVC remain implemented, but
-the paper does not report RoboReward evaluations for these two metrics. Code
-support does not imply coverage in the reported results.
+The [runner policy](../../src/vmbmk/runner/policy.py) permits the VOC family
+(`voc`, `voc_mem`, and `cycle_voc`). VS and CSVC (`csvc`, alias `cspc`) are
+excluded for RoboReward's discrete outputs, matching the paper. Their benchmark
+coverage is N/A, not a measured zero. Appendix F.3 separately assigns zero to
+missing metrics when computing the paper's normalized leaderboard score.
 
 ```bash
 bash vmbmk.sh validate data/dataset_real

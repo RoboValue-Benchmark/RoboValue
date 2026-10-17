@@ -1,4 +1,34 @@
-# Metric alignment (2026-10-06)
+# Metric alignment (2026-10-18)
+
+## FPL cohort and evaluation eligibility (2026-10-18)
+
+The author confirms that FPL retains successful-recovery (`r_plus`) trajectories
+with annotated failure onsets and excludes only failed-recovery (`r_zero`)
+trajectories. Ordinary annotated failures and continued-error (`r_minus`)
+trajectories remain eligible. The 5 Hz grid, native final-frame anchor, ZigZag
+alpha=0.2, onset error, plateau/tie rules and aggregation order are unchanged.
+
+Metric-scoped FPL dataset loading now reads TRR role metadata. Previously,
+`Dataset.load(..., metrics=["fpl"])` left `trr_role` unset, bypassing the
+existing exclusion. Both full and FPL-only loading are tested, together with
+retaining `r_plus` and rescoring a cache containing extra excluded queries.
+
+The corrected cohort uses `zigzag-onset-normalized-alpha0.2-rzero-excluded-v2`.
+Completed FPL artifacts with the old protocol are rejected, rather than being
+silently relabeled. Reuse raw cached values with `score_fpl` against the corrected
+dataset plan and write a separate versioned artifact; no model inference is
+needed when all retained query IDs and native frames are present. Archived
+results are not overwritten or claimed to be reproduced by unit tests.
+
+RoboReward no longer has a blanket VOC/MEM-VOC/Cycle-VOC prohibition. ProcVLM
+one-shot no longer blacklists `press_by_number` or `swap_blocks`; an exact
+task checkpoint remains required. These policy changes allow the recorded
+evaluations without claiming that every model/environment has been rerun.
+RoboReward VS and CSVC remain excluded as specified by Table 2 and Appendix F.3.
+Missing raw metric coverage is N/A; only the separate normalized leaderboard
+calculation assigns zero to these missing components.
+
+## Previous alignment review
 
 On 2026-10-06 the author confirmed that current VOC is exactly the forward
 half of Cycle-VOC, not the legacy standalone successful-episode cohort.
@@ -24,9 +54,11 @@ within each task followed by task-level averaging. It is not a global geometric
 mean over all tasks, and this correction does not change SIA queries or scores.
 The other reviewed primary metric formulas remain unchanged. This is an
 implementation alignment, not proof that archived model results were reproduced.
-The PDF mentions three boundary pairs for a small set of very short CSVC subtasks
-but does not identify that set or its selection rule; the existing four-pair
-query plan is retained pending the frozen query selection used for those rows.
+The author confirms retaining four CSVC boundary-state pairs, including repeated
+pairs for short spans. Each pair moves inward from the annotated interval's
+endpoints using Python rounding and the existing inward-distance cap; these are
+four state comparisons, not averages over every frame in a time window. The
+manuscript's short-subtask three-pair exception is not adopted in the query plan.
 
 TRR uses binary branch conjunctions and time-coverage-weighted all-pairs
 directions. Only continued error accepts zero. Its default grid is

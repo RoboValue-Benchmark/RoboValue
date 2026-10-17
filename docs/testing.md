@@ -51,6 +51,13 @@ per-module standalone runners or workflow regression modules.
 
 ## Run
 
+FPL cohort regressions cover full and FPL-only loading, exclusion of `r_zero`,
+retention of `r_plus`, extra excluded cached queries, and rejecting legacy
+protocols during resume, result validation, publication and incremental merge.
+`tests/runner/test_policy.py` covers RoboReward's reported VOC eligibility and
+VS/CSVC exclusions, plus ProcVLM memory tasks with and without task checkpoints.
+These focused policy tests do not certify the complete scheduler or GPU runtime.
+
 Model service adapter tests are in tests/adapters/test_mock_service.py. They
 exercise the ordinary CPU worker and runner with synthetic RGB frames, not
 held-out observations or a running API. Coverage includes scalar/comparison/text
@@ -91,10 +98,11 @@ Fixture video files are placeholders.
 
 ## Deliberate exclusions
 
-Rerun/rescore workflows, missing-task completion, schedulers, caches, result
-publication/merging, CLI/configuration plumbing, environment installation,
-workers, and generic data/query/playback infrastructure have no standalone
-automated tests in this suite. The test-scope reduction did not remove their
+Beyond the focused metric-facing regressions above, rerun/rescore workflows,
+missing-task completion, schedulers, caches, result publication/merging,
+CLI/configuration plumbing, environment installation, workers, and generic
+data/query/playback infrastructure have no comprehensive workflow suites.
+The test-scope reduction did not remove their
 production functionality; later refactors require separate, explicitly reported
 validation.
 Selected metric tests now exercise dispatch, shared inference and provenance

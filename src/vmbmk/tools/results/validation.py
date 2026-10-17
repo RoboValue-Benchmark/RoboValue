@@ -16,6 +16,7 @@ from vmbmk.errors import VMBMKError
 from vmbmk.runner.run import RunConfig
 from vmbmk.metrics.registry import QUERY_METRICS, build_metric_queries, selected_task_ids
 from vmbmk.metrics.csvc import CSVC_PROTOCOL
+from vmbmk.metrics.fpl import FPL_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.vs import VS_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.forward import VOC_PROTOCOL
 from vmbmk.inference.queries import query_state
@@ -100,6 +101,8 @@ def _validate_metric_coverage(
     metric_means(metrics)
     for metric, domains in expected.items():
         row = metrics[metric]
+        if metric == "fpl" and row.get("protocol") != FPL_PROTOCOL:
+            raise ValueError("FPL result uses an obsolete cohort protocol; rescore cached values")
         if metric == "csvc" and row.get("protocol") != CSVC_PROTOCOL:
             raise ValueError("CSVC result uses an obsolete scoring protocol")
         if metric == "voc" and row.get("protocol") != VOC_PROTOCOL:

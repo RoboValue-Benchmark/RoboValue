@@ -100,8 +100,10 @@ Metric settings must exist in the templates; domains are never invented.
 --data is explicit. Configs can have arbitrary YAML filenames; generalconfigs
 is an example, not a scheduled run. Config/model identity drives publication.
 Model eligibility and workload constraints live in runner/policy.py,
-separate from runner/batch.py: FailSafe is SIA-only; RoboReward excludes VOC variants;
-ProcVLM LoRA requires matching task checkpoints and retains known exclusions;
+separate from runner/batch.py: FailSafe is SIA-only; RoboReward can run VOC,
+MEM-VOC and Cycle-VOC, but excludes VS/CSVC as in the paper;
+ProcVLM LoRA requires matching task checkpoints without
+a task-name blacklist (including press_by_number and swap_blocks);
 TOPReward TGA keeps its verified batch size. These restrictions are not universal
 runtime certification. Historical environment blocker notes are not active policy.
 Actual scheduling still uses Linux locking. --dry-run does not launch inference,

@@ -40,11 +40,10 @@ class EvaluationPolicy:
 
 _POLICIES = {
     "failsafe": EvaluationPolicy(only_metrics=frozenset({"sia"})),
-    "roboreward": EvaluationPolicy(excluded_metrics=frozenset({"voc", "voc_mem", "cycle_voc"})),
+    "roboreward": EvaluationPolicy(excluded_metrics=frozenset({"vs", "csvc"})),
     "topreward": EvaluationPolicy(batch_size=2, batch_metrics=frozenset({"tga_easy", "tga_hard"})),
     "procvlm_one-shot": EvaluationPolicy(
-        excluded_tasks=frozenset({"press_by_number", "swap_blocks"}),
-        task_metrics=frozenset({"voc", "voc_mem"}), requires_task_checkpoint=True,
+        requires_task_checkpoint=True,
     ),
 }
 

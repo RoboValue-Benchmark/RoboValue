@@ -49,9 +49,10 @@ and set `model_options.checkpoint_by_task` to absolute paths. No public download
 mapping for those experiment-specific assets is certified here. Missing task
 weights must not be silently replaced with the base checkpoint.
 
-For one-shot evaluation, VOC and Memory-VOC exclude `press_by_number` and
-`swap_blocks` because their task-specific LoRA weights are unavailable. The
-[runner policy](../../src/vmbmk/runner/policy.py) enforces this scope.
+For one-shot evaluation, `press_by_number` and `swap_blocks` are permitted
+when their exact task IDs appear in `model_options.checkpoint_by_task`.
+The [runner policy](../../src/vmbmk/runner/policy.py) checks configured task
+checkpoints instead of assuming those weights are universally unavailable.
 
 ```bash
 bash vmbmk.sh validate data/dataset_real

@@ -15,7 +15,7 @@ from vmbmk.metrics.utils.aggregation import summarize_task_scores
 
 FPL_SAMPLE_RATE_HZ = 5.0
 FPL_ZIGZAG_ALPHA = 0.2
-FPL_PROTOCOL = "zigzag-onset-normalized-alpha0.2-v1"
+FPL_PROTOCOL = "zigzag-onset-normalized-alpha0.2-rzero-excluded-v2"
 
 
 def _anchor_frames(episode: Episode) -> list[int]:

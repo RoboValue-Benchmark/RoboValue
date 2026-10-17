@@ -102,20 +102,104 @@ class FPLTest(unittest.TestCase):
                     },
                 },
             )
-            dataset = Dataset.load(data)
+            for metrics in (None, ["fpl"]):
+                with self.subTest(metrics=metrics):
+                    dataset = Dataset.load(data, metrics=metrics)
+                    self.assertEqual(
+                        dataset.episode("task_001", "invalid_recovery").trr_role,
+                        "r_zero",
+                    )
+                    queries = build_fpl_queries(dataset)
+                    self.assertTrue(
+                        all(query.state.episode_id == "single_failure" for query in queries)
+                    )
+                    results = [Result(query.query_id, "value", 0.0) for query in queries]
+                    results.append(
+                        Result("fpl:task_001:invalid_recovery:0", "value", 0.0)
+                    )
+                    scored = score_fpl(dataset, results)
+                    self.assertEqual(
+                        [episode["episode_id"] for episode in scored["episodes"]],
+                        ["single_failure"],
+                    )
+
+    def test_fpl_scoped_loading_retains_successful_recovery(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            data = make_dataset(Path(directory), [("successful_recovery", True)])
+            task = set_task_metadata(data, ["FPL"])
+            metadata = task / "episodes" / "successful_recovery" / "metadata.json"
+            row = json.loads(metadata.read_text(encoding="utf-8"))
+            row["trr"] = {"group_id": "recovery_001", "role": "r_plus"}
+            write_json(metadata, row)
+            write_json(
+                metadata.with_name("annotation.json"),
+                {"fpl": {"failure_start": 20, "failure_end": 40}, "trr": "unused"},
+            )
+            dataset = Dataset.load(data, metrics=["fpl"])
+            self.assertEqual(
+                dataset.episode("task_001", "successful_recovery").trr_role,
+                "r_plus",
+            )
             queries = build_fpl_queries(dataset)
-            self.assertTrue(
-                all(query.state.episode_id == "single_failure" for query in queries)
+            self.assertTrue(queries)
+            scored = score_fpl(
+                dataset, [Result(query.query_id, "value", 0.0) for query in queries]
             )
-            results = [Result(query.query_id, "value", 0.0) for query in queries]
-            results.append(
-                Result("fpl:task_001:invalid_recovery:0", "value", 0.0)
-            )
-            scored = score_fpl(dataset, results)
             self.assertEqual(
                 [episode["episode_id"] for episode in scored["episodes"]],
-                ["single_failure"],
+                ["successful_recovery"],
             )
+
+    def test_completed_fpl_rejects_legacy_cohort_protocol(self) -> None:
+        from vmbmk.tools.results.publication import _merge_metric_result
+        from vmbmk.tools.results.validation import _validate_metric_coverage
+
+        score = {
+            "protocol": "zigzag-onset-normalized-alpha0.2-v1",
+            "mean": 0.5,
+            "domains": {"id": {"mean": 0.5, "tasks": {"task_001": 0.5}}},
+        }
+        coverage = {"fpl": {"id": {"task_001"}}}
+        with self.assertRaisesRegex(ValueError, "FPL result uses an obsolete cohort protocol"):
+            _validate_metric_coverage({"fpl": score}, coverage)
+        with self.assertRaisesRegex(ValueError, "obsolete cohort protocol"):
+            _merge_metric_result("fpl", score, score)
+        score["protocol"] = FPL_PROTOCOL
+        _validate_metric_coverage({"fpl": score}, coverage)
+        self.assertEqual(_merge_metric_result("fpl", score, score)["protocol"], FPL_PROTOCOL)
+
+    def test_fpl_resume_rejects_legacy_cohort_protocol(self) -> None:
+        from vmbmk.errors import ConfigurationError
+        from vmbmk.runner.run import _read_metrics
+
+        with tempfile.TemporaryDirectory() as directory:
+            checkpoint = Path(directory) / "metrics.json"
+            write_json(checkpoint, {"fpl": {"protocol": "zigzag-onset-normalized-alpha0.2-v1"}})
+            with self.assertRaisesRegex(ConfigurationError, "obsolete cohort protocol"):
+                _read_metrics(checkpoint, {"fpl"}, "test")
+            write_json(checkpoint, {"fpl": {"protocol": FPL_PROTOCOL}})
+            self.assertEqual(_read_metrics(checkpoint, {"fpl"}, "test")["fpl"]["protocol"], FPL_PROTOCOL)
+
+    def test_fpl_publication_rejects_legacy_protocol_before_writing(self) -> None:
+        from vmbmk.tools.results.publication import PublicationRequest, publish_result
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "config.yaml"
+            write_json(config, {"model": "topreward"})
+            score = {
+                "protocol": "zigzag-onset-normalized-alpha0.2-v1",
+                "mean": 0.5,
+                "domains": {"id": {"mean": 0.5, "tasks": {"task_001": 0.5}}},
+            }
+            job = PublicationRequest("topreward_qwen32b", config, "test", {"fpl": score})
+            output = root / "published"
+            with self.assertRaisesRegex(ValueError, "obsolete cohort protocol"):
+                publish_result(job, output)
+            self.assertFalse(output.exists())
+            score["protocol"] = FPL_PROTOCOL
+            publish_result(job, output)
+            self.assertTrue((output / "index.json").is_file())
 
     def test_fpl_zigzag_ties_use_shortest_span_then_earliest_start(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

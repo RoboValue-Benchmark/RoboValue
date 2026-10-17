@@ -500,6 +500,7 @@ def _load_episode(
     validate_trr_metadata = requested_metrics is None or bool(
         {
             "vs",
+            "fpl",
             "trr",
             "cycle_voc",
             "tga_easy",
