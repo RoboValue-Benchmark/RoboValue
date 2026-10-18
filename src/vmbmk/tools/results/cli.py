@@ -24,9 +24,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
     descriptions = {
-        "validate": "Validate config, query identity and metric coverage (not SIA).",
-        "status": "Inspect configured non-SIA runs for completion and stale outputs.",
+        "validate": "Validate provenance, query identity, coverage and saved SIA decisions.",
+        "status": "Inspect configured runs for completion and stale outputs.",
         "publish": "Explicitly publish a run or mirror an artifact.",
+        "leaderboard": "Export paper-normalized dimensions and rankings from scored artifacts.",
     }
     for command, description in descriptions.items():
         subparsers.add_parser(command, help=description, add_help=False)
@@ -36,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
         handler = validate_main
     elif args.command == "status":
         from .status import status_main as handler
+    elif args.command == "leaderboard":
+        from .leaderboard import main as handler
     else:
         from .sync import main as handler
     return handler(remaining)

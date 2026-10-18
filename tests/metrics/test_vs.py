@@ -19,6 +19,8 @@ from vmbmk.inference.queries import Result, read_queries, read_results
 from vmbmk.runner.run import _read_metrics, run_evaluation
 from vmbmk.tools.results.validation import _validate_metric_coverage, inspect_result
 from vmbmk.serialization import write_jsonl
+from vmbmk.inference.cache import bind_prediction_cache
+from vmbmk.metrics.cycle_voc_vs.forward import run_voc
 
 
 def make_vs_dataset(root: Path) -> Path:
@@ -39,6 +41,27 @@ def cycle_predictions(dataset: Dataset) -> list[Result]:
 
 
 class VSScoringTest(unittest.TestCase):
+    def test_shared_cycle_rejects_unbound_or_changed_model_predictions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data = make_vs_dataset(root / "data")
+            dataset = Dataset.load(data, metrics=["vs"])
+            source = root / "cycle.jsonl"
+            queries = build_cycle_voc_queries(dataset)
+            model = {"adapter": "mock_service", "model_version": "original"}
+            for runner, metric in ((run_vs, "vs"), (run_voc, "voc")):
+                output = root / f"{metric}.jsonl"
+                write_jsonl(source, (result.to_dict() for result in cycle_predictions(dataset)))
+                with self.subTest(metric=metric):
+                    if not (source.parent / ".inference-identities" / (source.name + ".json")).exists():
+                        with self.assertRaisesRegex(VMBMKError, "provenance is missing"):
+                            runner(data, model, ["task_001"], output, 0, mode="base", domains=["id"], cycle_operation_path=source)
+                        source.unlink()
+                        bind_prediction_cache(data, queries, model, source, None, dataset=dataset)
+                        write_jsonl(source, (result.to_dict() for result in cycle_predictions(dataset)))
+                    with self.assertRaisesRegex(VMBMKError, "inputs or model changed"):
+                        runner(data, {**model, "model_version": "changed"}, ["task_001"], output, 0, mode="base", domains=["id"], cycle_operation_path=source)
+                    self.assertFalse(output.exists())
     def test_native_controls(self) -> None:
         controls = [
             ([0, 1, 2, 3, 4, 5, 6], 1),
@@ -91,10 +114,12 @@ class VSScoringTest(unittest.TestCase):
             dataset = Dataset.load(data, metrics=['vs'])
             source = root / 'cycle.jsonl'
             output = root / 'vs.jsonl'
+            model = {"adapter": "mock_service"}
+            bind_prediction_cache(data, build_cycle_voc_queries(dataset), model, source, None, dataset=dataset)
             write_jsonl(source, (result.to_dict() for result in cycle_predictions(dataset)))
             self.assertEqual(selected_task_ids('vs', dataset, ['task_001'], ['id']), ('task_001',))
             with patch('vmbmk.metrics.cycle_voc_vs.vs.run_cycle_voc') as inference:
-                result = run_vs(data, {}, ['task_001'], output, 0, mode='base', domains=['id'], cycle_operation_path=source)
+                result = run_vs(data, model, ['task_001'], output, 0, mode='base', domains=['id'], cycle_operation_path=source)
                 inference.assert_not_called()
             self.assertEqual(result['protocol'], VS_PROTOCOL)
             self.assertEqual(result['prediction_source'], 'cycle_voc_forward')
@@ -123,10 +148,11 @@ class VSScoringTest(unittest.TestCase):
 
             def infer_cycle(data_root, model, task_ids, operation_path, gpu, *, mode, domains, plan):
                 self.assertEqual(mode, 'base')
+                bind_prediction_cache(data_root, plan.queries, model, Path(operation_path), None, dataset=dataset)
                 write_jsonl(operation_path, (result.to_dict() for result in cycle_predictions(dataset)))
 
             with patch('vmbmk.metrics.cycle_voc_vs.vs.run_cycle_voc', side_effect=infer_cycle) as inference:
-                result = run_vs(data, {}, ['task_001'], root / 'vs.jsonl', 0, mode='base', domains=['id'])
+                result = run_vs(data, {"adapter": "mock_service"}, ['task_001'], root / 'vs.jsonl', 0, mode='base', domains=['id'])
                 inference.assert_called_once()
             self.assertEqual(result['mean'], 1)
 
@@ -145,6 +171,7 @@ class VSScoringTest(unittest.TestCase):
             def infer(data_root, query_path, model, operation_path, *, gpu, native_metric):
                 queries = read_queries(query_path)
                 self.assertTrue(all(query.query_id.startswith('cycle_voc:') for query in queries))
+                bind_prediction_cache(data_root, queries, model, Path(operation_path), native_metric)
                 write_jsonl(operation_path, (
                     Result(query.query_id, 'value', query.state.anchor_frame if query.playback == 'forward' else -1000).to_dict()
                     for query in queries
@@ -200,6 +227,7 @@ class VSScoringTest(unittest.TestCase):
                 queries = read_queries(query_path)
                 self.assertTrue(all(query.query_id.startswith('cycle_voc:') for query in queries))
                 values = {'id': 1, 'env': 0, 'emb': -1}
+                bind_prediction_cache(data_root, queries, model, Path(operation_path), native_metric)
                 write_jsonl(operation_path, (
                     Result(query.query_id, 'value', values[dataset.episode(query.state.task_id, query.state.episode_id).domain] * query.state.anchor_frame).to_dict()
                     for query in queries

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from vmbmk.data.dataset import Dataset, Episode, Task
+from vmbmk.runner.config_identity import normalized_result_config
 from vmbmk.errors import VMBMKError
 from vmbmk.inference.dispatch import run_inference
 from vmbmk.inference.queries import Result, StateRef, SubtaskQuery, query_from_dict, read_queries, read_results
@@ -513,6 +514,10 @@ def run_sia(
     cache = Path(operation_path).parent / "sia"
     bundle_path = cache / "responses.json"
     dataset = dataset if dataset is not None else Dataset.load(data_root, metrics=["sia"])
+    _save_json(cache / "response_source.json", {
+        "external": str(Path(responses_path).resolve())
+        if stage == "judge" and responses_path is not None else None,
+    })
     if stage == "judge":
         return judge_sia_responses(
             responses_path or bundle_path,
@@ -541,7 +546,7 @@ def run_sia(
         "tasks": list(task_ids),
         "domains": list(domains),
         "seed": seed,
-        "model": adapter_model,
+        "model": normalized_result_config(adapter_model),
         "instruction_protocol": (
             "task-only-robofac-subtask-v1"
             if adapter_model.get("adapter") == "robofac"

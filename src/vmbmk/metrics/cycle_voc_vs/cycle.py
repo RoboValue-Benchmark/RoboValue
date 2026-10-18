@@ -16,6 +16,9 @@ from vmbmk.serialization import write_jsonl
 from .planning import CyclePlan, build_cycle_frame_indices, plan_cycle
 
 
+CYCLE_COMPONENT_PROTOCOL = "continuous-cycle-halves-v1"
+
+
 def build_cycle_voc_queries(
     dataset: Dataset,
     task_ids: Sequence[str] | None = None,
@@ -87,16 +90,33 @@ def score_cycle_voc_by_domain(
     *,
     plan: CyclePlan | None = None,
 ) -> dict[str, dict[str, float]]:
+    components = score_cycle_voc_components(dataset, results, task_ids, domains, plan=plan)
+    return {domain: row["tasks"] for domain, row in components["cycle"]["domains"].items()}
+
+
+def score_cycle_voc_components(
+    dataset: Dataset,
+    results: Sequence[Result],
+    task_ids: Sequence[str] | None = None,
+    domains: Sequence[str] | None = None,
+    *,
+    plan: CyclePlan | None = None,
+) -> dict[str, Any]:
+    """Expose both halves from the same continuous history and cohort."""
     plan = plan if plan is not None else plan_cycle(dataset, task_ids, domains)
     scores = result_scores(plan.queries, results, "CYCLE-VOC", "value")
-    by_domain_task: dict[tuple[str, str], list[float]] = defaultdict(list)
+    grouped = {name: defaultdict(list) for name in ("cycle", "forward", "reverse")}
     for (domain, task_id, _), trajectory in plan.trajectories.items():
         details = score_cycle_voc_values([scores[query_id] for query_id in trajectory.query_ids])
-        by_domain_task[(domain, task_id)].append(details["cycle_voc"])
-    by_domain: dict[str, dict[str, float]] = defaultdict(dict)
-    for (domain, task_id), values in sorted(by_domain_task.items()):
-        by_domain[domain][task_id] = sum(values) / len(values)
-    return {domain: tasks for domain, tasks in sorted(by_domain.items())}
+        for name, key in (("cycle", "cycle_voc"), ("forward", "score_up"), ("reverse", "score_down")):
+            grouped[name][(domain, task_id)].append(details[key])
+    output = {}
+    for name, by_domain_task in grouped.items():
+        by_domain: dict[str, dict[str, float]] = defaultdict(dict)
+        for (domain, task_id), values in sorted(by_domain_task.items()):
+            by_domain[domain][task_id] = sum(values) / len(values)
+        output[name] = summarize_domain_tasks(by_domain)
+    return output
 
 
 def score_cycle_voc(
@@ -139,7 +159,14 @@ def run_cycle_voc(
             gpu=gpu,
             native_metric=native_metric,
         )
-    scores = score_cycle_voc_by_domain(
+    components = score_cycle_voc_components(
         dataset, read_results(operation_path), task_ids, domains, plan=plan
     )
-    return summarize_domain_tasks(scores)
+    return {
+        **components["cycle"],
+        "components": {
+            "protocol": CYCLE_COMPONENT_PROTOCOL,
+            "forward": components["forward"],
+            "reverse": components["reverse"],
+        },
+    }

@@ -12,8 +12,7 @@ from typing import Any
 
 from vmbmk.data.dataset import Dataset
 from vmbmk.runner.run import RunConfig
-from vmbmk.metrics.registry import QUERY_METRICS
-from .validation import inspect_result
+from .validation import VALIDATABLE_METRICS, inspect_result
 
 
 def build_summary(
@@ -40,7 +39,7 @@ def build_summary(
     unsupported: list[dict[str, Any]] = []
     for config_path in configs:
         stem = config_path.stem
-        unsupported_metrics = sorted({metric for metric, _, _ in selections[config_path].metrics} - QUERY_METRICS)
+        unsupported_metrics = sorted({metric for metric, _, _ in selections[config_path].metrics} - VALIDATABLE_METRICS)
         if unsupported_metrics:
             unsupported.append({"run": stem, "metrics": unsupported_metrics})
             continue

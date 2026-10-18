@@ -159,6 +159,13 @@ def _publish_metrics(
 
     metrics = _read_json_object(metrics_path)
     config = _read_yaml_object(config_path)
+    from .validation import validate_run
+
+    from vmbmk.runner.run import RunConfig
+
+    report = validate_run(config_path, metrics_path.parent, RunConfig.load(config_path).data)
+    if not report["valid"]:
+        raise ValueError(f"cannot publish an unverified current run: {report['reason']}; use mirror mode for archives")
     baseline = str(
         baseline_override
         or canonical_baseline(config, fallback=metrics_path.parent.name)

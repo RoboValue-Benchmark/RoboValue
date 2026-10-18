@@ -380,6 +380,16 @@ def _merge_metric_result(
     merged = _merge_domain_tasks(existing, incoming)
     merged_domains = merged["domains"]
     incoming_domains = incoming["domains"]
+    if metric == "cycle_voc" and ("components" in existing or "components" in incoming):
+        from vmbmk.metrics.cycle_voc_vs.cycle import CYCLE_COMPONENT_PROTOCOL
+
+        for source in (existing, incoming):
+            if source.get("components", {}).get("protocol") != CYCLE_COMPONENT_PROTOCOL:
+                raise ValueError("Cannot merge unverified Cycle-VOC half components; rescore cached predictions")
+        merged["components"] = {
+            "protocol": CYCLE_COMPONENT_PROTOCOL,
+            **{half: _merge_domain_tasks(existing["components"][half], incoming["components"][half]) for half in ("forward", "reverse")},
+        }
     if metric == "vs":
         for key in ("er", "nonflat_time_fraction"):
             merged[key] = _merge_domain_tasks(existing[key], incoming[key])

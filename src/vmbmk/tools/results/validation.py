@@ -11,7 +11,7 @@ from typing import Any, Mapping, Sequence
 import yaml
 
 from vmbmk.data.dataset import Dataset
-from vmbmk.inference.queries import read_results
+from vmbmk.inference.queries import Query, read_results
 from vmbmk.errors import VMBMKError
 from vmbmk.runner.run import RunConfig
 from vmbmk.metrics.registry import QUERY_METRICS, build_metric_queries, selected_task_ids
@@ -20,6 +20,27 @@ from vmbmk.metrics.fpl import FPL_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.vs import VS_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.forward import VOC_PROTOCOL
 from vmbmk.inference.queries import query_state
+from vmbmk.runner.config_identity import normalized_result_config, resolved_run_config_paths
+from vmbmk.runner.provenance import run_identity
+from vmbmk.metrics.sia.evaluation import build_sia_queries
+from vmbmk.metrics.sia.scoring import SIA_PROTOCOL, SIA_AGGREGATION, SIA_EPISODE_SELECTION
+from .sia_validation import validate_sia_artifacts as _validate_sia_artifacts
+from vmbmk.serialization import read_yaml_object
+
+
+VALIDATABLE_METRICS = QUERY_METRICS | {"sia"}
+
+
+def _validation_queries(
+    metric: str, dataset: Dataset, tasks: Sequence[str],
+    domains: Sequence[str], config: RunConfig,
+) -> list[Query]:
+    if metric == "sia":
+        return build_sia_queries(dataset, tasks, domains, seed=0)
+    return build_metric_queries(
+        metric, dataset, tasks, domains,
+        candidate_tasks=(config.candidate_tasks or {}).get(metric),
+    )
 
 
 def operation_count(path: Path) -> int:
@@ -48,18 +69,9 @@ def metric_means(metrics: dict[str, Any], *, allow_missing: bool = False) -> dic
     return means
 
 
-def _load_yaml(path: Path) -> dict[str, Any]:
-    row = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if not isinstance(row, dict):
-        raise ValueError(f"{path}: expected a YAML object")
-    return row
-
-
 def _normalized_config(path: Path) -> dict[str, Any]:
-    row = _load_yaml(path)
-    # Completion lanes may remap a run to another physical GPU.
-    row.pop("gpu", None)
-    return row
+    resolved = resolved_run_config_paths(read_yaml_object(path), path.resolve().parent)
+    return normalized_result_config(resolved)
 
 
 def expected_result(
@@ -67,7 +79,7 @@ def expected_result(
 ) -> tuple[int, dict[str, dict[str, set[str]]]]:
     """Derive operation counts and coverage from the registered metric planners."""
     config = RunConfig.load(config_path)
-    unsupported = sorted({metric for metric, _, _ in config.metrics} - QUERY_METRICS)
+    unsupported = sorted({metric for metric, _, _ in config.metrics} - VALIDATABLE_METRICS)
     if unsupported:
         raise ValueError(f"query validation is unsupported for metrics: {unsupported}")
     expected_operations = 0
@@ -75,10 +87,7 @@ def expected_result(
     for metric, _, domains in config.metrics:
         requested = (config.metric_tasks or {}).get(metric, config.tasks)
         tasks = selected_task_ids(metric, dataset, requested, domains)
-        queries = build_metric_queries(
-            metric, dataset, tasks, domains,
-            candidate_tasks=(config.candidate_tasks or {}).get(metric),
-        )
+        queries = _validation_queries(metric, dataset, tasks, domains, config)
         expected_operations += len(queries)
         coverage: dict[str, set[str]] = {domain: set() for domain in domains}
         for query in queries:
@@ -101,6 +110,12 @@ def _validate_metric_coverage(
     metric_means(metrics)
     for metric, domains in expected.items():
         row = metrics[metric]
+        if metric == "sia" and (
+            row.get("protocol") != SIA_PROTOCOL
+            or row.get("aggregation") != SIA_AGGREGATION
+            or row.get("episode_selection") != SIA_EPISODE_SELECTION
+        ):
+            raise ValueError("SIA result uses an incompatible scoring or cohort protocol")
         if metric == "fpl" and row.get("protocol") != FPL_PROTOCOL:
             raise ValueError("FPL result uses an obsolete cohort protocol; rescore cached values")
         if metric == "csvc" and row.get("protocol") != CSVC_PROTOCOL:
@@ -162,14 +177,11 @@ def validate_operation_identity(
     expected = {}
     for metric, _, domains in config.metrics:
         tasks = sorted(set().union(*expected_tasks[metric].values()))
-        queries = build_metric_queries(
-            metric, dataset, tasks, domains,
-            candidate_tasks=(config.candidate_tasks or {}).get(metric),
-        )
+        queries = _validation_queries(metric, dataset, tasks, domains, config)
         for query in queries:
             if query.query_id in expected:
                 raise ValueError(f"duplicate planned query: {query.query_id}")
-            expected[query.query_id] = query.op
+            expected[query.query_id] = "value" if metric == "sia" else query.op
     seen = set()
     for result in read_results(operations_path):
         if result.query_id in seen:
@@ -204,8 +216,12 @@ def inspect_result(
             "reason": f"missing result files: {', '.join(missing)}",
         }
     try:
+        provenance_path = run_dir / "provenance.json"
+        config = RunConfig.load(config_path)
+        if not provenance_path.is_file() or json.loads(provenance_path.read_text(encoding="utf-8")) != run_identity(dataset, config.model_config(), sia_responses=config.sia_responses):
+            raise ValueError("run inputs or implementation changed, or provenance is missing")
         if _normalized_config(saved_config_path) != _normalized_config(config_path):
-            raise ValueError("saved config does not match current config (excluding gpu)")
+            raise ValueError("saved config does not match current result identity")
         expected_operations, expected_tasks = expected_result(config_path, dataset)
         actual_operations = operation_count(operations_path)
         if actual_operations != expected_operations:
@@ -218,6 +234,11 @@ def inspect_result(
         if not isinstance(metrics, dict):
             raise ValueError("metrics.json: expected an object")
         _validate_metric_coverage(metrics, expected_tasks)
+        from .scoring_validation import validate_metric_scores
+
+        validate_metric_scores(config, dataset, metrics, read_results(operations_path))
+        if "sia" in metrics:
+            _validate_sia_artifacts(config_path, run_dir, dataset, metrics["sia"])
         return {
             "valid": True,
             "state": "complete",

@@ -24,6 +24,7 @@ from .queries import (
     read_results,
 )
 from vmbmk.serialization import read_jsonl, replace_jsonl, write_jsonl
+from .cache import bind_prediction_cache
 
 
 def _validate_state(dataset: Dataset, query_id: str, state: StateRef) -> None:
@@ -165,6 +166,7 @@ def _run_worker_process(
     gpu: int | None,
     native_metric: str | None,
 ) -> None:
+    bind_prediction_cache(data_root, queries, config, result_path, native_metric)
     if result_path.exists():
         try:
             validate_results(queries, result_path)
@@ -399,6 +401,7 @@ def run_inference(
         gpus = ()
     result_path.parent.mkdir(parents=True, exist_ok=True)
     queries = read_queries(query_path)
+    bind_prediction_cache(data_root, queries, config, result_path, native_metric)
     if result_path.exists():
         try:
             validate_results(queries, result_path)

@@ -87,6 +87,9 @@ def run_voc(
         if mode != "base":
             raise VMBMKError("VOC cannot reuse metric-native Cycle-VOC predictions")
         validate_results(plan.queries, cycle_operation_path)
+        from vmbmk.inference.cache import bind_prediction_cache
+
+        bind_prediction_cache(data_root, plan.queries, model, Path(cycle_operation_path), None, dataset=dataset)
         predictions = result_scores(plan.queries, read_results(cycle_operation_path), "CYCLE-VOC", "value")
         results = [Result(query.query_id, "value", predictions[query.query_id.replace("voc:", "cycle_voc:", 1)]) for query in queries]
         replace_jsonl(operation_path, (result.to_dict() for result in results))

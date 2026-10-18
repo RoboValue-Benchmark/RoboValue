@@ -27,6 +27,9 @@ For code navigation and modification sites, see [the developer guide](developer_
 Relative top-level python, checkpoint, data and output paths are resolved from
 the configuration's directory, as are reference_data and sia_responses. Nested
 model_options paths retain their Adapter-specific handling.
+Saved run configs snapshot these resolved top-level paths so that moving the
+config into its result directory does not reinterpret relative inputs. The
+original user config is not rewritten.
 
     model: robometer
     gpu: 0
@@ -54,12 +57,41 @@ Result operations share one entry point:
     python -m vmbmk.cli results status --config-root CONFIGS --results-root RESULTS --dataset DATASET --output STATUS_JSON
     python -m vmbmk.cli results publish RUN --results-root RESULTS --final-results-root FINAL
 
-The two old result validators are replaced by validate, which checks query
-identity as well as counts and task/domain coverage. SIA query validation is
-not supported here; it is rejected explicitly, not treated as a completed run.
+The two old result validators are replaced by validate, which checks provenance,
+query identity, counts and task/domain coverage. SIA-only and mixed SIA runs
+also validate saved generation, judge decisions and geometric aggregation;
+random query frames are read from the saved generation rather than resampled.
+Judge-only runs using explicit sia_responses validate that external bundle and
+record its content SHA-256. Keep the referenced bundle available for validation;
+this checks supplied inputs, not the external generator's checkpoint provenance.
 Status inspects configured runs. Legacy campaign migration, specialized
 Cycle-VOC-to-VOC rescoring and TGA-only coverage reporting are removed.
 Published outputs and archived result files are not deleted.
+
+Current-result publication performs the same validation before writing.
+Validation and checkpoint resume also reproduce metric scores from saved
+operations using the original pure scorers; matching counts and finite means
+alone cannot certify a scored artifact. No model inference is performed.
+Use `--mode mirror` to preserve historical artifacts without claiming that
+they satisfy the current input/implementation identity.
+
+Direct `infer` and worker resumes bind their outputs to full queries, effective
+model configuration, native mode, dataset metadata and package implementation.
+Identities are stored under `.inference-identities/` beside the output. Missing
+or incompatible identities are rejected, including complete outputs, partial
+prefixes and multi-GPU shards; choose a new output path rather than relabeling
+old predictions. Checkpoint assets use size/mtime identities, not full weight
+hashes. GPU placement, batch size and SIA worker/timeout controls do not change
+the result identity; query, checkpoint, model-version and judge changes do.
+Completed runs also record checkpoint asset identity in `local-run-identity-v3`,
+so replacing weights at the same path invalidates normal reuse and validation.
+Shared Cycle-VOC predictions used by VOC/VS undergo the same inference identity
+check. Pure scoring remains available for separately audited historical curves.
+Reference assets are also part of the model input identity, including adapter
+default one-shot reference directories. Their identity uses size/mtime, like
+checkpoint assets; zero-shot inputs do not gain an implicit reference dependency.
+
+For the optional paper leaderboard export, see [leaderboard.md](leaderboard.md).
 
 
 Curve commands use the same RunConfig and adapter mapping as evaluation:

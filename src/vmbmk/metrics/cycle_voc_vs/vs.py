@@ -184,6 +184,9 @@ def run_vs(
         )
     cycle_queries = cycle_plan.queries
     validate_results(cycle_queries, cycle_operation_path)
+    from vmbmk.inference.cache import bind_prediction_cache
+
+    bind_prediction_cache(data_root, cycle_queries, model, Path(cycle_operation_path), None, dataset=dataset)
     predictions = result_scores(
         cycle_queries, read_results(cycle_operation_path), "CYCLE-VOC", "value"
     )

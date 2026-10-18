@@ -11,7 +11,7 @@ from typing import Any
 import yaml
 
 from vmbmk.data.dataset import Dataset
-from vmbmk.errors import ConfigurationError
+from vmbmk.errors import ConfigurationError, VMBMKError
 from .policy import evaluation_policy
 from vmbmk.metrics.registry import (
     SUPPORTED_METRICS,
@@ -23,6 +23,7 @@ from vmbmk.adapters.registry import ADAPTERS, adapter_class
 from vmbmk.metrics.sia.scoring import SIA_AGGREGATION, SIA_EPISODE_SELECTION, SIA_PROTOCOL
 from vmbmk.metrics.csvc import CSVC_PROTOCOL
 from vmbmk.metrics.fpl import FPL_PROTOCOL
+from vmbmk.runner.config_identity import normalized_result_config, resolved_run_config_paths
 from vmbmk.metrics.trr import TRR_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.vs import VS_PROTOCOL
 from vmbmk.metrics.cycle_voc_vs.forward import VOC_PROTOCOL
@@ -56,14 +57,12 @@ def _result_config(path: Path, label: str) -> dict[str, Any]:
         value = read_yaml_object(path)
     except ValueError as exc:
         raise ConfigurationError(f"{label} config is invalid: {path}") from exc
-    value = dict(value)
-    value.pop("gpu", None)
-    value.pop("batch_size", None)
-    options = value.get("model_options")
-    if isinstance(options, dict):
-        options.pop("sia_workers", None)
-        options.pop("sia_timeout", None)
-    return value
+    return normalized_result_config(resolved_run_config_paths(value, path.parent))
+
+
+def _save_run_config(source: Path, destination: Path) -> None:
+    resolved = resolved_run_config_paths(read_yaml_object(source), source.parent)
+    _write_text_atomic(destination, yaml.safe_dump(resolved, sort_keys=False))
 
 
 def _validate_saved_config(source: Path, saved: Path, label: str) -> bool:
@@ -170,6 +169,13 @@ def _cleanup_checkpoints(directory: Path, metric_names: tuple[str, ...]) -> None
         path = directory / name
         if path.exists():
             path.unlink()
+    identities = directory / ".inference-identities"
+    if identities.is_dir():
+        for metric in metric_names:
+            for path in identities.glob(f".{metric}.operations.jsonl*.json"):
+                path.unlink()
+        if not any(identities.iterdir()):
+            identities.rmdir()
 
 
 def _validate_completed_run(
@@ -582,18 +588,16 @@ def _prepare_run_directory(
         saved_config = temporary / "config.yaml"
         if saved_config.exists():
             if _validate_saved_config(source, saved_config, "resumable run"):
-                _write_text_atomic(
-                    saved_config, source.read_text(encoding="utf-8")
-                )
+                _save_run_config(source, saved_config)
         elif any(temporary.iterdir()):
             raise ConfigurationError(
                 f"resumable run has files but no config: {temporary}"
             )
         else:
-            shutil.copyfile(source, saved_config)
+            _save_run_config(source, saved_config)
     else:
         temporary.mkdir()
-        shutil.copyfile(source, temporary / "config.yaml")
+        _save_run_config(source, temporary / "config.yaml")
 
 
 def _finish_run(
@@ -648,7 +652,7 @@ def run_evaluation(
     if unknown_tasks:
         raise ConfigurationError(f"unknown tasks: {unknown_tasks}")
     selections = _select_metric_tasks(config, dataset)
-    identity = run_identity(dataset)
+    identity = run_identity(dataset, config.model_config(), sia_responses=config.sia_responses)
     existing = run_dir if run_dir.exists() and execution_mode == "normal" else temporary
     if existing.exists() and execution_mode != "rerun":
         recorded = existing / "provenance.json"
@@ -656,12 +660,11 @@ def run_evaluation(
             raise ConfigurationError("run inputs or implementation changed, or provenance is missing; use a new output directory or explicit rerun")
     if run_dir.exists() and execution_mode == "normal":
         _validate_completed_run(source, run_dir, metric_names)
-        if metric_names != ("sia",):
-            from vmbmk.tools.results.validation import inspect_result
+        from vmbmk.tools.results.validation import inspect_result
 
-            report = inspect_result(source, run_dir, dataset)
-            if not report["valid"]:
-                raise ConfigurationError(f"completed run is invalid: {report['reason']}")
+        report = inspect_result(source, run_dir, dataset)
+        if not report["valid"]:
+            raise ConfigurationError(f"completed run is invalid: {report['reason']}")
         return run_dir
     settings = {metric: (mode, domains) for metric, mode, domains in config.metrics}
     if "vs" in settings and settings["vs"][0] != "base":
@@ -689,6 +692,18 @@ def run_evaluation(
         metric_operations = temporary / f".{metric}.operations.jsonl"
         if metric in metrics:
             _validate_operations(metric_operations, metric)
+            try:
+                if metric == "sia":
+                    from vmbmk.tools.results.sia_validation import validate_sia_artifacts
+
+                    validate_sia_artifacts(source, temporary, dataset, metrics[metric], operations_path=metric_operations)
+                else:
+                    from vmbmk.tools.results.scoring_validation import validate_metric_scores
+                    from vmbmk.inference.queries import read_results
+
+                    validate_metric_scores(config, dataset, {metric: metrics[metric]}, read_results(metric_operations))
+            except (KeyError, ValueError, VMBMKError) as exc:
+                raise ConfigurationError(f"resumable {metric} checkpoint is invalid: {exc}") from exc
             continue
         metric_result = metric_runner(metric)(
             config.data,

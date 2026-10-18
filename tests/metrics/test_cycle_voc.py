@@ -9,7 +9,7 @@ from synthetic_data import make_dataset, write_json
 from vmbmk.data.dataset import Dataset
 from vmbmk.errors import VMBMKError
 from vmbmk.inference.queries import Result
-from vmbmk.metrics.cycle_voc_vs.cycle import build_cycle_frame_indices, build_cycle_voc_queries, score_cycle_voc, score_cycle_voc_values
+from vmbmk.metrics.cycle_voc_vs.cycle import build_cycle_frame_indices, build_cycle_voc_queries, score_cycle_voc, score_cycle_voc_values, score_cycle_voc_components
 from vmbmk.metrics.cycle_voc_vs.forward import build_voc_queries
 
 
@@ -28,6 +28,18 @@ def make_cycle_dataset(root: Path) -> Path:
 
 
 class CycleVOCTest(unittest.TestCase):
+    def test_component_export_preserves_combined_score_and_constant_convention(self):
+        with tempfile.TemporaryDirectory() as directory:
+            dataset = Dataset.load(make_cycle_dataset(Path(directory)), metrics=["cycle_voc"])
+            queries = build_cycle_voc_queries(dataset)
+            for values, expected in (([0, 1, 2, 1, 0], (1, 1, 1)), ([1, 1, 1, 1, 1], (0, 0, 0)), ([0, 1, 2, 3, 4], (1, -1, 0))):
+                with self.subTest(values=values):
+                    results = [Result(query.query_id, "value", value) for query, value in zip(queries, values)]
+                    components = score_cycle_voc_components(dataset, results)
+                    self.assertEqual(tuple(components[name]["mean"] for name in ("forward", "reverse", "cycle")), expected)
+                    self.assertEqual(components["cycle"]["mean"], score_cycle_voc(dataset, results))
+                    self.assertEqual(components["cycle"]["mean"], (components["forward"]["mean"] + components["reverse"]["mean"]) / 2)
+
     def test_samples_every_ten_frames_and_mirrors_without_peak_duplicate(self) -> None:
         self.assertEqual(
             build_cycle_frame_indices(35, 10),

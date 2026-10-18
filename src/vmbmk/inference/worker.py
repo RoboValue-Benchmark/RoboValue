@@ -9,7 +9,6 @@ from typing import Any, Mapping, Sequence
 from vmbmk.adapters import create_adapter
 from vmbmk.adapters.base import Adapter
 from vmbmk.adapters.registry import adapter_class
-from vmbmk.data.dataset import Dataset
 from vmbmk.errors import ConfigurationError, VMBMKError
 from .dispatch import validate_queries
 from .queries import (
@@ -21,6 +20,7 @@ from .queries import (
     read_queries,
 )
 from vmbmk.serialization import read_json, read_jsonl
+from .cache import bind_prediction_cache, load_query_dataset
 
 
 def _read_checkpoint(output: Path, queries: Sequence[Query]) -> set[str]:
@@ -122,15 +122,10 @@ def run_worker(
     if adapter_class(config["adapter"]).requires_gpu:
         _configure_torch_threads()
     queries = read_queries(query_path)
-    from vmbmk.metrics.registry import SUPPORTED_METRICS
-
-    query_metrics = {query.query_id.split(":", 1)[0] for query in queries}
-    dataset = Dataset.load(
-        data_root,
-        metrics=sorted(query_metrics) if query_metrics and query_metrics <= SUPPORTED_METRICS else None,
-    )
+    dataset = load_query_dataset(data_root, queries)
     validate_queries(dataset, queries)
     output = Path(output_path)
+    bind_prediction_cache(data_root, queries, config, output, native_metric, dataset=dataset)
     completed_ids = _read_checkpoint(output, queries)
     pending = [query for query in queries if query.query_id not in completed_ids]
     if not pending:

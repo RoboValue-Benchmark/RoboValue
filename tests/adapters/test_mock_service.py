@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import subprocess
 import sys
@@ -11,7 +12,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from synthetic_data import make_dataset, set_task_metadata
+from synthetic_data import make_dataset, set_task_metadata, write_json
 from vmbmk.adapters import create_adapter
 from vmbmk.adapters.mock_service import MockServiceAdapter
 from vmbmk.adapters.registry import adapter_class
@@ -25,6 +26,10 @@ from vmbmk.inference.worker import run_worker
 from vmbmk.metrics.sa import build_sa_queries, score_sa
 from vmbmk.runner.run import RunConfig, run_evaluation
 from vmbmk.serialization import write_jsonl
+from vmbmk.inference.cache import bind_prediction_cache
+from vmbmk.tools.results.validation import inspect_result
+from vmbmk.tools.results.sync import synchronize
+from vmbmk.tools.results.status import build_summary
 
 
 WORKER_FIXTURE = """
@@ -51,6 +56,20 @@ assert os.environ['CUDA_VISIBLE_DEVICES'] == ''
 main()
 assert 'torch' not in sys.modules
 """
+
+
+class FakeCandidateJudge:
+    def __init__(self, **kwargs):
+        self.model = "test-judge"
+
+    def _completion_url(self):
+        return "https://judge.invalid/completions"
+
+    def classify(self, instruction, candidates, response):
+        return {
+            "predicted_subtask_id": "001",
+            "candidate_logprobs": {"001": math.log(0.8), "002": math.log(0.2)},
+        }
 
 
 class MockServiceTest(unittest.TestCase):
@@ -122,6 +141,320 @@ class MockServiceTest(unittest.TestCase):
             (index, 1, 3) for index in range(4)
         ])
         self.assertEqual(predict.call_args.kwargs, {})
+
+    def test_cache_rejects_changed_query_model_and_native_mode(self) -> None:
+        queries = [self.query(4)]
+        path = self.write_queries(queries)
+        output = self.root / "bound.jsonl"
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            run_inference(self.data, path, self.config, output, gpu=None)
+        original = output.read_bytes()
+        for query, config, native in (
+            (self.query(80), self.config, None),
+            (queries[0], {**self.config, "model_version": "mock-2"}, None),
+            (queries[0], self.config, "sa"),
+        ):
+            with self.subTest(query=query, config=config, native=native):
+                self.write_queries([query])
+                with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+                    with self.assertRaisesRegex(VMBMKError, "inputs or model changed"):
+                        run_inference(self.data, path, config, output, gpu=None, native_metric=native)
+                    launch.assert_not_called()
+                self.assertEqual(output.read_bytes(), original)
+
+    def test_cache_rejects_changed_dataset_and_unbound_outputs(self) -> None:
+        path = self.write_queries([self.query(4)])
+        output = self.root / "bound.jsonl"
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            run_inference(self.data, path, self.config, output, gpu=None)
+        metadata = self.data / "task_001" / "metadata.json"
+        row = json.loads(metadata.read_text())
+        row["instruction"] = "Different goal"
+        write_json(metadata, row)
+        with self.assertRaisesRegex(VMBMKError, "inputs or model changed"):
+            run_inference(self.data, path, self.config, output, gpu=None)
+        legacy = self.root / "unbound.jsonl"
+        legacy.write_bytes(output.read_bytes())
+        with self.assertRaisesRegex(VMBMKError, "provenance is missing"):
+            run_inference(self.data, path, self.config, legacy, gpu=None)
+
+    def test_cache_checks_parent_identity_before_partial_shard_reuse(self) -> None:
+        queries = [self.query(4)]
+        output = self.root / "shards.jsonl"
+        bind_prediction_cache(self.data, queries, self.config, output, None)
+        write_jsonl(output.with_name(output.name + ".part-002-000"), [{"query_id": "value", "op": "value", "score": 0.5}])
+        path = self.write_queries([self.query(80)])
+        with patch("vmbmk.inference.dispatch._run_sharded") as shard:
+            with self.assertRaisesRegex(VMBMKError, "inputs or model changed"):
+                run_inference(self.data, path, self.config, output, gpu=None)
+            shard.assert_not_called()
+
+    def test_empty_cache_binding_can_change_without_discarding_predictions(self) -> None:
+        output = self.root / "empty.jsonl"
+        bind_prediction_cache(self.data, [self.query(4)], self.config, output, None)
+        bind_prediction_cache(self.data, [self.query(80)], self.config, output, None)
+        self.assertFalse(output.exists())
+
+    def test_completed_run_allows_batch_size_change_but_rejects_stale_publish(self) -> None:
+        source = self.write_run_config()
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            output = run_evaluation(source)
+        self.write_run_config(batch_size=1)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+            self.assertEqual(run_evaluation(source), output)
+            launch.assert_not_called()
+        status = build_summary(self.root, output.parent, self.data)
+        self.assertEqual(status["completed_count"], 1)
+        published = synchronize(output, results_root=output.parent, final_root=self.root / "valid_publication", mode="publish")
+        self.assertTrue(all(path.is_file() for path in published.destinations))
+        metadata = self.data / "task_001" / "metadata.json"
+        row = json.loads(metadata.read_text())
+        row["instruction"] = "Changed task goal"
+        write_json(metadata, row)
+        dataset = Dataset.load(self.data, metrics=["sa"])
+        report = inspect_result(source, output, dataset)
+        self.assertFalse(report["valid"])
+        self.assertEqual(report["state"], "stale")
+        self.assertEqual(build_summary(self.root, output.parent, self.data)["stale_count"], 1)
+        final = self.root / "published"
+        with self.assertRaisesRegex(ValueError, "unverified current run"):
+            synchronize(output, results_root=output.parent, final_root=final, mode="publish")
+        self.assertFalse(final.exists())
+
+    def test_relative_run_paths_survive_saved_config_and_publication(self) -> None:
+        source = self.write_run_config(data="data", output="relative-results")
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            output = run_evaluation(source)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+            self.assertEqual(run_evaluation(source), output)
+            launch.assert_not_called()
+        saved = RunConfig.load(output / "config.yaml")
+        self.assertEqual(saved.data, self.data)
+        self.assertEqual(saved.output, output.parent)
+        published = synchronize(output, results_root=output.parent,
+                                final_root=self.root / "relative-publication", mode="publish")
+        self.assertTrue(all(path.is_file() for path in published.destinations))
+
+    def test_completed_run_rejects_metric_scores_inconsistent_with_operations(self) -> None:
+        source = self.write_run_config()
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            output = run_evaluation(source)
+        path = output / "metrics.json"
+        original = json.loads(path.read_text())
+        for mutation in ("global_mean", "consistent_but_wrong_task_scores"):
+            with self.subTest(mutation=mutation):
+                metrics = json.loads(json.dumps(original))
+                metrics["sa"]["mean"] = 0.25
+                if mutation == "consistent_but_wrong_task_scores":
+                    metrics["sa"]["domains"]["id"] = {"mean": 0.25, "tasks": {"task_001": 0.25}}
+                write_json(path, metrics)
+                report = inspect_result(source, output, self.dataset)
+                self.assertFalse(report["valid"])
+                with self.assertRaisesRegex(ConfigurationError, "saved predictions"):
+                    run_evaluation(source)
+                final = self.root / f"invalid-publication-{mutation}"
+                with self.assertRaisesRegex(ValueError, "unverified current run"):
+                    synchronize(output, results_root=output.parent, final_root=final, mode="publish")
+                self.assertFalse(final.exists())
+
+    def test_resume_rejects_corrupted_completed_metric_checkpoint(self) -> None:
+        from vmbmk.metrics.registry import metric_runner
+
+        task = set_task_metadata(self.data, ["SA", "VOC"])
+        write_json(task / "episodes/ep_success/annotation.json", {
+            "voc": [{"frame_index": frame} for frame in (0, 50, 90)],
+        })
+        source = self.write_run_config(data="data", output="partial-results", metrics={
+            "sa": {"mode": "base", "domains": ["id"]},
+            "voc": {"mode": "base", "domains": ["id"]},
+        })
+
+        def select(metric):
+            if metric == "voc":
+                def interrupted(*args, **kwargs):
+                    raise RuntimeError("interrupted after SA checkpoint")
+                return interrupted
+            return metric_runner(metric)
+
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker), patch("vmbmk.runner.run.metric_runner", side_effect=select):
+            with self.assertRaisesRegex(RuntimeError, "after SA checkpoint"):
+                run_evaluation(source)
+        checkpoint = self.root / "partial-results/.mock.tmp/.metrics.partial.json"
+        original_metrics = checkpoint.read_bytes()
+        operations = checkpoint.parent / ".sa.operations.jsonl"
+        original_operations = operations.read_bytes()
+        for mutation in ("mean", "unexpected_query"):
+            with self.subTest(mutation=mutation):
+                checkpoint.write_bytes(original_metrics)
+                operations.write_bytes(original_operations)
+                if mutation == "mean":
+                    metrics = json.loads(checkpoint.read_text())
+                    metrics["sa"]["mean"] = 0.25
+                    write_json(checkpoint, metrics)
+                else:
+                    with operations.open("a", encoding="utf-8") as output:
+                        output.write(json.dumps({"query_id": "unexpected", "op": "value", "score": 0.5}) + "\n")
+                with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+                    with self.assertRaisesRegex(ConfigurationError, "saved predictions"):
+                        run_evaluation(source)
+                    launch.assert_not_called()
+        self.assertFalse((self.root / "partial-results/mock").exists())
+        checkpoint.write_bytes(original_metrics)
+        operations.write_bytes(original_operations)
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker) as launch:
+            completed = run_evaluation(source)
+            launch.assert_called_once()
+        metrics = json.loads((completed / "metrics.json").read_text())
+        self.assertEqual(metrics["sa"]["mean"], 1.0)
+        self.assertEqual(metrics["voc"]["mean"], 1.0)
+        self.assertTrue(inspect_result(source, completed, Dataset.load(self.data, metrics=["sa", "voc"]))["valid"])
+
+    def test_bound_partial_predictions_resume_with_new_batch_size(self) -> None:
+        queries = [self.query(4, "first"), self.query(80, "second")]
+        output = self.root / "prefix.jsonl"
+        bind_prediction_cache(self.data, queries, self.config, output, None)
+        write_jsonl(output, [{"query_id": "first", "op": "value", "score": 4 / (2 * 255)}])
+        prefix = output.read_bytes()
+        path = self.write_queries(queries)
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            run_inference(self.data, path, {**self.config, "batch_size": 1}, output, gpu=None)
+        self.assertTrue(output.read_bytes().startswith(prefix))
+        self.assertEqual(len(read_results(output)), 2)
+
+    def test_completed_run_rejects_checkpoint_replacement_at_same_path(self) -> None:
+        checkpoint = self.root / "weights.bin"
+        checkpoint.write_bytes(b"original weights")
+        source = self.write_run_config(model="robometer", gpu=0, checkpoint=str(checkpoint), model_options={})
+
+        def infer(data, query_path, model, output, **kwargs):
+            from vmbmk.inference.queries import read_queries
+
+            write_jsonl(output, ({"query_id": query.query_id, "op": "value", "score": 0.5} for query in read_queries(query_path)))
+
+        with patch("vmbmk.inference.execution.run_inference", side_effect=infer), patch("vmbmk.inference.dispatch.subprocess.run", side_effect=AssertionError("must not launch GPU inference")):
+            output = run_evaluation(source)
+        checkpoint.write_bytes(b"replacement weights with a different size")
+        report = inspect_result(source, output, Dataset.load(self.data, metrics=["sa"]))
+        self.assertFalse(report["valid"])
+        with self.assertRaisesRegex(ConfigurationError, "inputs or implementation changed"):
+            run_evaluation(source)
+
+    def test_multigpu_parent_binding_survives_gpu_layout_change(self) -> None:
+        queries = [self.query(4, "success"), ValueQuery("failure", StateRef("task_001", "ep_failure", 4), "Move cup")]
+        path = self.write_queries(queries)
+        output = self.root / "multigpu.jsonl"
+
+        def worker(data, query_path, config, result_path, shard, gpu, native_metric):
+            bind_prediction_cache(data, shard, config, result_path, native_metric)
+            if gpu == 1:
+                raise RuntimeError("interrupted shard")
+            write_jsonl(result_path, ({"query_id": query.query_id, "op": "value", "score": query.state.anchor_frame / 100} for query in shard))
+
+        with patch.object(MockServiceAdapter, "requires_gpu", True), patch("vmbmk.inference.dispatch._run_worker_process", side_effect=worker):
+            with self.assertRaisesRegex(RuntimeError, "interrupted shard"):
+                run_inference(self.data, path, self.config, output, gpu=[0, 1])
+            run_inference(self.data, path, self.config, output, gpu=[2, 3, 4])
+        self.assertEqual([result.query_id for result in read_results(output)], ["success", "failure"])
+        self.assertFalse(list(output.parent.glob(output.name + ".part-*")))
+
+    def test_mixed_sia_completed_run_and_saved_decisions_are_validated(self) -> None:
+        task = set_task_metadata(self.data, ["SA", "SIA"], [
+            {"id": "001", "description": "Move cup"},
+            {"id": "002", "description": "Place cup"},
+        ])
+        for episode in ("ep_success", "ep_failure"):
+            write_json(task / "episodes" / episode / "annotation.json", {"subtask_segments": [
+                {"id": "001", "start_frame": 0, "end_frame_exclusive": 50},
+                {"id": "002", "start_frame": 50, "end_frame_exclusive": 100},
+            ]})
+        source = self.write_run_config(metrics={
+            "sa": {"mode": "base", "domains": ["id"]},
+            "sia": {"mode": "base", "domains": ["id"]},
+        })
+
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker), patch("vmbmk.metrics.sia.evaluation.DeepSeekCandidateJudge", FakeCandidateJudge):
+            output = run_evaluation(source)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+            self.assertEqual(run_evaluation(source), output)
+            launch.assert_not_called()
+        identity_path = output / "sia/.inference-identities/subtask_results.jsonl.json"
+        original_identity = identity_path.read_bytes()
+        identity_path.unlink()
+        with self.assertRaisesRegex(ConfigurationError, "prediction provenance is missing"):
+            run_evaluation(source)
+        self.assertFalse(identity_path.exists())
+        identity_path.write_bytes(original_identity)
+        query_path = output / "sia" / "queries.jsonl"
+        bundle_path = output / "sia" / "responses.json"
+        original_queries, original_bundle = query_path.read_bytes(), bundle_path.read_bytes()
+        queries = [json.loads(line) for line in query_path.read_text().splitlines()]
+        bundle = json.loads(bundle_path.read_text())
+        queries[0]["state"]["anchor_frame"] += 1
+        bundle["items"][0]["query"]["state"]["anchor_frame"] += 1
+        write_jsonl(query_path, queries)
+        write_json(bundle_path, bundle)
+        with self.assertRaisesRegex(ConfigurationError, "prediction inputs or model changed"):
+            run_evaluation(source)
+        query_path.write_bytes(original_queries)
+        bundle_path.write_bytes(original_bundle)
+        decisions = output / "sia" / "decisions.jsonl"
+        records = [json.loads(line) for line in decisions.read_text().splitlines()]
+        records[0]["candidate_logprobs"]["001"] = math.log(0.5)
+        write_jsonl(decisions, records)
+        with self.assertRaisesRegex(ConfigurationError, "saved judge decisions"):
+            run_evaluation(source)
+
+    def test_standalone_sia_stages_preserve_saved_frames_and_allow_batch_change(self) -> None:
+        task = set_task_metadata(self.data, ["SIA"], [
+            {"id": "001", "description": "Move cup"},
+            {"id": "002", "description": "Place cup"},
+        ])
+        for episode in ("ep_success", "ep_failure"):
+            write_json(task / "episodes" / episode / "annotation.json", {"subtask_segments": [
+                {"id": "001", "start_frame": 0, "end_frame_exclusive": 50},
+                {"id": "002", "start_frame": 50, "end_frame_exclusive": 100},
+            ]})
+        settings = {"metrics": {"sia": {"mode": "base", "domains": ["id"]}}}
+        source = self.write_run_config(**settings)
+
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker):
+            generated = run_evaluation(source, sia_stage="generate")
+        queries = (generated / "sia" / "queries.jsonl").read_bytes()
+        predictions = (generated / "sia" / "subtask_results.jsonl").read_bytes()
+        self.assertFalse((generated / "metrics.json").exists())
+        self.write_run_config(**settings, batch_size=8)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch, patch("vmbmk.metrics.sia.evaluation.DeepSeekCandidateJudge", FakeCandidateJudge), patch("vmbmk.runner.run._finish_run", side_effect=RuntimeError("interrupted after SIA checkpoint")):
+            with self.assertRaisesRegex(RuntimeError, "after SIA checkpoint"):
+                run_evaluation(source, sia_stage="judge")
+            launch.assert_not_called()
+        self.assertTrue((generated / ".metrics.partial.json").is_file())
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch, patch("vmbmk.metrics.sia.evaluation.DeepSeekCandidateJudge", side_effect=AssertionError("must not rejudge a valid checkpoint")):
+            completed = run_evaluation(source, sia_stage="judge")
+            launch.assert_not_called()
+        self.assertEqual((completed / "sia" / "queries.jsonl").read_bytes(), queries)
+        self.assertEqual((completed / "sia" / "subtask_results.jsonl").read_bytes(), predictions)
+        self.assertAlmostEqual(json.loads((completed / "metrics.json").read_text())["sia"]["mean"], 0.4)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+            self.assertEqual(run_evaluation(source), completed)
+            launch.assert_not_called()
+        bundle = completed / "sia" / "responses.json"
+        external = self.write_run_config(**settings, output=str(self.root / "external"),
+                                         sia_responses=str(bundle), sia_stage="judge")
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch, patch("vmbmk.metrics.sia.evaluation.DeepSeekCandidateJudge", FakeCandidateJudge):
+            external_run = run_evaluation(external)
+            self.assertEqual(run_evaluation(external), external_run)
+            launch.assert_not_called()
+        bundle.write_text(bundle.read_text() + "\n", encoding="utf-8")
+        with self.assertRaisesRegex(ConfigurationError, "run inputs or implementation changed"):
+            run_evaluation(external)
+        source = self.write_run_config(**settings, output=str(self.root / "all-stage"),
+                                       sia_responses=str(bundle))
+        with patch("vmbmk.inference.dispatch.subprocess.run", side_effect=self.launch_fixture_worker), patch("vmbmk.metrics.sia.evaluation.DeepSeekCandidateJudge", FakeCandidateJudge):
+            internal_run = run_evaluation(source)
+        with patch("vmbmk.inference.dispatch.subprocess.run") as launch:
+            self.assertEqual(run_evaluation(source), internal_run)
+            launch.assert_not_called()
+        self.assertIsNone(json.loads((internal_run / "sia/response_source.json").read_text())["external"])
 
     def test_short_prefix_and_memory_keep_all_history(self) -> None:
         for anchor in (0, 1, 20):
@@ -317,7 +650,7 @@ class MockServiceTest(unittest.TestCase):
         ):
             with self.subTest(options=options):
                 self.write_run_config(model_options=options)
-                with self.assertRaisesRegex(ConfigurationError, "config does not match"):
+                with self.assertRaisesRegex(ConfigurationError, "run inputs or implementation changed"):
                     run_evaluation(source)
 
 

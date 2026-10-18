@@ -9,6 +9,7 @@ from pathlib import Path
 
 from synthetic_data import make_dataset, write_json
 from vmbmk.data.dataset import Dataset
+from vmbmk.inference.cache import bind_prediction_cache
 from vmbmk.errors import VMBMKError
 from vmbmk.inference.queries import Result, read_queries, read_results
 from vmbmk.metrics.cycle_voc_vs.cycle import build_cycle_voc_queries, score_cycle_voc_values
@@ -84,6 +85,7 @@ class VOCTest(unittest.TestCase):
 
             def infer(data_root, query_path, model, operation_path, *, gpu, native_metric):
                 queries = read_queries(query_path)
+                bind_prediction_cache(data_root, queries, model, Path(operation_path), native_metric)
                 write_jsonl(operation_path, (Result(query.query_id, 'value', query.state.anchor_frame).to_dict() for query in queries))
 
             with patch('vmbmk.metrics.cycle_voc_vs.cycle.run_inference', side_effect=infer) as inference, patch('vmbmk.metrics.cycle_voc_vs.forward.run_queries') as extra:
