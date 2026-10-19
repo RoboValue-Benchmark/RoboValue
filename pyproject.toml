@@ -7,6 +7,7 @@ name = "vmbmk"
 version = "0.2.0"
 description = "Minimal value-model inference core"
 readme = "README.md"
+license = {file = "LICENSE"}
 requires-python = ">=3.10"
 dependencies = ["PyYAML>=5.4"]
 

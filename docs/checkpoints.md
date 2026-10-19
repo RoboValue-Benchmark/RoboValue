@@ -1,14 +1,47 @@
 # Checkpoints
 
-For executable download/setup instructions, use the
-[per-baseline guides](baselines/README.md). This page preserves recorded
-checkpoint identities; it is not a substitute for the installation guides.
-Public revisions newly checked on 2026-10-06 are labeled in those guides rather
-than silently replacing the historical identities below.
+## Fixed download versions
 
-Use the local path in the YAML `checkpoint` field. Revisions are recorded when
-available locally; `unrecorded` means the local snapshot is usable but its
-exact upstream revision has not been pinned in this repository.
+Use these pinned Hugging Face revisions with the executable commands in the
+[per-baseline guides](baselines/README.md). Set the YAML `checkpoint` field to
+the corresponding local directory, and preserve the complete model snapshot.
+
+The table lists 17 download choices. Known historical revisions remain unchanged;
+fixed public revisions supply the previously unrecorded and newly listed choices.
+A download pin does not establish the revision used in a historical evaluation.
+
+| Adapter | Pretrained checkpoint | Fixed download revision | Local checkpoint path |
+| --- | --- | --- | --- |
+| Robometer | [`robometer/Robometer-4B`](https://huggingface.co/robometer/Robometer-4B) | `beef63bc914c5c189329d49c6d712d96d632aa34` | `/path/to/checkpoints/Robometer-4B` |
+| Robo-Dopamine | [`tanhuajie2001/Robo-Dopamine-GRM-3B`](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-3B) | `b75e1ea8381d384f580b41d04ee80fdff5369b34` | `/path/to/checkpoints/RoboDopamine-GRM-3B` |
+| Robo-Dopamine | [`tanhuajie2001/Robo-Dopamine-GRM-8B`](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B) | `773d72a9d20dac523968e43a6b0752ace434471b` | `/path/to/checkpoints/RoboDopamine-GRM-8B` |
+| Robo-Dopamine | [`tanhuajie2001/Robo-Dopamine-GRM-2.0-4B-Preview`](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-2.0-4B-Preview) | `68c8268cfb5f72f828e652bd40cb8b3324e902a5` | `/path/to/checkpoints/RoboDopamine-GRM-2.0-4B-Preview` |
+| Robo-Dopamine | [`tanhuajie2001/Robo-Dopamine-GRM-2.0-8B-Preview`](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-2.0-8B-Preview) | `980f3d1819c870f62c36169a9486e971049bb09a` | `/path/to/checkpoints/RoboDopamine-GRM-2.0-8B-Preview` |
+| ProcVLM | [`ce-amtic/ProcVLM-2B`](https://huggingface.co/ce-amtic/ProcVLM-2B) | `a7f5c18c6128a9c2a478a62ecc356f19f0e0bcf5` | `/path/to/checkpoints/ProcVLM-2B` |
+| RoboReward | [`teetone/RoboReward-4B`](https://huggingface.co/teetone/RoboReward-4B) | `4dec8af8d89d214de7028d70f9f9aee3b3a44c3d` | `/path/to/checkpoints/RoboReward-4B` |
+| RoboReward | [`teetone/RoboReward-8B`](https://huggingface.co/teetone/RoboReward-8B) | `3a185b4fce2b1253643105be1f234ae618b9732f` | `/path/to/checkpoints/RoboReward-8B` |
+| TOPReward | [`Qwen/Qwen3-VL-8B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) | `0c351dd01ed87e9c1b53cbc748cba10e6187ff3b` | `/path/to/checkpoints/Qwen3-VL-8B-Instruct` |
+| TOPReward | [`Qwen/Qwen3-VL-32B-Instruct`](https://huggingface.co/Qwen/Qwen3-VL-32B-Instruct) | `0cfaf48183f594c314753d30a4c4974bc75f3ccb` | `/path/to/checkpoints/Qwen3-VL-32B-Instruct` |
+| TOPReward | [`allenai/Molmo2-8B`](https://huggingface.co/allenai/Molmo2-8B) | `e28fa28597e5ec5e0cca2201dd8ab33d48bc4a1b` | `/path/to/checkpoints/Molmo2-8B` |
+| RoboFAC | [`MINT-SJTU/RoboFAC-7B`](https://huggingface.co/MINT-SJTU/RoboFAC-7B) | `7d55520ed6b44c500e7a844baae5a36e40186ecf` | `/path/to/checkpoints/RoboFAC-7B` |
+| RynnValue 4B | [`Alibaba-DAMO-Academy/RynnValue-4B`](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B) | `3f73b5d2b5e53b21f248c8791004dde6a8cf2b92` | `/path/to/checkpoints/RynnValue-4B` |
+| RynnValue 8B | [`Alibaba-DAMO-Academy/RynnValue-8B`](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-8B) | `8738c5e4ce4418ea0266e9fbeffae0eb9bbb230e` | `/path/to/checkpoints/RynnValue-8B` |
+| VLAC 2B | [`InternRobotics/VLAC`](https://huggingface.co/InternRobotics/VLAC) | `f44e552324944f80a63ab0083879f0bfafe01516` | `/path/to/checkpoints/VLAC-2B` |
+| VLAC 8B | [`InternRobotics/VLAC-8b`](https://huggingface.co/InternRobotics/VLAC-8b) | `dd94c057b0274b88e7228e8eaa73c03a7e8fa1d5` | `/path/to/checkpoints/VLAC-8B` |
+| LIV-EPIC RN50 | [`jasonyma/LIV`](https://huggingface.co/jasonyma/LIV) | `5a29adb8f796b0f91fdd9bc284b31a1829c1eb91` | `/path/to/checkpoints/LIV` |
+
+TOPReward uses `model: topreward` with `model_options.backend: qwen` for either
+Qwen3-VL size, or `model_options.backend: molmo` for Molmo2. Choose the matching
+runtime and checkpoint in the [TOPReward guide](baselines/topreward.md).
+See [configuration](configuration.md) for backend selection.
+
+<details>
+<summary><strong>Historical evaluation checkpoint records</strong></summary>
+
+The original checkpoint identity table is retained below. `unrecorded` means
+that the exact Hugging Face revision was not captured in the available historical
+records. Current download pins, website source hashes and GitHub code commits
+are not substitutes for those missing model revisions.
 
 | Adapter | Pretrained checkpoint | Hugging Face revision | Local checkpoint path |
 | --- | --- | --- | --- |
@@ -27,10 +60,7 @@ exact upstream revision has not been pinned in this repository.
 | VLAC 8B | [`InternRobotics/VLAC-8b`](https://huggingface.co/InternRobotics/VLAC-8b) | `dd94c057b0274b88e7228e8eaa73c03a7e8fa1d5` | `/path/to/checkpoints/VLAC-8B` |
 | LIV-EPIC RN50 | [`jasonyma/LIV`](https://huggingface.co/jasonyma/LIV) | `5a29adb8f796b0f91fdd9bc284b31a1829c1eb91` | `/path/to/checkpoints/LIV` |
 
-TOPReward uses model=topreward with model_options.backend=qwen or molmo.
-The Qwen checkpoint above is not interchangeable with a Molmo2 checkpoint;
-provide the corresponding externally obtained weights. No Molmo checkpoint
-revision is certified by this document. See configuration.md for backend selection.
+</details>
 
 ## LIV asset checksums
 

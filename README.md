@@ -223,6 +223,10 @@ View rankings, capability scores, and model configurations on the [**RoboValue L
 
 All three tracks share the held-out test set and evaluation metrics, with separate rankings. Current results cover Zero-Shot and One-Shot.
 
+## 📄 License
+
+RoboValue's own code, scripts, and documentation are released under the [MIT License](LICENSE). Third-party code, model weights, and datasets remain subject to their respective licenses and terms.
+
 ## 📝 Citation <a name="citation"></a>
 
 If you find **RoboValue** helpful in your research, please cite our paper. The paper link and official BibTeX entry will be added here.

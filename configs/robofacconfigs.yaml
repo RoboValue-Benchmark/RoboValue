@@ -2,7 +2,7 @@ model: robofac
 gpu: 0
 batch_size: 2
 python: /path/to/model-envs/robofac/bin/python
-checkpoint: /path/to/checkpoints/robofac
+checkpoint: /path/to/checkpoints/RoboFAC-7B
 data: /path/to/dataset
 output: /path/to/results
 metrics:

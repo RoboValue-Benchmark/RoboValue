@@ -1,4 +1,7 @@
 # VLAC: A Vision-Language-Action-Critic Model for Robotic Real-World Reinforcement Learning
+
+> This page contains upstream VLAC documentation. For RoboValue installation and evaluation, see the [VLAC baseline guide](../../docs/baselines/vlac.md).
+
 <div align="center">
 
 [[ICML2026]](https://openreview.net/pdf?id=i7mfaYYLDf)
@@ -35,7 +38,7 @@ A dataset with rich progress annotations that includes both success and failure 
 </div>
 
 <div align="center">
-  <img src="data/title_banner-2.gif" alt="VLAC banner" width="800"></img>
+  <img src="https://raw.githubusercontent.com/InternRobotics/VLAC/c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1/data/title_banner-2.gif" alt="VLAC banner" width="800"></img>
 </div>
 
 
@@ -65,7 +68,7 @@ VLAC trained on 3000h+ human egocentric data, 1200h+ comprehensive public roboti
 ## Framework
 
 <div align="center">
-  <img src="data/framework.png" alt="VLAC Framework" width="800"/>
+  <img src="https://raw.githubusercontent.com/InternRobotics/VLAC/c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1/data/framework.png" alt="VLAC Framework" width="800"/>
 </div>
 
 *The VLAC model is trained on a combination of comprehensive public robotic manipulation datasets, human demonstration data, self-collected manipulation data, and various image understanding datasets. Video data is processed into pair-wise samples to learn the different task progress between any two frames, supplemented with task descriptions and task completion evaluation to enable task progress understanding and action generation, as illustrated in the bottom-left corner. As shown in the diagram on the right, the model demonstrates strong generalization capabilities to new robots, scenarios, and tasks not covered in the training dataset. It can predict task progress and distinguish failure action or trajectory, providing dense reward feedback for real-world reinforcement learning and offering guidance for data refinement. Additionally, the model can directly perform manipulation tasks, exhibiting zero-shot capabilities to handle different scenarios.*
@@ -174,11 +177,11 @@ If the GPU memory is insufficient, please reduce the number of "batch_num".
 
 More examples  of 
 
-• pair-wise image inputs critic. Please check [this example](evo_vlac/examples/image_pair-wise_critic_example.py)
+• pair-wise image inputs critic. Please check [this example](https://github.com/InternRobotics/VLAC/blob/c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1/evo_vlac/examples/image_pair-wise_critic_example.py)
 
-• vla action generation. Please check [this example](evo_vlac/examples/vla_example.py)
+• vla action generation. Please check [this example](https://github.com/InternRobotics/VLAC/blob/c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1/evo_vlac/examples/vla_example.py)
 
-• data refinement. Please check [this example](evo_vlac/examples/data_filtering_example.py)
+• data refinement. Please check [this example](https://github.com/InternRobotics/VLAC/blob/c64bf7e49806dad12fcab06f32c6e39aaf0e6ce1/evo_vlac/examples/data_filtering_example.py)
 
 
 For training code, please refer to [InternVL2](https://huggingface.co/OpenGVLab/InternVL2-2B#quick-start).

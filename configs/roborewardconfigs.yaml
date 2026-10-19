@@ -2,7 +2,7 @@ model: roboreward
 gpu: 0
 batch_size: 1
 python: /path/to/model-envs/roboreward/bin/python
-checkpoint: /path/to/checkpoints/roboreward-8b
+checkpoint: /path/to/checkpoints/RoboReward-8B
 data: /path/to/dataset
 output: /path/to/results
 metrics:

@@ -38,12 +38,21 @@ not another YAML model name.
 
 ## 2. Download the corresponding checkpoint
 
-Qwen uses [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct):
+For the Qwen backend, choose either
+[Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct):
 
 ```bash
 hf download Qwen/Qwen3-VL-8B-Instruct \
   --revision 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b \
   --local-dir checkpoints/Qwen3-VL-8B-Instruct
+```
+
+or [Qwen3-VL-32B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-32B-Instruct):
+
+```bash
+hf download Qwen/Qwen3-VL-32B-Instruct \
+  --revision 0cfaf48183f594c314753d30a4c4974bc75f3ccb \
+  --local-dir checkpoints/Qwen3-VL-32B-Instruct
 ```
 
 Molmo uses [allenai/Molmo2-8B](https://huggingface.co/allenai/Molmo2-8B):
@@ -54,10 +63,10 @@ hf download allenai/Molmo2-8B \
   --local-dir checkpoints/Molmo2-8B
 ```
 
-Both revisions were checked against public metadata on 2026-10-06, not certified
-as archived benchmark revisions. Preserve tokenizer/processor files and any
-custom model code, not just weight shards. Model download does not install
-FlashAttention, TorchCodec or the runtime.
+These are fixed public download revisions; historical evaluation records are
+listed separately in [checkpoint references](../checkpoints.md). Preserve
+tokenizer/processor files and any custom model code, not just weight shards.
+Model download does not install FlashAttention, TorchCodec or the runtime.
 
 ## 3. Configure and run
 
@@ -67,14 +76,14 @@ cp configs/toprewardconfigs.yaml configs/topreward-local.yaml
 
 Select these four fields together:
 
-| Field | Qwen | Molmo |
-| --- | --- | --- |
-| `model_options.backend` | `qwen` | `molmo` |
-| `python` | `<REPO>/.model-envs/topreward/bin/python` | `<REPO>/.model-envs/topreward_molmo/bin/python` |
-| `checkpoint` | `<REPO>/checkpoints/Qwen3-VL-8B-Instruct` | `<REPO>/checkpoints/Molmo2-8B` |
-| Starting `batch_size` | `2` | `1` |
+| Field | Qwen 8B | Qwen 32B | Molmo 8B |
+| --- | --- | --- | --- |
+| `model_options.backend` | `qwen` | `qwen` | `molmo` |
+| `python` | `<REPO>/.model-envs/topreward/bin/python` | `<REPO>/.model-envs/topreward/bin/python` | `<REPO>/.model-envs/topreward_molmo/bin/python` |
+| `checkpoint` | `<REPO>/checkpoints/Qwen3-VL-8B-Instruct` | `<REPO>/checkpoints/Qwen3-VL-32B-Instruct` | `<REPO>/checkpoints/Molmo2-8B` |
+| Starting `batch_size` | `2` | `1` | `1` |
 
-Keep `model: topreward` in both cases. These batch sizes are conservative
+Keep `model: topreward` for all three choices. These batch sizes are conservative
 template choices, not GPU-memory guarantees. Fill `data`, `output`, `gpu`,
 `tasks` and eligible `metrics` before starting.
 

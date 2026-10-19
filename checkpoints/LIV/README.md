@@ -24,5 +24,6 @@ These assets alone do not establish score reproduction.
 Upstream source license notices are preserved in `LICENSE-LIV` and `LICENSE-CLIP`.
 The inspected LIV Hub metadata does not specify a separate checkpoint license.
 These notices do not invent a checkpoint license or grant additional rights;
-consult the upstream authors if your use requires clarification. No
-repository-wide license is selected here.
+consult the upstream authors if your use requires clarification. RoboValue's
+own code, scripts, and documentation use the [MIT License](../../LICENSE);
+third-party code and checkpoint assets remain subject to their upstream terms.
