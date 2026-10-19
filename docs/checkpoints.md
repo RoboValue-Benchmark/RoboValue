@@ -1,14 +1,42 @@
 # Checkpoints
 
-## Fixed download versions
+## Model list
 
-Use these pinned Hugging Face revisions with the executable commands in the
-[per-baseline guides](baselines/README.md). Set the YAML `checkpoint` field to
-the corresponding local directory, and preserve the complete model snapshot.
+The table lists 17 checkpoint choices by adapter. Select a model, then follow
+its setup guide for the runtime, download commands and YAML configuration.
 
-The table lists 17 download choices. Known historical revisions remain unchanged;
-fixed public revisions supply the previously unrecorded and newly listed choices.
-A download pin does not establish the revision used in a historical evaluation.
+| Adapter | Model / weights | Setup guide |
+| --- | --- | --- |
+| Robometer | [Robometer-4B](https://huggingface.co/robometer/Robometer-4B) | [Setup](baselines/robometer.md) |
+| Robo-Dopamine | [Robo-Dopamine-GRM-3B](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-3B) | [Setup](baselines/robodopamine.md) |
+| Robo-Dopamine | [Robo-Dopamine-GRM-8B](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B) | [Setup](baselines/robodopamine.md) |
+| Robo-Dopamine | [Robo-Dopamine-GRM-2.0-4B-Preview](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-2.0-4B-Preview) | [Setup](baselines/robodopamine.md) |
+| Robo-Dopamine | [Robo-Dopamine-GRM-2.0-8B-Preview](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-2.0-8B-Preview) | [Setup](baselines/robodopamine.md) |
+| ProcVLM | [ProcVLM-2B](https://huggingface.co/ce-amtic/ProcVLM-2B) | [Setup](baselines/procvlm.md) |
+| RoboReward | [RoboReward-4B](https://huggingface.co/teetone/RoboReward-4B) | [Setup](baselines/roboreward.md) |
+| RoboReward | [RoboReward-8B](https://huggingface.co/teetone/RoboReward-8B) | [Setup](baselines/roboreward.md) |
+| TOPReward | [Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct) | [Setup](baselines/topreward.md) |
+| TOPReward | [Qwen3-VL-32B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-32B-Instruct) | [Setup](baselines/topreward.md) |
+| TOPReward | [Molmo2-8B](https://huggingface.co/allenai/Molmo2-8B) | [Setup](baselines/topreward.md) |
+| RoboFAC | [RoboFAC-7B](https://huggingface.co/MINT-SJTU/RoboFAC-7B) | [Setup](baselines/robofac.md) |
+| RynnValue | [RynnValue-4B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B) | [Setup](baselines/rynnvalue.md) |
+| RynnValue | [RynnValue-8B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-8B) | [Setup](baselines/rynnvalue.md) |
+| VLAC | [VLAC-2B](https://huggingface.co/InternRobotics/VLAC) | [Setup](baselines/vlac.md) |
+| VLAC | [VLAC-8B](https://huggingface.co/InternRobotics/VLAC-8b) | [Setup](baselines/vlac.md) |
+| LIV | [LIV-EPIC RN50](https://huggingface.co/jasonyma/LIV) | [Setup](baselines/liv.md) |
+
+TOPReward uses `model: topreward` with `model_options.backend: qwen` for either
+Qwen3-VL size, or `model_options.backend: molmo` for Molmo2. Choose the matching
+runtime and checkpoint in the [TOPReward guide](baselines/topreward.md).
+See [configuration](configuration.md) for backend selection.
+
+<details>
+<summary><strong>Download references: revisions and local paths</strong></summary>
+
+A revision identifies a snapshot of the model repository, including weights,
+tokenizer and processor files. Use the references below to repeat a download
+of the same files. These download references do not establish the versions
+used in historical evaluations.
 
 | Adapter | Pretrained checkpoint | Fixed download revision | Local checkpoint path |
 | --- | --- | --- | --- |
@@ -30,10 +58,7 @@ A download pin does not establish the revision used in a historical evaluation.
 | VLAC 8B | [`InternRobotics/VLAC-8b`](https://huggingface.co/InternRobotics/VLAC-8b) | `dd94c057b0274b88e7228e8eaa73c03a7e8fa1d5` | `/path/to/checkpoints/VLAC-8B` |
 | LIV-EPIC RN50 | [`jasonyma/LIV`](https://huggingface.co/jasonyma/LIV) | `5a29adb8f796b0f91fdd9bc284b31a1829c1eb91` | `/path/to/checkpoints/LIV` |
 
-TOPReward uses `model: topreward` with `model_options.backend: qwen` for either
-Qwen3-VL size, or `model_options.backend: molmo` for Molmo2. Choose the matching
-runtime and checkpoint in the [TOPReward guide](baselines/topreward.md).
-See [configuration](configuration.md) for backend selection.
+</details>
 
 <details>
 <summary><strong>Historical evaluation checkpoint records</strong></summary>
