@@ -234,12 +234,14 @@ RoboValue 自有代码、脚本与文档采用 [MIT 许可](LICENSE)。第三方
 如果 **RoboValue** 对你的研究有所帮助，欢迎使用以下 BibTeX 条目引用[我们的论文](https://arxiv.org/pdf/2610.26663)：
 
 ```bibtex
-@article{liu2026robovalue,
-  title={RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models},
-  author={Liu, Shengbang and Du, Zhengye and Wan, Zhilong and Su, Honghao and Xia, Chenxiang and Ge, Chang and Xiao, Jinyang and Wang, Nan and Hu, Zhipeng and Yuan, Huining and Yu, Shu'ang and Chen, Yue and Chen, Tianxing and Li, Chuankang and Yao, Maoqing and Ding, Wenbo and Wang, Yu and Ren, Guanghui and Yu, Chao},
-  journal={arXiv preprint arXiv:2610.26663},
-  year={2026},
-  url={https://arxiv.org/abs/2610.26663},
+@misc{liu2026robovaluefinegrainedsimandrealbenchmark,
+      title={RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models},
+      author={Shengbang Liu and Zhengye Du and Zhilong Wan and Honghao Su and Chenxiang Xia and Chang Ge and Jinyang Xiao and Nan Wang and Zhipeng Hu and Huining Yuan and Shu'ang Yu and Yue Chen and Tianxing Chen and Chuankang Li and Maoqing Yao and Wenbo Ding and Yu Wang and Guanghui Ren and Chao Yu},
+      year={2026},
+      eprint={2610.26663},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2610.26663},
 }
 ```
 
