@@ -3,8 +3,7 @@
 </div>
 
 <div align="center">
-  <!-- Add official arXiv and Hugging Face URLs when available. -->
-  <img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="arXiv: paper link pending" height="20" />
+  <a href="https://arxiv.org/pdf/2610.26663"><img src="https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv" alt="RoboValue paper on arXiv" height="20" /></a>
 <a href="https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data">
   <img src="https://img.shields.io/badge/HuggingFace-yellow?logo=huggingface&amp;logoColor=white" alt="Hugging Face training dataset" height="20" /></a>
   <a href="https://robovalue-benchmark.github.io/doc/"><img src="https://img.shields.io/badge/Documentation-Purple?color=8A2BE2&amp;logo=readthedocs" alt="Documentation" height="20" /></a>
@@ -70,7 +69,7 @@ All four simulation and real-world **Full-Shot and One-Shot training subsets** a
 
 ## 📰 What's New <a name="whats-new"></a>
 
-- [2026/10] 🔥 Our paper **RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models** is officially released.
+- [2026/10] 🔥 Our paper [**RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models**](https://arxiv.org/pdf/2610.26663) is available on arXiv.
 
 ## ✨ Highlights
 
@@ -231,7 +230,19 @@ RoboValue's own code, scripts, and documentation are released under the [MIT Lic
 
 ## 📝 Citation <a name="citation"></a>
 
-If you find **RoboValue** helpful in your research, please cite our paper. The paper link and official BibTeX entry will be added here.
+If you find **RoboValue** helpful in your research, please cite [our paper](https://arxiv.org/pdf/2610.26663) using the official arXiv BibTeX entry:
+
+```bibtex
+@misc{liu2026robovaluefinegrainedsimandrealbenchmark,
+  title={RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models},
+  author={Shengbang Liu and Zhengye Du and Zhilong Wan and Honghao Su and Chenxiang Xia and Chang Ge and Jinyang Xiao and Nan Wang and Zhipeng Hu and Huining Yuan and Shu'ang Yu and Yue Chen and Tianxing Chen and Chuankang Li and Maoqing Yao and Wenbo Ding and Yu Wang and Guanghui Ren and Chao Yu},
+  year={2026},
+  eprint={2610.26663},
+  archivePrefix={arXiv},
+  primaryClass={cs.RO},
+  url={https://arxiv.org/abs/2610.26663},
+}
+```
 
 ## 📬 Contact <a name="contact"></a>
 
