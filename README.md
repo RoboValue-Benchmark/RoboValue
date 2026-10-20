@@ -67,8 +67,9 @@ All four simulation and real-world **Full-Shot and One-Shot training subsets** a
   <a href="docs/assets/overview-20261016.pdf"><img src="docs/assets/overview-20261016.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" /></a>
 </div>
 
-## 📰 What's New <a name="whats-new"></a>
+## 📰 News <a name="news"></a>
 
+- [2026/10] 📰 RoboValue was featured by **具身智能之心**: [具身赛道当下的盲点：哪些经验被保留、哪些行为需要被强化依然无法标准评测](https://mp.weixin.qq.com/s/mwxJNB9CZdt97M39rcwHkw).
 - [2026/10] 🔥 Our paper [**RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models**](https://arxiv.org/pdf/2610.26663) is available on arXiv.
 
 ## ✨ Highlights

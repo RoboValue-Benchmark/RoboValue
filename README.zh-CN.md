@@ -69,6 +69,7 @@
 
 ## 📰 最新动态 <a name="最新动态"></a>
 
+- [2026/10] 📰 我们的项目 RoboValue 获得**具身智能之心**报道：[《具身赛道当下的盲点：哪些经验被保留、哪些行为需要被强化依然无法标准评测》](https://mp.weixin.qq.com/s/mwxJNB9CZdt97M39rcwHkw)。
 - [2026/10] 🔥 我们的论文 [**RoboValue: A Fine-Grained Sim-and-Real Benchmark for Unified Evaluation of Robotic Value Models**](https://arxiv.org/pdf/2610.26663) 已在 arXiv 发布。
 
 ## ✨ Highlights
