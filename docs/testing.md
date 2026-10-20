@@ -68,7 +68,7 @@ Use an existing environment with Pillow and PyYAML:
 
     PYTHONPATH=src:tests python -m unittest discover -s tests/adapters -p test_mock_service.py -v
 
-Use an existing Python environment with PyYAML and pytest. Do not install model
+Use an existing Python environment with PyYAML, Pillow and pytest. Do not install model
 packages or download weights to run this suite. From the repository root:
 
     # POSIX shell
@@ -116,6 +116,16 @@ remain historical evidence and are not current coverage claims.
 Passing this suite verifies only the tested local scoring contracts and minimal
 adapter operations. It does not reproduce paper tables, validate real
 checkpoints, establish environment readiness, or guarantee every inference path.
+
+## CPU verification on 2026-10-20
+
+Python 3.12.14 with PyYAML 6.0.3 and Pillow 12.3.0 exercised 166 unittest
+methods across metrics, adapters, runner policy/provenance, dataset asset paths
+and result tools. The 165 unaffected tests passed; after correcting a macOS
+path-alias assertion, the saved-config/publication test and two related tests
+passed on rerun. Nine CLI help entry points also loaded without model packages.
+This check used synthetic fixtures and temporary outputs, with no GPU inference,
+model downloads or published-data changes.
 
 ## Verified execution on 2026-10-06
 

@@ -12,7 +12,7 @@ model_options:
 # model_options.backend: molmo
 # batch_size: 1
 # python: /path/to/model-envs/topreward_molmo/bin/python
-# checkpoint: /path/to/checkpoints/Molmo2
+# checkpoint: /path/to/checkpoints/Molmo2-8B
 # Keep model: topreward. Other backend-specific defaults stay in the adapter.
 metrics:
   sa:

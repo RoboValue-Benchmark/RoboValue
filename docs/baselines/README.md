@@ -116,9 +116,10 @@ Check the model license and available disk space before any large download.
 ## Revisions and offline execution
 
 Download examples pin checkpoint revisions. Some were recorded from existing
-benchmark assets; others were checked against public repository metadata on
-**2026-10-06**. A newly checked revision is not proof that historical paper scores
-used it. Guides mark the difference. Keep the selected revisions with your run
+benchmark assets; others were checked against public repository metadata, as
+recorded in the [checkpoint references](../checkpoints.md). A newly checked
+revision is not proof that historical paper scores used it. Guides mark the
+difference. Keep the selected revisions with your run
 record; do not silently replace them with `main` to match a result.
 
 `vmbmk.sh` defaults to Hugging Face offline mode. Complete explicit checkpoint

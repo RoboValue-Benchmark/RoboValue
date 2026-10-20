@@ -35,7 +35,7 @@ original user config is not rewritten.
     gpu: 0
     batch_size: 2
     python: /path/to/model-env/bin/python
-    checkpoint: /path/to/checkpoints/robometer
+    checkpoint: /path/to/checkpoints/Robometer-4B
     data: /path/to/dataset
     output: /path/to/results
     metrics:

@@ -122,7 +122,7 @@ RoboValue 数据由团队提供。提交模型时，请提供**推理服务（�
 
 - **Zero-Shot：** 不进行任务专属适应，也不使用参考示范。
 - **One-Shot：** 每个任务使用从训练集中选取的 **1 条专家示范**，可**在推理时作为参考，或用于任务专属适应**。论文实验中，Robo-Dopamine 和 VLAC 使用参考观测，不更新模型参数；ProcVLM 则使用该示范进行 LoRA 微调。
-- **Full-Shot（计划中）：** 使用完整 RoboValue 训练集进行训练或微调，并记录训练设置。该赛道将随数据集发布开放。训练数据获取方式以[数据说明](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training)为准。
+- **Full-Shot（评测赛道计划中）：** 使用完整 RoboValue 训练集进行训练或微调，并记录训练设置。[Full-Shot 与 One-Shot 训练数据](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading)现已公开，均为 LeRobot v3.0 格式；数据集卡片提供下载、读取和训练批次示例。
 
 **2. 提供推理服务。**
 

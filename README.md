@@ -122,7 +122,7 @@ Specify the model or checkpoint version, preprocessing and prompt revisions, and
 
 - **Zero-Shot:** use the model without task-specific adaptation or reference demonstrations.
 - **One-Shot:** use **one expert demonstration per task**, selected from the training split, for **inference-time conditioning or task-specific adaptation**. In the reported experiments, Robo-Dopamine and VLAC use reference observations without updating model parameters, while ProcVLM uses the demonstration for LoRA fine-tuning.
-- **Full-Shot (planned):** train or fine-tune on the complete RoboValue training split and record the training setup. This track will open with the dataset release. See the [data guide](https://robovalue-benchmark.github.io/doc/get-started/data/#dataset-training) for training-data access information.
+- **Full-Shot (planned evaluation track):** train or fine-tune on the complete RoboValue training split and record the training setup. The [Full-Shot and One-Shot training data](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading) are publicly available in LeRobot v3.0 format, with download and training-batch examples in the dataset card.
 
 **2. Provide your inference service.**
 

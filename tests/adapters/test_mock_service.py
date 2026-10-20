@@ -229,8 +229,8 @@ class MockServiceTest(unittest.TestCase):
             self.assertEqual(run_evaluation(source), output)
             launch.assert_not_called()
         saved = RunConfig.load(output / "config.yaml")
-        self.assertEqual(saved.data, self.data)
-        self.assertEqual(saved.output, output.parent)
+        self.assertEqual(saved.data, self.data.resolve())
+        self.assertEqual(saved.output, output.parent.resolve())
         published = synchronize(output, results_root=output.parent,
                                 final_root=self.root / "relative-publication", mode="publish")
         self.assertTrue(all(path.is_file() for path in published.destinations))

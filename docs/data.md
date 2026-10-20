@@ -9,6 +9,12 @@ an inference service, adapter and runnable synthetic example, as described in
 the [service and adapter guide](api.md); they do not need to source an additional
 robotics dataset.
 
+Public Full-Shot and One-Shot expert demonstrations are available in
+[LeRobot v3.0 format on Hugging Face](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading).
+Use the dataset card's download, reading and training-batch examples for these
+subsets. The annotated directory layout below is used by the benchmark
+evaluation CLI.
+
 ## Choose a dataset root
 
 Use the RoboValue dataset supplied for the evaluation deployment. Dataset assets
