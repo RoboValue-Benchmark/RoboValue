@@ -62,6 +62,8 @@
 
 **RoboValue** 是一个面向机器人价值模型的细粒度评测基准，用于检验模型能否准确判断任务是否完成、执行进展如何。它覆盖 **15 个仿真任务与 20 个真实世界任务**，评测任务理解、进度跟踪、失败与恢复判断以及价值一致性。通过统一评测协议和排行榜，RoboValue 帮助研究者比较模型、定位不可靠的价值反馈，为机器人学习、规划和执行监测中的模型改进提供依据。
 
+仿真与真机的 **Full-Shot 和 One-Shot 四个训练子集均已公开**，采用 [LeRobot v3.0 格式](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading)。论文与当前排行榜报告的评测设置为 **Zero-Shot 和 One-Shot**。
+
 <div align="center">
   <a href="docs/assets/overview-20261016.pdf"><img src="docs/assets/overview-20261016.png" alt="RoboValue 概览：仿真与真实世界数据、统一模型接口和四类评测能力" width="100%" /></a>
 </div>
@@ -122,7 +124,7 @@ RoboValue 数据由团队提供。提交模型时，请提供**推理服务（�
 
 - **Zero-Shot：** 不进行任务专属适应，也不使用参考示范。
 - **One-Shot：** 每个任务使用从训练集中选取的 **1 条专家示范**，可**在推理时作为参考，或用于任务专属适应**。论文实验中，Robo-Dopamine 和 VLAC 使用参考观测，不更新模型参数；ProcVLM 则使用该示范进行 LoRA 微调。
-- **Full-Shot（评测赛道计划中）：** 使用完整 RoboValue 训练集进行训练或微调，并记录训练设置。[Full-Shot 与 One-Shot 训练数据](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading)现已公开，均为 LeRobot v3.0 格式；数据集卡片提供下载、读取和训练批次示例。
+- **Full-Shot：** 使用完整 RoboValue 训练集进行训练或微调，并记录训练设置。本版本未报告 Full-Shot 评测结果。
 
 **2. 提供推理服务。**
 
@@ -213,15 +215,15 @@ RoboValue/
 
 ## 🏆 排行榜
 
-总体排名、分能力得分和模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。根据可使用的任务专属示范，基准设立三个赛道：
+总体排名、分能力得分和模型配置见 [**RoboValue 排行榜**](https://robovalue-benchmark.github.io/leaderboard/)。评测设置区分任务专属示范的使用方式：
 
-| 赛道 | 任务专属示范 | 使用方式 | 评测进展 |
+| 设置 | 任务专属示范 | 使用方式 | 已报告的评测结果 |
 | --- | --- | --- | --- |
 | **Zero-Shot** | 无 | 不进行任务专属适应 | ✅ 结果已公布 |
 | **One-Shot** | 每个任务 1 条示范 | 推理时作为参考，或用于任务专属适应 | ✅ 结果已公布 |
-| **Full-Shot** | 完整训练集 | 训练或微调 | 📋 计划中 |
+| **Full-Shot** | 完整训练集 | 训练或微调 | — 本版本未报告 |
 
-三个赛道使用相同的独立测试集与评测指标，并分别排名。目前已报告 Zero-Shot 和 One-Shot 的结果。
+论文与当前排行榜报告 Zero-Shot 和 One-Shot 结果，两者使用相同的独立测试集与评测指标，分别排名。Full-Shot 和 One-Shot 训练子集均已公开，可用于训练与适配。
 
 ## 📄 许可
 

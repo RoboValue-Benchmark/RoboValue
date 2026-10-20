@@ -62,6 +62,8 @@
 
 **RoboValue** is a fine-grained benchmark for evaluating how well robotic value models judge task success and execution progress. It covers **15 simulation and 20 real-world tasks**, testing task understanding, progress tracking, failure and recovery reasoning, and value consistency. With a shared evaluation protocol and leaderboard, RoboValue helps researchers compare models, diagnose unreliable feedback, and guide improvements for robot learning, planning, and execution monitoring.
 
+All four simulation and real-world **Full-Shot and One-Shot training subsets** are [publicly available in LeRobot v3.0 format](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading). The paper and current leaderboard report **Zero-Shot and One-Shot evaluations**.
+
 <div align="center">
   <a href="docs/assets/overview-20261016.pdf"><img src="docs/assets/overview-20261016.png" alt="RoboValue overview: sim-and-real data, shared model interfaces, and four evaluation capabilities" width="100%" /></a>
 </div>
@@ -122,7 +124,7 @@ Specify the model or checkpoint version, preprocessing and prompt revisions, and
 
 - **Zero-Shot:** use the model without task-specific adaptation or reference demonstrations.
 - **One-Shot:** use **one expert demonstration per task**, selected from the training split, for **inference-time conditioning or task-specific adaptation**. In the reported experiments, Robo-Dopamine and VLAC use reference observations without updating model parameters, while ProcVLM uses the demonstration for LoRA fine-tuning.
-- **Full-Shot (planned evaluation track):** train or fine-tune on the complete RoboValue training split and record the training setup. The [Full-Shot and One-Shot training data](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading) are publicly available in LeRobot v3.0 format, with download and training-batch examples in the dataset card.
+- **Full-Shot:** train or fine-tune on the complete RoboValue training split and record the training setup. This release does not report Full-Shot evaluation results.
 
 **2. Provide your inference service.**
 
@@ -213,15 +215,15 @@ RoboValue/
 
 ## 🏆 Leaderboard
 
-View rankings, capability scores, and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/). The benchmark defines three tracks according to access to task-specific demonstrations:
+View rankings, capability scores, and model configurations on the [**RoboValue Leaderboard**](https://robovalue-benchmark.github.io/leaderboard/). Evaluation settings describe how task-specific demonstrations are used:
 
-| Track | Task-specific demonstrations | How they are used | Status |
+| Setting | Task-specific demonstrations | How they are used | Reported evaluation results |
 | --- | --- | --- | --- |
 | **Zero-Shot** | None | No task-specific adaptation | ✅ Results available |
 | **One-Shot** | 1 demonstration per task | Inference-time conditioning or task-specific adaptation | ✅ Results available |
-| **Full-Shot** | Complete training split | Training or fine-tuning | 📋 Planned |
+| **Full-Shot** | Complete training split | Training or fine-tuning | — Not reported in this release |
 
-All three tracks share the held-out test set and evaluation metrics, with separate rankings. Current results cover Zero-Shot and One-Shot.
+The paper and current leaderboard report Zero-Shot and One-Shot results, using the same held-out test set and evaluation metrics with separate rankings. All Full-Shot and One-Shot training subsets are publicly available for training and adaptation.
 
 ## 📄 License
 

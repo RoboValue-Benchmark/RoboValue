@@ -69,11 +69,15 @@ Choose and document the evaluation setting:
 - **One-Shot:** use one training demonstration per task, supplied by the
   evaluation organizers through the adapter. Document how the reference enters
   your model's native interface.
-- **Full-Shot (planned):** fine-tune on the RoboValue training split before
+- **Full-Shot:** fine-tune on the RoboValue training split before
   providing the service, and record the training settings. The fine-tuned model
   uses the same inference interface as Zero-Shot; training demonstrations do not
-  need to accompany each query.
+  need to accompany each query. This release does not report Full-Shot evaluation
+  results.
 
+All four simulation and real-world Full-Shot and One-Shot training subsets are
+[publicly available](https://huggingface.co/datasets/wzlllong/value-model-benchmark-training-data#download-and-reading).
+The paper and current leaderboard report Zero-Shot and One-Shot evaluations.
 These settings apply to both simulation and real-world tasks. The mock does not
 implement reference-conditioned inference or train a model.
 
