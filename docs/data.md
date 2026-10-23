@@ -16,6 +16,9 @@ subsets. The annotated directory layout below is used by the benchmark
 evaluation CLI. The paper and current leaderboard report Zero-Shot and One-Shot
 evaluations on the held-out test set.
 
+See [real-world task instructions](training_tasks.md) for completion requirements
+and task metadata preparation.
+
 ## Choose a dataset root
 
 Use the RoboValue dataset supplied for the evaluation deployment. Dataset assets

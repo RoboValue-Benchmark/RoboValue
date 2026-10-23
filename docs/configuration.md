@@ -322,8 +322,21 @@ Create it separately on each machine that runs judging. The file is not copied
 into run configs, response bundles,
 judgement identities or result artifacts; no evaluation YAML field is added.
 
-Then run python -m vmbmk.cli run CONFIG --sia-stage judge. Judging reuses saved
-generation responses and does not reload the GPU model. Never paste keys into
+To score a saved generation on another machine, run:
+
+```bash
+python -m vmbmk.cli sia-judge output/baseline/sia/responses.json --output output/sia-scored
+```
+
+The response bundle contains the model answers, task instructions, candidate
+descriptions, target subtask IDs and domains. No dataset, videos or model
+checkpoint is needed. Scores use the ground-truth candidate probabilities and
+the same within-task geometric mean and task/domain aggregation as a full run.
+The judge does not replace saved instructions or remap subtask IDs. Diverse
+trajectory candidates are ordered during generation. `run CONFIG --sia-stage judge`
+remains available for dataset-backed run validation and publication.
+
+Never paste keys into
 task messages, shell history, logs or public configs; this file is plaintext,
 not an encrypted credential store.
 

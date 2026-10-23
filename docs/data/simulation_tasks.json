@@ -1,0 +1,96 @@
+{
+  "version": 2,
+  "domain": "simulation",
+  "tasks": [
+    {
+      "task_index": 0,
+      "task_id": "arrange_largest_number",
+      "name": "Arrange Largest Number",
+      "instruction": "Arrange the numbers from left to right to form the largest possible number, and place them on the pad."
+    },
+    {
+      "task_index": 1,
+      "task_id": "fill_pen_holder",
+      "name": "Fill Pen Holder",
+      "instruction": "Pick up the pen holder, place all the pens into it one by one, then put the filled holder back on the table."
+    },
+    {
+      "task_index": 2,
+      "task_id": "fold_clothes",
+      "name": "Fold Clothes",
+      "instruction": "Fold the left sleeve inward toward the opposite chest point, fold the right sleeve inward toward the opposite chest point, then fold the lower hem upward until it is aligned with the shoulders."
+    },
+    {
+      "task_index": 3,
+      "task_id": "hang_mugs",
+      "name": "Hang Mugs",
+      "instruction": "Hang all three mugs on the mug rack."
+    },
+    {
+      "task_index": 4,
+      "task_id": "insert_tubes",
+      "name": "Insert Tubes",
+      "instruction": "Insert the three tubes into the rack one by one."
+    },
+    {
+      "task_index": 5,
+      "task_id": "make_toast",
+      "name": "Make Toast",
+      "instruction": "Pick up two bread slices one by one, place them into the toaster, and press the lever down."
+    },
+    {
+      "task_index": 6,
+      "task_id": "organize_table",
+      "name": "Organize Table",
+      "instruction": "Place the alarm clock on the drawer, put the figurine on its stand, place the mouse on the mouse pad, and push the keyboard into the frame."
+    },
+    {
+      "task_index": 7,
+      "task_id": "pack_objects_into_box",
+      "name": "Pack Objects Into Box",
+      "instruction": "Move the box to the center of the table, then place all the objects into the box."
+    },
+    {
+      "task_index": 8,
+      "task_id": "play_stacking_toy",
+      "name": "Play Stacking Toy",
+      "instruction": "Place the four matching pieces onto the longest peg one by one, place the three matching pieces onto the second-longest peg, place the two matching pieces onto the second-shortest peg, then place the remaining piece onto the shortest peg."
+    },
+    {
+      "task_index": 9,
+      "task_id": "press_by_number",
+      "name": "Press By Number",
+      "instruction": "Press the two red buttons the required number of times according to the number cards, then press the blue button to confirm."
+    },
+    {
+      "task_index": 10,
+      "task_id": "put_bottles_into_dustbin",
+      "name": "Put Bottles Into Dustbin",
+      "instruction": "Pick up all four bottles one by one and throw them into the dustbin."
+    },
+    {
+      "task_index": 11,
+      "task_id": "stack_blocks",
+      "name": "Stack Blocks",
+      "instruction": "Stack the three blocks with different textures into one stable pile."
+    },
+    {
+      "task_index": 12,
+      "task_id": "store_laptop_and_headphone",
+      "name": "Store Laptop And Headphones",
+      "instruction": "Hang the headphones on the headphone stand, close the laptop, then place the closed laptop into the vertical laptop stand."
+    },
+    {
+      "task_index": 13,
+      "task_id": "swap_blocks",
+      "name": "Swap Blocks",
+      "instruction": "Swap the two blocks using the empty mat, pressing the button after each move."
+    },
+    {
+      "task_index": 14,
+      "task_id": "sweep_blocks",
+      "name": "Sweep Blocks",
+      "instruction": "Pick up the broom, pick up and place the dustpan upright on the table, then use the broom to sweep all the objects into the dustpan."
+    }
+  ]
+}

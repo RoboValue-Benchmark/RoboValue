@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "domain": "real-world",
+  "tasks": [
+    {
+      "task_index": 0,
+      "task_id": "transfer_colored_blocks_using_bowl",
+      "name": "Transfer Blocks Using Plate",
+      "instruction": "Place the three colored blocks on the plate one at a time in the order red, green, then blue. Tilt the loaded plate to pour all three blocks into the box."
+    },
+    {
+      "task_index": 1,
+      "task_id": "enter_keypad_number_sequence",
+      "name": "Enter Keypad Number Sequence",
+      "instruction": "Press the keys in the sequence 2-8-2-6-8, fully releasing each key and returning to the waiting position in front of the keypad between presses."
+    },
+    {
+      "task_index": 2,
+      "task_id": "set_the_table",
+      "name": "Set the Table",
+      "instruction": "Take the plate, bowl, fork, and knife out of the crate. Place the plate face up in the lower center of the placemat and the bowl open side up in the upper center, in front of the plate. Place the fork on the left and the knife on the right, with the fork tines and knife tip pointing toward the front. Complete these actions in any order."
+    },
+    {
+      "task_index": 3,
+      "task_id": "arrange_seasoning_jars",
+      "name": "Arrange Seasoning Jars",
+      "instruction": "Place the three seasoning jars on the two-tier rack in any order, on either tier and in any positions."
+    },
+    {
+      "task_index": 4,
+      "task_id": "load_plastic_plates_into_rack",
+      "name": "Load Plastic Plates Into Rack",
+      "instruction": "Insert the three plastic plates into the rack in any order and in any slots."
+    },
+    {
+      "task_index": 5,
+      "task_id": "press_button_five_times",
+      "name": "Press Button Five Times",
+      "instruction": "Press the button 5 times, fully releasing it and returning to the waiting position after each press."
+    },
+    {
+      "task_index": 6,
+      "task_id": "place_pot_on_induction_cooker",
+      "name": "Place Pot On Induction Cooker",
+      "instruction": "Place the pot, with the spatula inside, on the induction cooker so that most of the pot is over the cooking surface. Turn the handle toward the camera, move the spatula to the basket, and cover the pot with the lid."
+    },
+    {
+      "task_index": 7,
+      "task_id": "organize_desktop_workstation",
+      "name": "Organize Desktop Workstation",
+      "instruction": "Place the pen in the holder, place the eraser in the open drawer and close it, switch off the lamp, and unplug it. These actions may be performed in any order, except that the lamp must be switched off before it is unplugged."
+    },
+    {
+      "task_index": 8,
+      "task_id": "organize_books_and_pen",
+      "name": "Organize Books And Pen",
+      "instruction": "Center and align the closed book in the target rectangle. Place the pen along the spine of the open book, close the book, and stack it on the first book."
+    },
+    {
+      "task_index": 9,
+      "task_id": "arrange_family_tea_set",
+      "name": "Arrange Family Tea Set",
+      "instruction": "Place the teacup on the cat-head mat, the teapot on the yellow mat, the lid on the teapot, the tongs in their holder, and the canister on the round mat. Complete these placements in any order, provided the teapot is placed before its lid."
+    },
+    {
+      "task_index": 10,
+      "task_id": "operate_drawers_in_sequence",
+      "name": "Operate Drawers In Sequence",
+      "instruction": "Open the bottom, middle, and top drawers in that order, then close the top, middle, and bottom drawers in that order."
+    },
+    {
+      "task_index": 11,
+      "task_id": "sort_colored_blocks_into_boxes",
+      "name": "Sort Blocks in Order",
+      "instruction": "Place the red block on the yellow drawer, the yellow block on the white drawer, and the blue block on the dark-green drawer, in that order."
+    },
+    {
+      "task_index": 12,
+      "task_id": "fill_and_place_pen_holder",
+      "name": "Fill And Place Pen Holder",
+      "instruction": "Hold the pen holder with its opening upward, insert all four pens one by one in any order, then place the filled holder upright."
+    },
+    {
+      "task_index": 13,
+      "task_id": "organize_cosmetics_storage_box",
+      "name": "Organize Cosmetics Storage Box",
+      "instruction": "Open the upper drawer, cap the lipstick, and place the lipstick and eyebrow pencil inside. Close the drawer once both are inside. Along the way, place the serum and cleansing oil in the storage area above, in either order, before or after closing the drawer."
+    },
+    {
+      "task_index": 14,
+      "task_id": "strike_drum_five_times",
+      "name": "Strike Drum Five Times",
+      "instruction": "Pick up the drumstick and strike the center of the drumhead 5 times continuously."
+    },
+    {
+      "task_index": 15,
+      "task_id": "apply_dish_soap_repeatedly",
+      "name": "Apply Dish Soap Repeatedly",
+      "instruction": "Press the dish-soap bottle 5 times continuously, dispensing soap onto the dishcloth."
+    },
+    {
+      "task_index": 16,
+      "task_id": "season_meat_skewers_repeatedly",
+      "name": "Season Meat Skewers Repeatedly",
+      "instruction": "Sprinkle the meat skewers with the seasoning shaker 5 times continuously."
+    },
+    {
+      "task_index": 17,
+      "task_id": "pack_items_for_shipping",
+      "name": "Pack Items For Shipping",
+      "instruction": "Place the wireless mouse, then the wired earphones, in the cardboard box. Cover both items with bubble wrap."
+    },
+    {
+      "task_index": 18,
+      "task_id": "arrange_flowers_and_reed_diffuser",
+      "name": "Arrange Flowers and Reed Diffuser",
+      "instruction": "Place the pink, white, and yellow flowers consecutively in the vase, in any order. Place the diffuser bottle on the coaster and insert the reed stick into it, in either order. Either diffuser action may occur before or after the flower sequence, but neither may occur between flower placements."
+    },
+    {
+      "task_index": 19,
+      "task_id": "prepare_breakfast",
+      "name": "Prepare Breakfast",
+      "instruction": "Place the pig bun on the left, the yellow steamed bun on the right, and the black steamed bun at the front of the upper tier of the two already assembled, in that order. Add the empty tier on top, place the large bun in its center, then cover the steamer with the lid."
+    }
+  ]
+}

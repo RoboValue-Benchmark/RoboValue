@@ -90,13 +90,8 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("data", help="inspect dataset assets", add_help=False)
     commands.add_parser("results", help="validate, inspect and publish results", add_help=False)
     commands.add_parser("visualize", help="render value and cycle curves", add_help=False)
-    judge = commands.add_parser("sia-judge", help="judge saved SIA responses without GPU inference")
+    judge = commands.add_parser("sia-judge", help="judge saved SIA responses without a dataset or GPU")
     judge.add_argument("responses")
-    judge.add_argument(
-        "--data",
-        required=True,
-        help="dataset root for episode selection and diverse subtask mapping",
-    )
     judge.add_argument("--output", required=True)
     judge.add_argument("--model", help="judge model (default: DEEPSEEK_MODEL or deepseek-v4-pro)")
     judge.add_argument("--base-url")
@@ -186,7 +181,6 @@ def main(argv: list[str] | None = None) -> int:
                 args.responses, output / "operations.jsonl",
                 model={"sia_model": args.model, "sia_base_url": args.base_url},
                 cache_dir=output / "judgements",
-                dataset=Dataset.load(args.data, metrics=["sia"]),
             )
             _save_json(output / "metrics.json", {"sia": metrics})
             print(output)

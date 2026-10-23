@@ -234,12 +234,11 @@ def judge_sia_responses(
     *,
     model: Mapping[str, Any],
     cache_dir: str | Path,
-    dataset: Dataset,
     task_ids: Sequence[str] | None = None,
     domains: Sequence[str] | None = None,
 ) -> dict[str, Any]:
-    """Select and remap saved answers by episode annotations, without a GPU."""
-    items = select_sia_responses(_read_bundle(responses), dataset, task_ids, domains)
+    """Judge saved instructions and candidates without changing the response bundle."""
+    items = select_sia_responses(_read_bundle(responses), task_ids=task_ids, domains=domains)
     workers = model.get("sia_workers", 50)
     timeout = model.get("sia_timeout", 120)
     if isinstance(workers, bool) or not isinstance(workers, int) or workers < 1:
@@ -366,11 +365,11 @@ def judge_sia_responses(
 
 def select_sia_responses(
     items: Sequence[dict[str, Any]],
-    dataset: Dataset,
+    dataset: Dataset | None = None,
     task_ids: Sequence[str] | None = None,
     domains: Sequence[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Select and remap legacy and freshly generated bundles in the same way."""
+    """Filter saved answers, using dataset annotations only when supplied."""
     selected_tasks = set(task_ids) if task_ids is not None else None
     selected_domains = set(domains) if domains is not None else None
     selected = []
@@ -379,14 +378,15 @@ def select_sia_responses(
         state = item["query"].state
         if selected_tasks is not None and state.task_id not in selected_tasks:
             continue
-        episode = dataset.episode(state.task_id, state.episode_id)
-        if not is_sia_episode(episode):
+        if dataset is not None:
+            episode = dataset.episode(state.task_id, state.episode_id)
+            if not is_sia_episode(episode):
+                continue
+            item = _remap_diverse_response(
+                {**item, "domain": episode.domain}, dataset.tasks[state.task_id], episode,
+            )
+        if selected_domains is not None and item["domain"] not in selected_domains:
             continue
-        if selected_domains is not None and episode.domain not in selected_domains:
-            continue
-        item = _remap_diverse_response(
-            {**item, "domain": episode.domain}, dataset.tasks[state.task_id], episode,
-        )
         query_id = item["query"].query_id
         if query_id in seen:
             raise VMBMKError(f"SIA duplicate subtask sample after diverse remapping: {query_id}")
@@ -513,7 +513,6 @@ def run_sia(
         raise VMBMKError(f"unknown SIA stage: {stage}")
     cache = Path(operation_path).parent / "sia"
     bundle_path = cache / "responses.json"
-    dataset = dataset if dataset is not None else Dataset.load(data_root, metrics=["sia"])
     _save_json(cache / "response_source.json", {
         "external": str(Path(responses_path).resolve())
         if stage == "judge" and responses_path is not None else None,
@@ -524,10 +523,10 @@ def run_sia(
             operation_path,
             model=model,
             cache_dir=cache / "judgements",
-            dataset=dataset,
             task_ids=task_ids,
             domains=domains,
         )
+    dataset = dataset if dataset is not None else Dataset.load(data_root, metrics=["sia"])
     seed = model.get("sia_seed")
     if seed is not None and (isinstance(seed, bool) or not isinstance(seed, int)):
         raise VMBMKError("SIA sia_seed must be an integer")
@@ -581,7 +580,6 @@ def run_sia(
         operation_path,
         model=model,
         cache_dir=cache / "judgements",
-        dataset=dataset,
         task_ids=task_ids,
         domains=domains,
     )
